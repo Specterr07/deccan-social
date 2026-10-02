@@ -102,7 +102,7 @@ Read `docs/CICD.md`. The workflow `.github/workflows/ci.yml` is already written.
 **Notes:** 2026-10-03 plan (branch `t-03b-ci`): push the branch and open a PR (the workflow runs on PRs and on pushes to `main`), watch the run with `gh run watch`, fix anything red, add the README badge, merge, confirm `main` is green, then set branch protection (try `gh api`; otherwise Vivek does it in the UI). Risk: first run may fail on action versions or on the `public/brand` symlink in a clean checkout.
 Badge added to README.
 
-### T-03c · AI cost tracking + cheaper Claude calls — `doing` · 40m
+### T-03c · AI cost tracking + cheaper Claude calls — `done` · 40m
 Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude.com/docs/en/about-claude/pricing and …/build-with-claude/prompt-caching (as of 2026-10-03: Sonnet 5.5 $2/$10 per MTok in/out, Haiku 4.5 $1/$5; cache read 0.1× input, 5-min cache write 1.25×; minimum cacheable prompt: Sonnet 5.5 512 tokens, Haiku 4.5 4,096).
 
 **Tracking**
