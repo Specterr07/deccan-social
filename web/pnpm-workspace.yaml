@@ -1,0 +1,4 @@
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
+  esbuild: false # its binary ships as a prebuilt optional package; the postinstall script is not needed

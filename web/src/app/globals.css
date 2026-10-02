@@ -1,0 +1,14 @@
+/* Admin UI styling. All colours and fonts come from brand/tokens.css variables. */
+body {
+  margin: 0;
+  background: var(--paper-50);
+  color: var(--ink-900);
+  font-family: var(--font-sans);
+}
+h1 { font-family: var(--font-display); color: var(--forest-900); }
+.card { max-width: 420px; margin: 12vh auto; padding: var(--stack-lg); background: var(--white); border-radius: var(--radius-md); }
+.stack { display: flex; flex-direction: column; gap: var(--stack-sm); }
+input { padding: 10px 12px; border: 1px solid var(--ink-600); border-radius: var(--radius-sm); font: inherit; }
+button { padding: 10px 16px; border: 0; border-radius: var(--radius-pill); background: var(--leaf-700); color: var(--white); font: inherit; cursor: pointer; }
+button:disabled { opacity: 0.6; cursor: wait; }
+.error { color: var(--pomegranate-700); margin: 0; }

@@ -6,8 +6,8 @@
 
 - **Phase:** SLC
 - **Current task:** T-01 (scaffold) — `doing`, branch `t-01-scaffold` (plan in TASKS Notes)
-- **Last thing done:** T-00 done — `.env.local` at project root, `npm run check-env` (in scripts/) shows 5/5. No app code yet.
-- **Next action:** Install pnpm (`corepack enable`), then build T-01 step 2 onward. Symlink `web/.env.local → ../.env.local`.
+- **Last thing done:** T-01 built on `t-01-scaffold` (app, schema pushed to Neon, login, Docker image builds). Before that: T-00 done — `.env.local` at project root, `npm run check-env` (in scripts/) shows 5/5. No app code yet.
+- **Next action:** Vivek: run `cd web && pnpm dev`, log in at localhost:3000 with APP_PASSWORD and confirm the empty Months page. Then review, merge `t-01-scaffold`, mark T-01 done, start T-02.
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 

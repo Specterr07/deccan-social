@@ -17,9 +17,9 @@ Fill `.env.local` at the project root (already created; APP_PASSWORD and SESSION
 - Symlink env: `ln -s ../.env.local web/.env.local` (one secrets file for app + scripts).
 - Password login (`APP_PASSWORD`) with signed cookie middleware.
 - Dockerfile on the Playwright base image; `.dockerignore`.
-- [ ] `pnpm dev` shows a login page, then an empty "Months" page.
-- [ ] `pnpm typecheck` passes; `pnpm db:push` creates tables on Neon.
-- [ ] `docker build` succeeds.
+- [ ] `pnpm dev` shows a login page, then an empty "Months" page. (Login page, redirect and wrong-password message verified; successful login awaits Vivek's check.)
+- [x] `pnpm typecheck` passes; `pnpm db:push` creates tables on Neon.
+- [x] `docker build` succeeds (run from repo root: `docker build -f web/Dockerfile -t deccan-social .`).
 **Notes:** 2026-10-02 plan (branch `t-01-scaffold`):
 1. `pnpm` is not installed on the Mac — enable it with `corepack enable` (or `npm i -g pnpm`) first.
 2. Scaffold `web/` with create-next-app (TS, App Router, src/, no Tailwind, ESLint); symlink `web/.env.local → ../.env.local` and `web/public/brand → ../../brand`.
@@ -27,6 +27,7 @@ Fill `.env.local` at the project root (already created; APP_PASSWORD and SESSION
 4. Login: `/login` page + server action checking `APP_PASSWORD`, signed cookie via `SESSION_SECRET` (small `lib/session.ts`), middleware redirecting to `/login`; empty `/months` page.
 5. Dockerfile (Playwright base image) + `.dockerignore`.
 Risks: Next.js middleware runs on the edge runtime, so signing must use Web Crypto, not Node `crypto`. `db:push` writes to the real Neon DB (fine, it is empty).
+**Built 2026-10-02:** Next.js 16 (middleware is now `proxy.ts`), pnpm 12.8.1 (installed via npm -g), `src/env.ts` skips validation only during `next build` so Docker builds need no secrets, Dockerfile builds from the repo root and copies `brand/` in place of the symlink. Sharp's build script is still disabled in `pnpm-workspace.yaml` — revisit in T-02.
 Higgsfield credit: Vivek added $5 (~125 images at $0.04). Not used in T-01; be frugal in T-05 (n=1 tests first).
 
 ### T-02 · Renderer — `todo` · 75m
