@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Playwright drives a real Chromium and must not be bundled into the server build.
+  serverExternalPackages: ["playwright", "playwright-core"],
 };
 
 export default nextConfig;

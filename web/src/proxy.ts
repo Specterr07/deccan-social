@@ -5,6 +5,9 @@ import { SESSION_COOKIE_NAME, isSessionTokenValid } from "@/lib/session";
 export async function proxy(request: NextRequest) {
   const isLoggedIn = await isSessionTokenValid(request.cookies.get(SESSION_COOKIE_NAME)?.value);
   const isLoginPage = request.nextUrl.pathname === "/login";
+  // Dev-only render previews skip the login check (the route itself returns 404 in production).
+  const isDevPreview = process.env.NODE_ENV !== "production" && request.nextUrl.pathname.startsWith("/api/dev/");
+  if (isDevPreview) return NextResponse.next();
 
   if (!isLoggedIn && !isLoginPage) {
     return NextResponse.redirect(new URL("/login", request.url));

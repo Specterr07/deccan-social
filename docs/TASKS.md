@@ -52,9 +52,9 @@ Approach decided in ADR-009 (alternatives compared). Keep `renderSlide()` behind
 - React components for the 5 templates (+ carousel cover/inner/CTA), footer and wordmark, porting `brand/templates/*.html` 1:1 using `brand/templates.css` classes.
 - `renderSlide(slide, post) → Buffer (JPEG)`: build full HTML (inline tokens.css, templates.css, fonts as data URIs), Playwright → screenshot `.dp-post` → sharp JPEG q92. Reuse one browser instance.
 - Dev page `/dev/templates` rendering each template with sample data.
-- [ ] Each render matches its `brand/templates/*.png` reference (eyeball side by side).
-- [ ] 1:1 (`dp-square`) works for festival and day-of.
-- [ ] Long hero text (3 lines) does not overflow — reduce font or clamp lines.
+- [x] Each render matches its `brand/templates/*.png` reference (eyeball side by side). (Agent compared festival, exhibition, cover, CTA by screenshot — near pixel-identical; Vivek to eyeball `/dev/templates`.)
+- [x] 1:1 (`dp-square`) works for festival and day-of.
+- [x] Long hero text (3 lines) does not overflow — reduce font or clamp lines.
 **Notes:** 2026-10-02 plan (branch `t-02-renderer`):
 1. Add `playwright` pinned to 1.63.0 (matches the Dockerfile image) and download local Chromium. Playwright can screenshot straight to JPEG, so sharp is not needed — leave its build script disabled.
 2. `web/src/lib/render/`: `types.ts` (zod `RenderInput`), `templates/*.tsx` (one file per template, ported 1:1 from `brand/templates/*.html`) + `Footer.tsx`, `document.ts` (React → HTML string, inlines tokens.css, templates.css, fonts and logos as data URIs), `browser.ts` (one shared Chromium), `renderSlide.ts` (the single swappable entry point).
@@ -62,6 +62,13 @@ Approach decided in ADR-009 (alternatives compared). Keep `renderSlide()` behind
 4. Square (`dp-square`, 1080 high) variants for festival and day-of: re-position the absolute-placed blocks.
 5. `/api/dev/render/[template]` returns the JPEG (404 in production); `/dev/templates` shows every template as an `<img>` next to its `brand/templates/*.png` reference.
 Risks: `react-dom/server` inside a Next route may be blocked — fall back to string templates if so. Local Chromium download (~150 MB) is needed once on the Mac.
+**Built 2026-10-02:**
+- `lib/render/` = `types.ts` (zod `RenderInput`), `templates/*` (7 templates + Footer + Canvas helpers), `document.ts`, `browser.ts`, `brandFiles.ts`, `renderSlide.ts` (the one entry point), `samples.ts`. ~150 ms per slide after warm-up. Sharp not used (Playwright writes the JPEG).
+- Next.js blocks `react-dom/server` in app code, so `document.ts` loads it at run time with `import(/* turbopackIgnore: true */ …)`; `brandFiles.ts` also needs a `turbopackIgnore` on `process.cwd()` (Turbopack can't follow the brand symlink). `playwright` is in `serverExternalPackages`. If this gets fragile, move rendering into a small Node script/worker (P2-01).
+- Functions sent into the page (`shrinkTextToFit`) must have no inner named functions (tsx adds `__name`).
+- Missing photo → plain fruit-tint block (looks empty; T-05 decides the fallback). Missing event logo → box omitted (never invent). Heroes that need > 3 lines shrink to a 40px floor — T-03 should cap hero length (~60 chars) in the plan schema.
+- Dev only: `/api/dev/render/[sample]` (no login required, 404 in production) and `/dev/templates` (login required).
+- Not yet tested: rendering inside the Docker image (Chromium + fonts) — do it in T-09.
 
 
 ### T-03 · Calendar → plan (Claude) — `todo` · 60m

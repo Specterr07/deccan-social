@@ -7,7 +7,7 @@
 - **Phase:** SLC
 - **Current task:** T-02 (renderer) — `doing`, branch `t-02-renderer` (plan in TASKS Notes)
 - **Last thing done:** T-01b done and merged — Tailwind v4 + shadcn themed from brand tokens, app shell (header, nav), restyled login.
-- **Next action:** Build T-02 per the plan: playwright + Chromium, `lib/render/*`, dev page.
+- **Next action:** Vivek: run `cd web && pnpm dev`, log in, open `/dev/templates` and eyeball renders vs references. Then merge `t-02-renderer`, mark T-02 done, start T-03 (needs the plan schema to cap hero length).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
