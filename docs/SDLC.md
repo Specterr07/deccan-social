@@ -24,10 +24,22 @@ A light, five-step loop per task. Each step leaves a trace in the repo so any se
 Self-review the diff: correctness, brand rules, secrets, error handling and user-facing messages, dead code, `.env.example` updated, docs updated if behaviour changed.
 
 ## 5. Ship
-- CI must be green on the branch/PR before merging (see `docs/CICD.md`).
-- Merge to `main` (fast-forward or squash), delete the branch.
+One pull request per task, **including the handoff commit** (update `docs/TASKS.md` and `docs/STATUS.md` on the task branch before pushing).
+
+1. `cd web && pnpm check` (typecheck + lint + build). Fix anything red; never push a failing check.
+2. `git push -u origin <branch>`, then:
+   ```bash
+   gh pr create --fill
+   gh pr merge --auto --squash --delete-branch
+   ```
+   GitHub merges the PR by itself once the required checks pass (branch protection, see `docs/CICD.md`).
+3. **End the session without watching CI.** Do not poll or sleep on it; the next `/start` checks that `main` is green.
+4. Only if you really must wait (for example the next step depends on the merge):
+   ```bash
+   gh pr checks --watch --fail-fast > /dev/null; echo $?     # 0 = green
+   ```
+   On a non-zero exit, and only then: `gh run view --log-failed | tail -50`.
 - Task → `done` with ticked boxes; anything left becomes a new task.
-- `/handoff`: update `docs/STATUS.md` (Now + new session-log entry), commit `docs: handoff`.
 
 ## Definition of done (every task)
 - Acceptance criteria met and ticked.
