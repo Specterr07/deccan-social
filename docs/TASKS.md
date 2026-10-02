@@ -47,7 +47,7 @@ Read `docs/UI.md` first.
 - `typecheck` now runs `next typegen` first so route types exist after a clean `.next`.
 - Screens: `(app)` route group with `AppHeader` (wordmark, Months/Library nav, sign out); `/months` and a placeholder `/library` use it; login restyled.
 
-### T-02 · Renderer — `todo` · 75m
+### T-02 · Renderer — `doing` · 75m
 Approach decided in ADR-009 (alternatives compared). Keep `renderSlide()` behind one function so the engine can be swapped later.
 - React components for the 5 templates (+ carousel cover/inner/CTA), footer and wordmark, porting `brand/templates/*.html` 1:1 using `brand/templates.css` classes.
 - `renderSlide(slide, post) → Buffer (JPEG)`: build full HTML (inline tokens.css, templates.css, fonts as data URIs), Playwright → screenshot `.dp-post` → sharp JPEG q92. Reuse one browser instance.
@@ -55,7 +55,14 @@ Approach decided in ADR-009 (alternatives compared). Keep `renderSlide()` behind
 - [ ] Each render matches its `brand/templates/*.png` reference (eyeball side by side).
 - [ ] 1:1 (`dp-square`) works for festival and day-of.
 - [ ] Long hero text (3 lines) does not overflow — reduce font or clamp lines.
-**Notes:**
+**Notes:** 2026-10-02 plan (branch `t-02-renderer`):
+1. Add `playwright` pinned to 1.63.0 (matches the Dockerfile image) and download local Chromium. Playwright can screenshot straight to JPEG, so sharp is not needed — leave its build script disabled.
+2. `web/src/lib/render/`: `types.ts` (zod `RenderInput`), `templates/*.tsx` (one file per template, ported 1:1 from `brand/templates/*.html`) + `Footer.tsx`, `document.ts` (React → HTML string, inlines tokens.css, templates.css, fonts and logos as data URIs), `browser.ts` (one shared Chromium), `renderSlide.ts` (the single swappable entry point).
+3. Hero fit: after load, shrink any `[data-fit-lines]` text until it fits its line limit (floor ~56px), so 3-line heroes never overflow.
+4. Square (`dp-square`, 1080 high) variants for festival and day-of: re-position the absolute-placed blocks.
+5. `/api/dev/render/[template]` returns the JPEG (404 in production); `/dev/templates` shows every template as an `<img>` next to its `brand/templates/*.png` reference.
+Risks: `react-dom/server` inside a Next route may be blocked — fall back to string templates if so. Local Chromium download (~150 MB) is needed once on the Mac.
+
 
 ### T-03 · Calendar → plan (Claude) — `todo` · 60m
 - `schemas/plan.ts`: zod `MonthPlan` (posts with slides, captions, photo_tags, artwork_prompt, rationale). Convert with `z.toJSONSchema` for the tool `input_schema`.

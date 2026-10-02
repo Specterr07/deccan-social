@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none — T-02 (renderer) is next
+- **Current task:** T-02 (renderer) — `doing`, branch `t-02-renderer` (plan in TASKS Notes)
 - **Last thing done:** T-01b done and merged — Tailwind v4 + shadcn themed from brand tokens, app shell (header, nav), restyled login.
-- **Next action:** Run `/start`, begin T-02 (renderer). Enable sharp's build script in `web/pnpm-workspace.yaml`, add Playwright matching the Dockerfile image tag (v1.63.0).
+- **Next action:** Build T-02 per the plan: playwright + Chromium, `lib/render/*`, dev page.
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
