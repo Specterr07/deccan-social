@@ -5,13 +5,17 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** T-01 (scaffold) — `doing`, branch `t-01-scaffold` (plan in TASKS Notes)
-- **Last thing done:** T-01 built on `t-01-scaffold` (app, schema pushed to Neon, login, Docker image builds). Before that: T-00 done — `.env.local` at project root, `npm run check-env` (in scripts/) shows 5/5. No app code yet.
-- **Next action:** Vivek: run `cd web && pnpm dev`, log in at localhost:3000 with APP_PASSWORD and confirm the empty Months page. Then review, merge `t-01-scaffold`, mark T-01 done, start T-02.
+- **Current task:** none — T-02 (renderer) is next
+- **Last thing done:** T-01 done and merged to `main` — Next.js app in `web/`, schema on Neon, password login, Docker image builds.
+- **Next action:** Run `/start`, begin T-02 (renderer). Enable sharp's build script in `web/pnpm-workspace.yaml` and add Playwright (match the Dockerfile image tag, currently v1.63.0).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-02 · T-01 session (Claude, Claude Code)
+- Scaffolded `web/` (Next.js 16, Drizzle schema pushed to Neon, signed-cookie login via `proxy.ts`, Dockerfile built from repo root). Vivek confirmed login works.
+- Notes: pnpm installed via `npm -g`; `env.ts` skips validation only during `next build`; Higgsfield has $5 credit, unused so far.
 
 ### 2026-10-02 · Keys session (Claude, claude.ai)
 - Created `.env.local` (APP_PASSWORD + SESSION_SECRET generated on the Mac) and `scripts/check-env.mjs` provider checker.

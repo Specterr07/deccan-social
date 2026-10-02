@@ -9,7 +9,7 @@ Fill `.env.local` at the project root (already created; APP_PASSWORD and SESSION
 - [x] `cd scripts && npm install && npm run check-env` shows 5/5 ready.
 **Notes:** 2026-10-02 — all 5 providers verified on the Mac (Claude model claude-sonnet-5-5 available, Neon Postgres 18.6, R2 read/write/public OK, Resend sending-only key, Higgsfield auth OK — add credit before T-05). Resend uses the onboarding@resend.dev test sender, so mail only reaches the Resend signup address.
 
-### T-01 · Scaffold the app — `doing` · 30m
+### T-01 · Scaffold the app — `done` · 30m
 - `pnpm create next-app web` (TypeScript, App Router, Tailwind off, src/ dir, ESLint on).
 - Add Drizzle + `pg`, zod, env validation (`web/src/env.ts` parses `process.env` with zod).
 - Drizzle schema for all tables in `docs/ARCHITECTURE.md`; scripts `typecheck`, `db:push`.
@@ -17,7 +17,7 @@ Fill `.env.local` at the project root (already created; APP_PASSWORD and SESSION
 - Symlink env: `ln -s ../.env.local web/.env.local` (one secrets file for app + scripts).
 - Password login (`APP_PASSWORD`) with signed cookie middleware.
 - Dockerfile on the Playwright base image; `.dockerignore`.
-- [ ] `pnpm dev` shows a login page, then an empty "Months" page. (Login page, redirect and wrong-password message verified; successful login awaits Vivek's check.)
+- [x] `pnpm dev` shows a login page, then an empty "Months" page. (Confirmed by Vivek 2026-10-02.)
 - [x] `pnpm typecheck` passes; `pnpm db:push` creates tables on Neon.
 - [x] `docker build` succeeds (run from repo root: `docker build -f web/Dockerfile -t deccan-social .`).
 **Notes:** 2026-10-02 plan (branch `t-01-scaffold`):
