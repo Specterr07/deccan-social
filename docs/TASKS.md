@@ -137,18 +137,27 @@ Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude
 - Spend line shows month-to-date across all months (IST calendar month); today's test calls were ₹11.
 
 
-### T-04 · Photo library — `todo` · 30m
+### T-04 · Photo library + image slots — `todo` · 60m
+Read ADR-014 first. In short: some posts need one exact image (event logo, our team photo). Claude marks those slots as required; the user uploads them on the post; the app never guesses or uses AI for them.
+- Plan schema: each slide gets `image { kind: photo | event_logo | specific | artwork, description, required, tags, library_name? }`; update the planner prompt (exhibitions always need `event_logo`; behind-the-scenes always need a real `specific` photo) and the limits checks. Migration for the new columns.
+- Assets get a unique, human `name` (e.g. `nashik-packhouse-team`) so the calendar can point at one exact image.
+- Calendar template: add an **Image** column — a library name links that asset; "will upload" marks the slot required.
+- Month page: each post shows its slots. Empty required slot = dashed box "Upload <description>" with upload or "pick from library"; filling it links `slide.asset_id` and saves the image to the library with tags.
+- Post status `needs_image` while any required slot is empty; such posts can't be approved; others are unaffected.
 - `/library`: upload (multi-file) to R2 with kind, tags (fruit, category), people_ok checkbox; grid with filters; delete.
 - Seed with `brand/sample-photos/*` (script `pnpm seed:library`).
-- `pickAsset(tags)` returns best tag match or null.
+- `pickAsset(tags)` returns best tag match or null — used only for `photo` slots.
 - [ ] Seeded photos appear with tags; picking by tags works.
+- [ ] An exhibition post shows "Upload event logo", stays `needs_image` until filled, then links that exact file.
+- [ ] A `library_name` in the calendar links that exact asset.
+- [ ] Required slots are never filled by AI or by tag guessing.
 **Notes:**
 
 ### T-05 · Higgsfield artwork — `todo` · 60m
 Read `docs/integrations/higgsfield.md` first.
 - `lib/higgsfield.ts generateArtwork(slide, n)`: prompt = slide.artwork_prompt + BRAND house style; n parallel `subscribe` calls, idempotency `slideId:variant`; copy each result URL to R2 immediately; save `assets` (source `higgsfield`) + `generations` (cost).
 - Use `lib/budget.ts` from T-03c: `canSpend()` before every generation, so Claude + artwork together stay under `MONTHLY_AI_BUDGET_INR`; record each image in `generations` with its cost.
-- Picture step: library hit → use it; else generate n variants, pick variant 1 by default.
+- Picture step (ADR-014): only `photo` slots with no library match, and `artwork` slots, go to Higgsfield. Never `event_logo` or `specific` slots.
 - Handle `failed` / `nsfw` (not charged): retry once with a softened prompt, else leave slide on the no-photo fallback.
 - [ ] A slide with no library match gets n artwork variants saved in R2 and logged with cost.
 - [ ] Budget cap stops generation and shows a clear message.
@@ -164,7 +173,7 @@ Read `docs/integrations/higgsfield.md` first.
 **Notes:**
 
 ### T-07 · Approval email — `todo` · 30m
-- `lib/email.ts`: Resend, subject "Your <Month> posts are ready (N posts)", thumbnails (R2 URLs) + button to review page. Sent when rendering completes.
+- `lib/email.ts`: Resend, subject "Your <Month> posts are ready (N posts)", thumbnails (R2 URLs) + button to review page. Sent when rendering completes. If any post is `needs_image`, say so at the top: "2 posts need images from you" with links (ADR-014).
 - [ ] Email arrives at `REVIEWER_EMAIL` with working images and link.
 **Notes:**
 
