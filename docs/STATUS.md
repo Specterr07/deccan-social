@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none — T-01b (UI foundation) is next, then T-02 (renderer)
+- **Current task:** T-01b (UI foundation) — `doing`, branch `t-01b-ui-foundation`, built and committed; awaiting Vivek's visual check of the signed-in shell
 - **Last thing done:** T-01 done and merged to `main` — Next.js app in `web/`, schema on Neon, password login, Docker image builds.
-- **Next action:** Run `/start`, begin T-01b (UI foundation, see `docs/UI.md`), then T-02 (renderer). Enable sharp's build script in `web/pnpm-workspace.yaml` and add Playwright (match the Dockerfile image tag, currently v1.63.0).
+- **Next action:** Vivek checks `/months` and `/library` after login (header, nav, sign out, Tab focus rings, phone width). Then merge, mark T-01b done, start T-02 (enable sharp build script, add Playwright matching the Dockerfile tag v1.63.0).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 

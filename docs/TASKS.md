@@ -30,16 +30,22 @@ Risks: Next.js middleware runs on the edge runtime, so signing must use Web Cryp
 **Built 2026-10-02:** Next.js 16 (middleware is now `proxy.ts`), pnpm 12.8.1 (installed via npm -g), `src/env.ts` skips validation only during `next build` so Docker builds need no secrets, Dockerfile builds from the repo root and copies `brand/` in place of the symlink. Sharp's build script is still disabled in `pnpm-workspace.yaml` — revisit in T-02.
 Higgsfield credit: Vivek added $5 (~125 images at $0.04). Not used in T-01; be frugal in T-05 (n=1 tests first).
 
-### T-01b · UI foundation — `todo` · 30m
+### T-01b · UI foundation — `doing` · 30m
 Read `docs/UI.md` first.
 - Install Tailwind v4 + shadcn/ui in `web/` (verify current steps for Next 16 at ui.shadcn.com); lucide-react; sonner.
 - Map shadcn variables to brand tokens in `globals.css`; load Fraunces + League Spartan from `brand/fonts` via `next/font/local`.
 - Add base components: button, card, input, textarea, badge, dialog, tabs, checkbox, select, sonner.
 - App shell: header with `wordmark-color.svg`, nav (Months, Library), sign out; restyle login and months pages with it.
 - [ ] Login and Months pages use the shell and brand theme; focus rings visible.
-- [ ] No hex colours or font names hardcoded in components.
-- [ ] `pnpm typecheck` and `pnpm lint` pass.
-**Notes:**
+- [x] No hex colours or font names hardcoded in components.
+- [x] `pnpm typecheck` and `pnpm lint` pass.
+**Notes:** 2026-10-02 (branch `t-01b-ui-foundation`)
+- Install that worked: add `tailwindcss @tailwindcss/postcss postcss`, `postcss.config.mjs`, `@import "tailwindcss"` in globals.css, then `pnpm dlx shadcn@latest init -t next -b radix -p nova -y --pointer` (init refuses to run without Tailwind; it asks for a preset unless `-p` is given), then `shadcn add card input textarea badge dialog tabs checkbox select sonner label`.
+- The new shadcn output imports `cn` from an npm package named `cn` (not `clsx`/`tailwind-merge`) — it is a real dependency, keep it.
+- `globals.css` keeps shadcn's `@theme` mapping; the palette points at brand tokens (border = `paper-100` mixed with 8% ink). Dark theme removed; sonner forced to light (next-themes removed).
+- Fonts via `next/font/local` through `public/brand/fonts` (Fraunces 600, League Spartan 400/500/700) — computed fonts verified in the browser.
+- `typecheck` now runs `next typegen` first so route types exist after a clean `.next`.
+- Screens: `(app)` route group with `AppHeader` (wordmark, Months/Library nav, sign out); `/months` and a placeholder `/library` use it; login restyled.
 
 ### T-02 · Renderer — `todo` · 75m
 - React components for the 5 templates (+ carousel cover/inner/CTA), footer and wordmark, porting `brand/templates/*.html` 1:1 using `brand/templates.css` classes.

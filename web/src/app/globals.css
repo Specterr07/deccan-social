@@ -1,14 +1,102 @@
-/* Admin UI styling. All colours and fonts come from brand/tokens.css variables. */
-body {
-  margin: 0;
-  background: var(--paper-50);
-  color: var(--ink-900);
-  font-family: var(--font-sans);
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+    --font-heading: var(--font-fraunces);
+    --font-sans: var(--font-league-spartan);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
 }
-h1 { font-family: var(--font-display); color: var(--forest-900); }
-.card { max-width: 420px; margin: 12vh auto; padding: var(--stack-lg); background: var(--white); border-radius: var(--radius-md); }
-.stack { display: flex; flex-direction: column; gap: var(--stack-sm); }
-input { padding: 10px 12px; border: 1px solid var(--ink-600); border-radius: var(--radius-sm); font: inherit; }
-button { padding: 10px 16px; border: 0; border-radius: var(--radius-pill); background: var(--leaf-700); color: var(--white); font: inherit; cursor: pointer; }
-button:disabled { opacity: 0.6; cursor: wait; }
-.error { color: var(--pomegranate-700); margin: 0; }
+
+/* App theme: shadcn variables point at brand tokens from brand/tokens.css (loaded in layout.tsx).
+   Light theme only for the SLC (see docs/UI.md). Never hardcode hex colours here or in components. */
+:root {
+    --background: var(--paper-50);
+    --foreground: var(--ink-900);
+    --card: var(--white);
+    --card-foreground: var(--ink-900);
+    --popover: var(--white);
+    --popover-foreground: var(--ink-900);
+    --primary: var(--leaf-700);
+    --primary-foreground: var(--white);
+    --secondary: var(--paper-100);
+    --secondary-foreground: var(--ink-900);
+    --muted: var(--paper-100);
+    --muted-foreground: var(--ink-600);
+    --accent: var(--paper-100);
+    --accent-foreground: var(--ink-900);
+    --destructive: var(--pomegranate-700);
+    --border: color-mix(in srgb, var(--paper-100), var(--ink-900) 8%);
+    --input: color-mix(in srgb, var(--paper-100), var(--ink-900) 8%);
+    --ring: var(--leaf-700);
+    --chart-1: var(--leaf-700);
+    --chart-2: var(--olive-500);
+    --chart-3: var(--turmeric-500);
+    --chart-4: var(--pomegranate-700);
+    --chart-5: var(--ink-600);
+    --radius: var(--radius-sm);
+    --sidebar: var(--paper-50);
+    --sidebar-foreground: var(--ink-900);
+    --sidebar-primary: var(--leaf-700);
+    --sidebar-primary-foreground: var(--white);
+    --sidebar-accent: var(--paper-100);
+    --sidebar-accent-foreground: var(--ink-900);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--leaf-700);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+  }
+  /* Page titles use the brand display face. */
+  h1, h2 {
+    @apply font-heading font-semibold;
+  }
+}
