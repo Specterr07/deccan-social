@@ -24,6 +24,7 @@ A light, five-step loop per task. Each step leaves a trace in the repo so any se
 Self-review the diff: correctness, brand rules, secrets, error handling and user-facing messages, dead code, `.env.example` updated, docs updated if behaviour changed.
 
 ## 5. Ship
+- CI must be green on the branch/PR before merging (see `docs/CICD.md`).
 - Merge to `main` (fast-forward or squash), delete the branch.
 - Task → `done` with ticked boxes; anything left becomes a new task.
 - `/handoff`: update `docs/STATUS.md` (Now + new session-log entry), commit `docs: handoff`.

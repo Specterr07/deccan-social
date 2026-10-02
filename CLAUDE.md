@@ -25,6 +25,7 @@ Slash commands: `/start` (orient + pick the next task), `/handoff` (write status
 | `docs/STATUS.md` | Handoff log: current state, next action, session history |
 | `docs/DECISIONS.md` | Architecture decision records (ADRs) |
 | `docs/SDLC.md` | How work moves from idea to shipped |
+| `docs/CICD.md` | CI now, CD at first deploy; how to read CI runs |
 | `docs/integrations/` | Verified notes per external API |
 | `brand/` | Source of truth for visuals: tokens, CSS, logos, fonts, templates, reference posts |
 | `samples/` | Test inputs (sample calendars) and `calendar-template.md`, the fill-in template for the monthly calendar |

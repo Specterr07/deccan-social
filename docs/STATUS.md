@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none — T-04 (photo library) is next
+- **Current task:** none — T-03b (CI pipeline, 15m) is next, then T-04 (photo library)
 - **Last thing done:** T-03 done and merged — calendar PDF → Claude plan → posts/slides in Neon; upload dialog, month page, CONTENT-LIMITS.md, calendar template.
-- **Next action:** Run `/start`, begin T-04 (photo library: R2 uploads, tags, seed from `brand/sample-photos`, `pickAsset(tags)`).
+- **Next action:** Run `/start`, do T-03b (push, get CI green, branch protection), then begin T-04 (photo library: R2 uploads, tags, seed from `brand/sample-photos`, `pickAsset(tags)`).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 

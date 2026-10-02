@@ -48,3 +48,8 @@ Add a new record when a choice would surprise a future reader or is costly to re
 **Decision:** `planMonth()` uses structured outputs (`output_config.format` from the zod shape, no limits) and validates the answer in code (`schemas/planRules.ts`, numbers in `schemas/limits.ts`, documented in `docs/CONTENT-LIMITS.md`). If limits are broken, Claude gets the problem list once and corrects its plan; after that the month shows a readable error and nothing is saved.
 **Consequences:** One source of truth for limits (code + doc); a plan sometimes costs two calls (about 10 cents instead of 5). Server-side refusal fallbacks are not enabled (a calendar refusal is very unlikely; a refusal shows a clear message).
 
+
+## ADR-011 · CI on GitHub Actions now, CD to Fly.io at first deploy — accepted 2026-10-03
+**Context:** AI sessions commit straight to `main`; a broken build would carry into every later session. First deploy is T-09.
+**Decision:** Add CI now (typecheck, lint, build, Docker build on every push/PR; branch protection on `main`). Add CD at T-09: deploy job with a scoped Fly deploy token after CI passes, and switch to generated Drizzle migrations run by Fly's `release_command`. Plan in `docs/CICD.md`.
+**Consequences:** ~3–5 min feedback per push; `main` stays deployable. No staging environment or IaC until there is a second environment to manage.

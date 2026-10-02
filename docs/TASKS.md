@@ -92,6 +92,15 @@ Risks: Claude cost per plan (a few cents; test n=1); long-running job inside the
 - Neon prints a pg warning about `sslmode=require`; harmless now, fix by using `sslmode=verify-full` in `DATABASE_URL` when convenient.
 
 
+### T-03b · CI pipeline — `todo` · 15m
+Read `docs/CICD.md`. The workflow `.github/workflows/ci.yml` is already written.
+- Push and watch the run (`gh run watch`); fix anything red (versions of actions, lint errors, build env).
+- Turn on branch protection for `main` (GitHub → Settings → Branches/Rules): require the `Typecheck, lint, build` and `Docker image builds` checks. Vivek does this in the GitHub UI if `gh` lacks permission.
+- Add a CI status badge to `README.md`.
+- [ ] Both jobs green on `main`.
+- [ ] Branch protection requires both checks.
+**Notes:**
+
 ### T-04 · Photo library — `todo` · 30m
 - `/library`: upload (multi-file) to R2 with kind, tags (fruit, category), people_ok checkbox; grid with filters; delete.
 - Seed with `brand/sample-photos/*` (script `pnpm seed:library`).
@@ -129,6 +138,7 @@ Read `docs/integrations/higgsfield.md` first.
 **Notes:**
 
 ### T-09 · Deploy + October end-to-end — `todo` · 45m
+Includes CI/CD stages 2–3 from `docs/CICD.md`: generated Drizzle migrations + `release_command`, and the `deploy` job with a scoped Fly deploy token.
 - Fly app, secrets, deploy; run the real October calendar; approve; download pack.
 - [ ] Production URL works end to end; STATUS.md records the URL.
 **Notes:**
