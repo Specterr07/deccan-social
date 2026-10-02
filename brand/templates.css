@@ -1,0 +1,73 @@
+/* Deccan Produce post templates. Every post is a 1080 × 1350 canvas (4:5).
+   The renderer uses these same classes, so a preview here is what gets posted. */
+
+.dp-post {
+  --fruit: var(--leaf-700);
+  --fruit-deep: var(--forest-900);
+  --fruit-tint: var(--paper-50);
+  width: 1080px; height: 1350px; position: relative; overflow: hidden;
+  background: var(--paper-50); color: var(--ink-900);
+  font-family: var(--font-sans); box-sizing: border-box;
+}
+.dp-post *, .dp-post *::before, .dp-post *::after { box-sizing: border-box; }
+.dp-post.dp-square { height: 1080px; }
+
+/* fruit palettes: set one class per post */
+.dp-fruit-pomegranate { --fruit: var(--pomegranate-700); --fruit-deep: var(--pomegranate-900); --fruit-tint: var(--pomegranate-100); }
+.dp-fruit-mango       { --fruit: var(--mango-800);       --fruit-deep: var(--forest-900);      --fruit-tint: var(--mango-100); --fruit-pop: var(--mango-500); }
+.dp-fruit-grape       { --fruit: var(--grape-800);       --fruit-deep: var(--grape-800);       --fruit-tint: var(--grape-100); --fruit-pop: var(--grape-600); }
+.dp-fruit-citrus      { --fruit: var(--citrus-800);      --fruit-deep: var(--citrus-800);      --fruit-tint: var(--citrus-100); --fruit-pop: var(--citrus-500); }
+
+/* text roles */
+.dp-eyebrow { font: 700 26px/1 var(--font-sans); letter-spacing: 4.5px; text-transform: uppercase; color: var(--fruit); display: flex; align-items: center; gap: 16px; }
+.dp-eyebrow::before { content: ""; width: 44px; height: 3px; background: currentColor; }
+.dp-eyebrow.dp-center { justify-content: center; }
+.dp-eyebrow.dp-center::after { content: ""; width: 44px; height: 3px; background: currentColor; }
+.dp-hero { font: 600 96px/1.02 var(--font-display); letter-spacing: -0.5px; margin: 0; }
+.dp-hero-italic { font: italic 600 72px/1.1 var(--font-display); margin: 0; }
+.dp-festival { font: 700 120px/0.95 var(--font-sans); letter-spacing: 2px; text-transform: uppercase; margin: 0; }
+.dp-title { font: 600 64px/1.1 var(--font-display); margin: 0; }
+.dp-sub { font: 500 38px/1.3 var(--font-sans); margin: 0; }
+.dp-body { font: 400 32px/1.42 var(--font-sans); margin: 0; }
+.dp-info { font: 500 26px/1.4 var(--font-sans); margin: 0; color: var(--ink-600); }
+
+/* logo */
+.dp-logo { display: block; height: 64px; width: auto; }
+.dp-logo-sm { height: 52px; }
+.dp-logo-lg { height: 80px; }
+
+/* footer strip: on every post */
+.dp-footer {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 96px;
+  display: flex; align-items: center; justify-content: center; gap: 28px;
+  padding: 0 72px; font: 500 26px/1 var(--font-sans); letter-spacing: 0.3px;
+  background: var(--fruit-deep); color: var(--paper-50);
+}
+.dp-footer .dp-sep { width: 2px; height: 28px; background: currentColor; opacity: .5; }
+.dp-footer.dp-footer-paper { background: var(--paper-100); color: var(--leaf-700); justify-content: space-between; }
+.dp-footer.dp-footer-clear { background: transparent; color: var(--white); }
+
+/* photos */
+.dp-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.dp-photo-card { width: 100%; object-fit: cover; border-radius: var(--radius-md); display: block; }
+.dp-scrim-top { position: absolute; inset: 0; background: linear-gradient(180deg, var(--scrim-forest) 0%, rgba(15,42,30,0) 45%); }
+.dp-scrim-bottom { position: absolute; inset: 0; background: linear-gradient(0deg, var(--forest-900) 0%, var(--scrim-forest) 30%, rgba(15,42,30,0) 62%); }
+
+/* carousel progress */
+.dp-dots { display: flex; gap: 10px; justify-content: center; }
+.dp-dots i { width: 12px; height: 12px; border-radius: 6px; background: currentColor; opacity: .25; }
+.dp-dots i.on { width: 36px; opacity: 1; }
+.dp-rule { width: 96px; height: 4px; background: var(--fruit); border: 0; margin: 0; }
+
+/* date boxes (exhibitions) */
+.dp-dates { display: flex; gap: 14px; }
+.dp-date { width: 104px; height: 120px; border-radius: var(--radius-sm); background: var(--paper-50); color: var(--ink-900);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.dp-date b { font: 700 52px/1 var(--font-sans); }
+.dp-date span { font: 700 18px/1 var(--font-sans); letter-spacing: 3px; color: var(--ink-600); }
+.dp-date.on { outline: 4px solid var(--turmeric-500); outline-offset: -4px; }
+
+/* preview helper: scales a 1080 canvas into a card */
+.dp-stage { display: flex; gap: 20px; padding: 16px; justify-content: center; background: transparent; }
+.dp-frame { overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.18); flex: none; }
+.dp-frame > .dp-post { transform-origin: 0 0; }
