@@ -4,11 +4,12 @@ import { LoginForm } from "./LoginForm";
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 px-4">
+      {/* Logo sits above the card, centred and large. */}
+      <Image src="/brand/logos/wordmark-color.svg" alt="Deccan Produce" width={320} height={41} priority />
       <Card className="w-full max-w-sm">
         <CardHeader className="items-center text-center">
-          <Image src="/brand/logos/wordmark-color.svg" alt="Deccan Produce" width={180} height={23} priority />
-          <CardTitle className="pt-4 text-2xl">Social posts</CardTitle>
+          <CardTitle className="text-2xl">Social posts</CardTitle>
           <CardDescription>Enter the team password to continue.</CardDescription>
         </CardHeader>
         <CardContent>
