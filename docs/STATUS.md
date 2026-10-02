@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** T-01 (scaffold) — next up
+- **Current task:** T-01 (scaffold) — `doing`, branch `t-01-scaffold` (plan in TASKS Notes)
 - **Last thing done:** T-00 done — `.env.local` at project root, `npm run check-env` (in scripts/) shows 5/5. No app code yet.
-- **Next action:** Run `/start`, begin T-01. Remember the step that symlinks `web/.env.local → ../.env.local`.
+- **Next action:** Install pnpm (`corepack enable`), then build T-01 step 2 onward. Symlink `web/.env.local → ../.env.local`.
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 

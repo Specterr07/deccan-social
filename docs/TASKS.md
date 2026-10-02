@@ -9,7 +9,7 @@ Fill `.env.local` at the project root (already created; APP_PASSWORD and SESSION
 - [x] `cd scripts && npm install && npm run check-env` shows 5/5 ready.
 **Notes:** 2026-10-02 — all 5 providers verified on the Mac (Claude model claude-sonnet-5-5 available, Neon Postgres 18.6, R2 read/write/public OK, Resend sending-only key, Higgsfield auth OK — add credit before T-05). Resend uses the onboarding@resend.dev test sender, so mail only reaches the Resend signup address.
 
-### T-01 · Scaffold the app — `todo` · 30m
+### T-01 · Scaffold the app — `doing` · 30m
 - `pnpm create next-app web` (TypeScript, App Router, Tailwind off, src/ dir, ESLint on).
 - Add Drizzle + `pg`, zod, env validation (`web/src/env.ts` parses `process.env` with zod).
 - Drizzle schema for all tables in `docs/ARCHITECTURE.md`; scripts `typecheck`, `db:push`.
@@ -20,7 +20,14 @@ Fill `.env.local` at the project root (already created; APP_PASSWORD and SESSION
 - [ ] `pnpm dev` shows a login page, then an empty "Months" page.
 - [ ] `pnpm typecheck` passes; `pnpm db:push` creates tables on Neon.
 - [ ] `docker build` succeeds.
-**Notes:**
+**Notes:** 2026-10-02 plan (branch `t-01-scaffold`):
+1. `pnpm` is not installed on the Mac — enable it with `corepack enable` (or `npm i -g pnpm`) first.
+2. Scaffold `web/` with create-next-app (TS, App Router, src/, no Tailwind, ESLint); symlink `web/.env.local → ../.env.local` and `web/public/brand → ../../brand`.
+3. `src/env.ts` (zod-parsed env), `src/db/schema.ts` (tables from ARCHITECTURE.md) + `src/db/client.ts`, drizzle config, scripts `typecheck` and `db:push`.
+4. Login: `/login` page + server action checking `APP_PASSWORD`, signed cookie via `SESSION_SECRET` (small `lib/session.ts`), middleware redirecting to `/login`; empty `/months` page.
+5. Dockerfile (Playwright base image) + `.dockerignore`.
+Risks: Next.js middleware runs on the edge runtime, so signing must use Web Crypto, not Node `crypto`. `db:push` writes to the real Neon DB (fine, it is empty).
+Higgsfield credit: Vivek added $5 (~125 images at $0.04). Not used in T-01; be frugal in T-05 (n=1 tests first).
 
 ### T-02 · Renderer — `todo` · 75m
 - React components for the 5 templates (+ carousel cover/inner/CTA), footer and wordmark, porting `brand/templates/*.html` 1:1 using `brand/templates.css` classes.
