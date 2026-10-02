@@ -30,13 +30,13 @@ Risks: Next.js middleware runs on the edge runtime, so signing must use Web Cryp
 **Built 2026-10-02:** Next.js 16 (middleware is now `proxy.ts`), pnpm 12.8.1 (installed via npm -g), `src/env.ts` skips validation only during `next build` so Docker builds need no secrets, Dockerfile builds from the repo root and copies `brand/` in place of the symlink. Sharp's build script is still disabled in `pnpm-workspace.yaml` — revisit in T-02.
 Higgsfield credit: Vivek added $5 (~125 images at $0.04). Not used in T-01; be frugal in T-05 (n=1 tests first).
 
-### T-01b · UI foundation — `doing` · 30m
+### T-01b · UI foundation — `done` · 30m
 Read `docs/UI.md` first.
 - Install Tailwind v4 + shadcn/ui in `web/` (verify current steps for Next 16 at ui.shadcn.com); lucide-react; sonner.
 - Map shadcn variables to brand tokens in `globals.css`; load Fraunces + League Spartan from `brand/fonts` via `next/font/local`.
 - Add base components: button, card, input, textarea, badge, dialog, tabs, checkbox, select, sonner.
 - App shell: header with `wordmark-color.svg`, nav (Months, Library), sign out; restyle login and months pages with it.
-- [ ] Login and Months pages use the shell and brand theme; focus rings visible.
+- [x] Login and Months pages use the shell and brand theme; focus rings visible. (Confirmed by Vivek 2026-10-02; login logo moved above the card.)
 - [x] No hex colours or font names hardcoded in components.
 - [x] `pnpm typecheck` and `pnpm lint` pass.
 **Notes:** 2026-10-02 (branch `t-01b-ui-foundation`)

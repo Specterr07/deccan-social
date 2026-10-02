@@ -5,13 +5,17 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** T-01b (UI foundation) — `doing`, branch `t-01b-ui-foundation`, built and committed; awaiting Vivek's visual check of the signed-in shell
-- **Last thing done:** T-01 done and merged to `main` — Next.js app in `web/`, schema on Neon, password login, Docker image builds.
-- **Next action:** Vivek checks `/months` and `/library` after login (header, nav, sign out, Tab focus rings, phone width). Then merge, mark T-01b done, start T-02 (enable sharp build script, add Playwright matching the Dockerfile tag v1.63.0).
+- **Current task:** none — T-02 (renderer) is next
+- **Last thing done:** T-01b done and merged — Tailwind v4 + shadcn themed from brand tokens, app shell (header, nav), restyled login.
+- **Next action:** Run `/start`, begin T-02 (renderer). Enable sharp's build script in `web/pnpm-workspace.yaml`, add Playwright matching the Dockerfile image tag (v1.63.0).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-02 · T-01b session (Claude, Claude Code)
+- Added Tailwind v4 + shadcn/ui (radix-nova), brand-token theme, local brand fonts, `(app)` shell with header/nav, placeholder `/library`. Vivek approved the look.
+- Gotchas recorded in T-01b Notes (shadcn init needs Tailwind first; `cn` is a real package; typecheck runs `next typegen`).
 
 ### 2026-10-02 · T-01 session (Claude, Claude Code)
 - Scaffolded `web/` (Next.js 16, Drizzle schema pushed to Neon, signed-cookie login via `proxy.ts`, Dockerfile built from repo root). Vivek confirmed login works.
