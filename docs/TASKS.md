@@ -48,6 +48,7 @@ Read `docs/UI.md` first.
 - Screens: `(app)` route group with `AppHeader` (wordmark, Months/Library nav, sign out); `/months` and a placeholder `/library` use it; login restyled.
 
 ### T-02 · Renderer — `todo` · 75m
+Approach decided in ADR-009 (alternatives compared). Keep `renderSlide()` behind one function so the engine can be swapped later.
 - React components for the 5 templates (+ carousel cover/inner/CTA), footer and wordmark, porting `brand/templates/*.html` 1:1 using `brand/templates.css` classes.
 - `renderSlide(slide, post) → Buffer (JPEG)`: build full HTML (inline tokens.css, templates.css, fonts as data URIs), Playwright → screenshot `.dp-post` → sharp JPEG q92. Reuse one browser instance.
 - Dev page `/dev/templates` rendering each template with sample data.
