@@ -13,6 +13,10 @@
 
 ## Session log
 
+### 2026-10-03 · Shipping workflow (Claude, Claude Code)
+- New rule: one PR per task incl. the handoff commit; `cd web && pnpm check` before every push; `gh pr create --fill` + `gh pr merge --auto --squash --delete-branch`; do not watch CI. CI now has a `changes` job and skips the Docker job for docs-only changes (skipped jobs satisfy branch protection). Docs: `docs/SDLC.md` step 5, `docs/CICD.md`, `CLAUDE.md`.
+- Open items from before: remote branches `docs/ai-cost-plan` and `t-03c-ai-cost` may still exist (safe to delete).
+
 ### 2026-10-03 · T-03c session (Claude, Claude Code)
 - Env rename (`MONTHLY_AI_BUDGET_INR`, `CLAUDE_MODEL_LIGHT`), migrations baselined + `ai_calls`, `callClaude` wrapper, cheaper retries, budget helper, spend line. Kept effort `medium` (low dropped an expo day). PR #3, CI green.
 

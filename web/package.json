@@ -10,7 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --env-file=.env.local scripts/migrate.ts",
-    "db:baseline": "tsx --env-file=.env.local scripts/baseline-migrations.ts"
+    "db:baseline": "tsx --env-file=.env.local scripts/baseline-migrations.ts",
+    "check": "pnpm typecheck && pnpm lint && pnpm build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",

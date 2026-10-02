@@ -9,6 +9,7 @@ Monthly calendar PDF → on-brand Instagram/LinkedIn posts (with captions) → e
 3. Skim `docs/DECISIONS.md` before changing anything architectural.
 4. Follow `docs/SDLC.md` for the task: Plan → Build → Verify → Review → Ship.
 5. Before you stop (even mid-task), run the handoff: update `docs/STATUS.md` (+ `docs/TASKS.md`, + a decision record if you made one) and commit. The next session must be able to continue from those files alone.
+6. Ship one PR per task, handoff commit included: `pnpm check` → push → `gh pr create --fill` → `gh pr merge --auto --squash --delete-branch` → stop; do not watch CI (see `docs/SDLC.md` step 5).
 
 Slash commands: `/start` (orient + pick the next task), `/handoff` (write status and commit), `/review` (self-review the current diff).
 
@@ -40,7 +41,7 @@ Slash commands: `/start` (orient + pick the next task), `/handoff` (write status
 - **Spend is capped.** Every paid AI call (Claude via `callClaude()`, Higgsfield) is logged with its cost and checked against one monthly budget. No LangChain/LangSmith (ADR-012).
 - **Copy facts from the calendar.** Dates, venues, stall numbers are never invented; leave them out if missing.
 - **Secrets only in `.env.local`** (never committed). Keep `.env.example` in sync when adding a variable.
-- **Small, verified steps.** Typecheck must pass before any commit to `main`.
+- **Small, verified steps.** `pnpm check` must pass before every push; nothing reaches `main` except through a PR with green checks.
 
 ## Stack (SLC)
 
@@ -49,7 +50,7 @@ Next.js (App Router, TypeScript) in `web/` · shadcn/ui + Tailwind v4 for app sc
 ## Commands (fill in as they exist)
 
 - `cd web && pnpm dev` — run locally
-- `cd web && pnpm typecheck` — must pass before commit
+- `cd web && pnpm check` — typecheck + lint + build; run before every push (`pnpm typecheck` alone is fine while iterating)
 - `cd web && pnpm db:generate` — write a SQL migration after changing `src/db/schema.ts` (commit it)
 - `cd web && pnpm db:migrate` — apply pending migrations to Neon (**never `drizzle-kit push` against Neon**)
 
