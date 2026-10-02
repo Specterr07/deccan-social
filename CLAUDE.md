@@ -37,7 +37,7 @@ Slash commands: `/start` (orient + pick the next task), `/handoff` (write status
 - **Brand comes from `brand/`.** Use `brand/tokens.css` + `brand/templates.css` and the logo SVGs as-is. Never hardcode a colour or font in app code; never retype the wordmark. Target look = `brand/templates/*.png`.
 - **Two styling systems, kept apart.** Posts = plain brand CSS (`dp-*`); app screens = shadcn/ui + Tailwind themed from tokens (`docs/UI.md`). Show posts in the app only as rendered JPEGs.
 - **Nothing publishes without approval.** Every post needs an explicit approve.
-- **Spend is capped.** Every paid image call goes through the budget check and is logged with its cost.
+- **Spend is capped.** Every paid AI call (Claude via `callClaude()`, Higgsfield) is logged with its cost and checked against one monthly budget. No LangChain/LangSmith (ADR-012).
 - **Copy facts from the calendar.** Dates, venues, stall numbers are never invented; leave them out if missing.
 - **Secrets only in `.env.local`** (never committed). Keep `.env.example` in sync when adding a variable.
 - **Small, verified steps.** Typecheck must pass before any commit to `main`.
