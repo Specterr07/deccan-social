@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** T-03b (CI pipeline) — `doing`, branch `t-03b-ci`; then T-04
-- **Last thing done:** T-03 done and merged — calendar PDF → Claude plan → posts/slides in Neon; upload dialog, month page, CONTENT-LIMITS.md, calendar template.
-- **Next action:** Push branch, open PR, get both CI jobs green, badge, merge, branch protection.
+- **Current task:** none — T-04 (photo library) is next
+- **Last thing done:** T-03b done — CI green on `main`, badge in README, branch protection on (required checks, no force-push).
+- **Next action:** Run `/start`, begin T-04 (photo library). Branch per task; open a PR if you want CI before merging.
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-03b session (Claude, Claude Code)
+- Opened PR #1 to run CI: both jobs green first time. Added README badge, merged, then enabled branch protection on `main` with Vivek's approval.
 
 ### 2026-10-02/03 · T-03 session (Claude, Claude Code)
 - Wrote `docs/CONTENT-LIMITS.md` and `samples/calendar-template.md`; built schema + limit checks, `planMonth()` (structured outputs, one correction retry), R2 helper, plan job via `after()`, upload dialog, month page. ADR-010. Real end-to-end run OK (~$0.05-0.12 per plan).
