@@ -5,13 +5,17 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** T-02 (renderer) — `doing`, branch `t-02-renderer` (plan in TASKS Notes)
-- **Last thing done:** T-01b done and merged — Tailwind v4 + shadcn themed from brand tokens, app shell (header, nav), restyled login.
-- **Next action:** Vivek: run `cd web && pnpm dev`, log in, open `/dev/templates` and eyeball renders vs references. Then merge `t-02-renderer`, mark T-02 done, start T-03 (needs the plan schema to cap hero length).
+- **Current task:** none — T-03 (calendar → plan) is next
+- **Last thing done:** T-02 done and merged — `renderSlide()` renders all 7 templates (4:5 and 1:1) to JPEG; `/dev/templates` gallery.
+- **Next action:** Run `/start`, begin T-03. Cap hero length (~60 chars) in the plan schema; Claude API cost is small (n=1 test first).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-02 · T-02 session (Claude, Claude Code)
+- Built `web/src/lib/render/` (7 React templates, HTML builder, shared Playwright browser, `renderSlide`), dev gallery. Vivek approved the renders.
+- Gotchas in T-02 Notes (react-dom/server + Turbopack workarounds, in-page function rule). Docker rendering still untested (T-09).
 
 ### 2026-10-02 · T-01b session (Claude, Claude Code)
 - Added Tailwind v4 + shadcn/ui (radix-nova), brand-token theme, local brand fonts, `(app)` shell with header/nav, placeholder `/library`. Vivek approved the look.

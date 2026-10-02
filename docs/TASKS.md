@@ -47,12 +47,12 @@ Read `docs/UI.md` first.
 - `typecheck` now runs `next typegen` first so route types exist after a clean `.next`.
 - Screens: `(app)` route group with `AppHeader` (wordmark, Months/Library nav, sign out); `/months` and a placeholder `/library` use it; login restyled.
 
-### T-02 · Renderer — `doing` · 75m
+### T-02 · Renderer — `done` · 75m
 Approach decided in ADR-009 (alternatives compared). Keep `renderSlide()` behind one function so the engine can be swapped later.
 - React components for the 5 templates (+ carousel cover/inner/CTA), footer and wordmark, porting `brand/templates/*.html` 1:1 using `brand/templates.css` classes.
 - `renderSlide(slide, post) → Buffer (JPEG)`: build full HTML (inline tokens.css, templates.css, fonts as data URIs), Playwright → screenshot `.dp-post` → sharp JPEG q92. Reuse one browser instance.
 - Dev page `/dev/templates` rendering each template with sample data.
-- [x] Each render matches its `brand/templates/*.png` reference (eyeball side by side). (Agent compared festival, exhibition, cover, CTA by screenshot — near pixel-identical; Vivek to eyeball `/dev/templates`.)
+- [x] Each render matches its `brand/templates/*.png` reference (eyeball side by side). (Agent compared festival, exhibition, cover, CTA by screenshot — near pixel-identical; Vivek confirmed `/dev/templates` 2026-10-02.)
 - [x] 1:1 (`dp-square`) works for festival and day-of.
 - [x] Long hero text (3 lines) does not overflow — reduce font or clamp lines.
 **Notes:** 2026-10-02 plan (branch `t-02-renderer`):
