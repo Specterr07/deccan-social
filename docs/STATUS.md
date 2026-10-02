@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** T-03c (AI cost tracking) — `doing`, branch `t-03c-ai-cost` (plan in TASKS Notes); then T-04
-- **Last thing done:** T-03b done — CI green on `main`, badge in README, branch protection on (required checks, no force-push).
-- **Next action:** Open PR for `t-03c-ai-cost`, CI green, merge, then T-04 (photo library).
+- **Current task:** none — T-04 (photo library) is next
+- **Last thing done:** T-03c done and merged — `ai_calls` cost log, `callClaude` wrapper, cached + post-only plan retries, AI budget + spend line, SQL migrations (baselined).
+- **Next action:** Run `/start`, begin T-04 (photo library). Schema changes now go through `pnpm db:generate` + `pnpm db:migrate` (never `push`).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-03c session (Claude, Claude Code)
+- Env rename (`MONTHLY_AI_BUDGET_INR`, `CLAUDE_MODEL_LIGHT`), migrations baselined + `ai_calls`, `callClaude` wrapper, cheaper retries, budget helper, spend line. Kept effort `medium` (low dropped an expo day). PR #3, CI green.
 
 ### 2026-10-03 · T-03b session (Claude, Claude Code)
 - Opened PR #1 to run CI: both jobs green first time. Added README badge, merged, then enabled branch protection on `main` with Vivek's approval.
