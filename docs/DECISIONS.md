@@ -31,3 +31,8 @@ Add a new record when a choice would surprise a future reader or is costly to re
 ## ADR-007 · Docs-as-handoff for AI sessions — accepted 2026-10-01
 **Decision:** `CLAUDE.md` (auto-loaded) points every session to `docs/STATUS.md` → `docs/TASKS.md` → `docs/SDLC.md`; sessions end with `/handoff`. `AGENTS.md` points other agents to the same files.
 **Consequences:** Continuity doesn't depend on chat history; the docs must be kept current.
+
+## ADR-008 · App UI: shadcn/ui + Tailwind v4, themed from brand tokens — accepted 2026-10-02
+**Context:** The app needs accessible dialogs, tabs, menus and forms built fast by AI agents; posts are rendered from plain brand CSS.
+**Decision:** App screens use shadcn/ui (copied into `web/src/components/ui/`, Radix-based) on Tailwind CSS v4, with shadcn variables mapped to brand tokens and fonts loaded from `brand/fonts`. Post templates stay plain CSS and are shown in the app only as rendered JPEGs or iframes. Details in `docs/UI.md`.
+**Consequences:** Components are owned code (no version lock-in) that agents know well; two styling systems exist, separated by rule. Alternatives rejected: MUI/Mantine (fight the brand look, heavier), hand-written CSS modules (slower to build).

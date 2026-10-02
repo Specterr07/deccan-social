@@ -30,6 +30,17 @@ Risks: Next.js middleware runs on the edge runtime, so signing must use Web Cryp
 **Built 2026-10-02:** Next.js 16 (middleware is now `proxy.ts`), pnpm 12.8.1 (installed via npm -g), `src/env.ts` skips validation only during `next build` so Docker builds need no secrets, Dockerfile builds from the repo root and copies `brand/` in place of the symlink. Sharp's build script is still disabled in `pnpm-workspace.yaml` — revisit in T-02.
 Higgsfield credit: Vivek added $5 (~125 images at $0.04). Not used in T-01; be frugal in T-05 (n=1 tests first).
 
+### T-01b · UI foundation — `todo` · 30m
+Read `docs/UI.md` first.
+- Install Tailwind v4 + shadcn/ui in `web/` (verify current steps for Next 16 at ui.shadcn.com); lucide-react; sonner.
+- Map shadcn variables to brand tokens in `globals.css`; load Fraunces + League Spartan from `brand/fonts` via `next/font/local`.
+- Add base components: button, card, input, textarea, badge, dialog, tabs, checkbox, select, sonner.
+- App shell: header with `wordmark-color.svg`, nav (Months, Library), sign out; restyle login and months pages with it.
+- [ ] Login and Months pages use the shell and brand theme; focus rings visible.
+- [ ] No hex colours or font names hardcoded in components.
+- [ ] `pnpm typecheck` and `pnpm lint` pass.
+**Notes:**
+
 ### T-02 · Renderer — `todo` · 75m
 - React components for the 5 templates (+ carousel cover/inner/CTA), footer and wordmark, porting `brand/templates/*.html` 1:1 using `brand/templates.css` classes.
 - `renderSlide(slide, post) → Buffer (JPEG)`: build full HTML (inline tokens.css, templates.css, fonts as data URIs), Playwright → screenshot `.dp-post` → sharp JPEG q92. Reuse one browser instance.

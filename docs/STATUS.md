@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none — T-02 (renderer) is next
+- **Current task:** none — T-01b (UI foundation) is next, then T-02 (renderer)
 - **Last thing done:** T-01 done and merged to `main` — Next.js app in `web/`, schema on Neon, password login, Docker image builds.
-- **Next action:** Run `/start`, begin T-02 (renderer). Enable sharp's build script in `web/pnpm-workspace.yaml` and add Playwright (match the Dockerfile image tag, currently v1.63.0).
+- **Next action:** Run `/start`, begin T-01b (UI foundation, see `docs/UI.md`), then T-02 (renderer). Enable sharp's build script in `web/pnpm-workspace.yaml` and add Playwright (match the Dockerfile image tag, currently v1.63.0).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 

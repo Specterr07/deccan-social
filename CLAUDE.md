@@ -19,6 +19,7 @@ Slash commands: `/start` (orient + pick the next task), `/handoff` (write status
 | `docs/PRD.md` | What we build and why; SLC scope |
 | `docs/ARCHITECTURE.md` | Ideal + SLC architecture, data model, flows |
 | `docs/BRAND.md` | Design language rules (voice, colour, type, templates) |
+| `docs/UI.md` | How app screens are built (shadcn/ui + Tailwind v4, theme mapping, screen components) |
 | `docs/TASKS.md` | Backlog with IDs, status, acceptance criteria |
 | `docs/STATUS.md` | Handoff log: current state, next action, session history |
 | `docs/DECISIONS.md` | Architecture decision records (ADRs) |
@@ -32,6 +33,7 @@ Slash commands: `/start` (orient + pick the next task), `/handoff` (write status
 
 - **AI never draws text.** Image models make backgrounds/artwork only; all text, logos, dates, event logos and the footer are placed by the HTML templates in `brand/`.
 - **Brand comes from `brand/`.** Use `brand/tokens.css` + `brand/templates.css` and the logo SVGs as-is. Never hardcode a colour or font in app code; never retype the wordmark. Target look = `brand/templates/*.png`.
+- **Two styling systems, kept apart.** Posts = plain brand CSS (`dp-*`); app screens = shadcn/ui + Tailwind themed from tokens (`docs/UI.md`). Show posts in the app only as rendered JPEGs.
 - **Nothing publishes without approval.** Every post needs an explicit approve.
 - **Spend is capped.** Every paid image call goes through the budget check and is logged with its cost.
 - **Copy facts from the calendar.** Dates, venues, stall numbers are never invented; leave them out if missing.
@@ -40,7 +42,7 @@ Slash commands: `/start` (orient + pick the next task), `/handoff` (write status
 
 ## Stack (SLC)
 
-Next.js (App Router, TypeScript) in `web/` · Postgres (Neon) + Drizzle · Claude API (planning, copy, captions) · Higgsfield API (artwork) · Playwright (render HTML → JPEG) · Cloudflare R2 (files) · Resend (email) · Docker on Fly.io. Package manager: pnpm.
+Next.js (App Router, TypeScript) in `web/` · shadcn/ui + Tailwind v4 for app screens · Postgres (Neon) + Drizzle · Claude API (planning, copy, captions) · Higgsfield API (artwork) · Playwright (render HTML → JPEG) · Cloudflare R2 (files) · Resend (email) · Docker on Fly.io. Package manager: pnpm.
 
 ## Commands (fill in as they exist)
 
