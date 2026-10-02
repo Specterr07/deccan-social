@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none — T-03 (calendar → plan) is next
+- **Current task:** T-03 (calendar → plan) — `doing`, branch `t-03-plan` (plan in TASKS Notes)
 - **Last thing done:** T-02 done and merged — `renderSlide()` renders all 7 templates (4:5 and 1:1) to JPEG; `/dev/templates` gallery.
-- **Next action:** Run `/start`, begin T-03. Cap hero length (~60 chars) in the plan schema; Claude API cost is small (n=1 test first).
+- **Next action:** Write CONTENT-LIMITS.md + calendar template, then build schema, planMonth, upload flow.
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 

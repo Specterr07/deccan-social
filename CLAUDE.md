@@ -20,13 +20,14 @@ Slash commands: `/start` (orient + pick the next task), `/handoff` (write status
 | `docs/ARCHITECTURE.md` | Ideal + SLC architecture, data model, flows |
 | `docs/BRAND.md` | Design language rules (voice, colour, type, templates) |
 | `docs/UI.md` | How app screens are built (shadcn/ui + Tailwind v4, theme mapping, screen components) |
+| `docs/CONTENT-LIMITS.md` | Character/count limits per text field (mirrors `web/src/schemas/limits.ts`) |
 | `docs/TASKS.md` | Backlog with IDs, status, acceptance criteria |
 | `docs/STATUS.md` | Handoff log: current state, next action, session history |
 | `docs/DECISIONS.md` | Architecture decision records (ADRs) |
 | `docs/SDLC.md` | How work moves from idea to shipped |
 | `docs/integrations/` | Verified notes per external API |
 | `brand/` | Source of truth for visuals: tokens, CSS, logos, fonts, templates, reference posts |
-| `samples/` | Test inputs (sample calendars) |
+| `samples/` | Test inputs (sample calendars) and `calendar-template.md`, the fill-in template for the monthly calendar |
 | `web/` | The Next.js app (created by task T-01) |
 
 ## Hard rules
