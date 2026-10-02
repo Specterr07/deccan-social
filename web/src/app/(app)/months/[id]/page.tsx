@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { AiSpendLine } from "@/components/months/AiSpendLine";
 import { AutoRefresh } from "@/components/months/AutoRefresh";
 import { MonthStatusBadge } from "@/components/months/MonthStatusBadge";
 import { PlanAgainButton } from "@/components/months/PlanAgainButton";
@@ -26,6 +27,7 @@ export default async function MonthPage({ params }: { params: Promise<{ id: stri
         <h1 className="text-3xl">{formatMonthLabel(month.month)}</h1>
         <MonthStatusBadge status={month.status} />
       </div>
+      <AiSpendLine />
 
       {isPlanning && (
         <Card>

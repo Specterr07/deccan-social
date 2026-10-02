@@ -75,6 +75,25 @@ export const generations = pgTable("generations", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// One row per Claude API call: what it was for, tokens (incl. cache), cost and outcome. See ADR-013.
+export const aiCalls = pgTable("ai_calls", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // Kept (set null) if the month or post is deleted, so spend history survives.
+  monthId: uuid("month_id").references(() => months.id, { onDelete: "set null" }),
+  postId: uuid("post_id").references(() => posts.id, { onDelete: "set null" }),
+  purpose: text("purpose").notNull(), // plan_month | plan_fix | rewrite_post | …
+  model: text("model").notNull(),
+  inputTokens: integer("input_tokens").notNull().default(0),
+  outputTokens: integer("output_tokens").notNull().default(0),
+  cacheReadTokens: integer("cache_read_tokens").notNull().default(0),
+  cacheWriteTokens: integer("cache_write_tokens").notNull().default(0),
+  costUsd: numeric("cost_usd", { precision: 10, scale: 6 }).notNull().default("0"),
+  latencyMs: integer("latency_ms").notNull().default(0),
+  status: text("status").notNull(), // ok | error | refused | cut_off
+  error: text("error"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const reviews = pgTable("reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
   postId: uuid("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),

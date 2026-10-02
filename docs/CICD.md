@@ -7,7 +7,7 @@ Goal: `main` is always green and deployable; every AI or human session starts fr
 | Stage | When | What |
 | --- | --- | --- |
 | 1 · CI | T-03b (now) | `.github/workflows/ci.yml` on every push to `main` and every PR: pnpm install (cached) → `typecheck` → `lint` → `next build` → Docker image build (not pushed, layer cache in GitHub Actions). Branch protection on `main` requires both jobs to pass. |
-| 2 · Safe migrations | Before T-09 | Replace `drizzle-kit push` with `drizzle-kit generate` (SQL migrations committed in `web/drizzle/`) + a migrate script run by Fly's `release_command`, so schema changes apply before new code goes live and a failed migration stops the deploy. Keep `db:push` for local experiments only. |
+| 2 · Safe migrations | **Started in T-03c** (Fly `release_command` still to do in T-09) | Replace `drizzle-kit push` with `drizzle-kit generate` (SQL migrations committed in `web/drizzle/`) + a migrate script run by Fly's `release_command`, so schema changes apply before new code goes live and a failed migration stops the deploy. Keep `db:push` for local experiments only. |
 | 3 · CD | T-09 | New `deploy` job in the workflow: on push to `main`, after `web` + `docker` pass, `flyctl deploy --remote-only`. Auth with a Fly **deploy token** scoped to this app (`fly tokens create deploy`), stored as the GitHub secret `FLY_API_TOKEN`. App secrets live only in `fly secrets`. Region `bom` (Mumbai). |
 | 4 · Later | Phase 2+ | Smoke test that renders one sample post in CI (Playwright image). Neon branch per PR as a preview database. Dependabot (weekly, grouped). Deploy notifications. |
 
@@ -25,3 +25,11 @@ gh run list --limit 5          # recent CI runs
 gh run watch                   # follow the current run
 gh run view --log-failed       # logs of the failed step
 ```
+
+## Database migrations (how it works now)
+
+- Change `web/src/db/schema.ts` → `cd web && pnpm db:generate --name <what_changed>` → review and commit the new `web/drizzle/NNNN_*.sql` (never edit one that has been applied) → `pnpm db:migrate` applies it. `db:push` was removed from `package.json`; do not run `drizzle-kit push` against Neon.
+- History: tables were first created with `push` (T-01..T-03). In T-03c we **baselined**: `0000_baseline.sql` was generated from the then-current schema and recorded as applied in Neon with `pnpm db:baseline` (one-off script `web/scripts/baseline-migrations.ts`; it refuses to run on an empty database and does nothing if anything is already recorded). Nothing was dropped. Use `db:baseline` again only for another database that already has these tables from `push`; a brand-new database just runs `db:migrate`.
+- `web/scripts/migrate.ts` reads only `DATABASE_URL`, so at T-09 it can run as Fly's `release_command` (the image already contains `scripts/` and `drizzle/`; `tsx` is installed because the image installs dev dependencies).
+- Still to add: a CI step that fails when `schema.ts` and the committed migrations disagree (`drizzle-kit generate` produces no new file).
+

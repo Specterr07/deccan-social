@@ -117,10 +117,10 @@ Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude
 - Retry only what's broken: when limits fail, send the problem list and ask for corrected versions of the failing posts only (by index), then merge them into the plan. Do not ask for the whole plan again.
 - `CLAUDE_MODEL_LIGHT=claude-haiku-4-5` (new env var) for small jobs: single-post rewrites in T-06 send only that post's JSON + the voice/limit rules, never the PDF.
 - Effort: run the sample October calendar at `effort: "low"` and `"medium"`; keep `low` if the plan is as good (note result + token counts here).
-- [ ] Every Claude call writes an `ai_calls` row, including failures.
-- [ ] Month page shows AI spend split Claude / artwork.
-- [ ] Retry call shows cache reads > 0 in `ai_calls`.
-- [ ] A retry asks only for broken posts.
+- [x] Every Claude call writes an `ai_calls` row, including failures.
+- [x] Month page shows AI spend split Claude / artwork.
+- [x] Retry call shows cache reads > 0 in `ai_calls`. (Forced retry: 4,542 cache-read tokens, cost $0.025.)
+- [x] A retry asks only for broken posts.
 **Notes:** 2026-10-03 plan (branch `t-03c-ai-cost`). Prices re-verified 2026-10-03 on the pricing page: Sonnet 5.5 $2 in / $10 out / $2.50 cache write (5m) / $0.20 cache read; Haiku 4.5 $1 / $5 / $1.25 / $0.10; min cacheable prompt Sonnet 5.5 512 tokens, Haiku 4.5 4,096. Changing `effort` or `output_config.format` between calls invalidates the cached *message* blocks, so the retry keeps both identical.
 1. Env (done): `MONTHLY_IMAGE_BUDGET_INR` → `MONTHLY_AI_BUDGET_INR` and `CLAUDE_MODEL_LIGHT` added to `.env.local` (targeted edit, names only printed), `env.ts` updated; `.env.example` already had them.
 2. Migrations first: baseline (not reset). Generate `0000` from the current schema, run a one-off `scripts/baseline-migrations.ts` that records it as applied in Neon (nothing dropped), then add `ai_calls`, generate `0001`, add `db:generate` / `db:migrate`, remove `db:push`, update `docs/CICD.md` stage 2.
@@ -128,6 +128,13 @@ Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude
 4. Cheaper retry: first call = system prompt + calendar PDF both with `cache_control`; on limit problems ask for corrected versions of only the failing posts (same output format and effort so the cache holds), merge by index, re-check the whole plan. Problems that are not about one post (wrong month, no posts) still fail loudly.
 5. `lib/budget.ts` (Claude + Higgsfield, INR, IST calendar month) and the spend line on the month page.
 6. Effort test on the October sample at `low` and `medium` (about 10–20 cents approved by Vivek); keep `low` if the plan is as good. A scripted test forces a retry to prove cache reads > 0.
+**Built 2026-10-03:**
+- Migrations: baselined (nothing dropped); `0000_baseline.sql`, `0001_ai_calls.sql`; scripts `db:generate`, `db:migrate`, `db:baseline`; `db:push` removed; `docs/CICD.md` + `CLAUDE.md` updated.
+- Code: `lib/ai/{prices,callClaude,planMonth,planPrompt}.ts`, `lib/budget.ts`, `components/months/AiSpendLine.tsx`. `planMonth` now caches the system prompt and the PDF; the fix call asks for only the broken posts and merges them (whole-plan problems like a wrong month fail immediately).
+- Measured (Sonnet 5.5, October sample, real calls): first call ≈ $0.048–0.054 (3.6–5.3k output tokens, 4.5k cached write). Old full retry ≈ $0.058; new post-only retry ≈ $0.025 (4.5k cache read). `canSpend` and a failed-call row ($0) verified.
+- **Effort test:** `low` 3,643 out tokens / $0.048 vs `medium` 5,264 / $0.054 — a saving under 1 cent per plan, but `low` dropped the middle day of the Dubai expo (boxes 4 and 6 Nov only) and left one LinkedIn caption 2 characters short (would trigger a fix call). **Kept `medium`** (facts outrank a cent). Changing effort between calls did not break the cache for the PDF/system prefix on this model.
+- `CLAUDE_MODEL_LIGHT` is in env and `.env.example`; first used by `rewrite_post` in T-06 (not wired yet).
+- Spend line shows month-to-date across all months (IST calendar month); today's test calls were ₹11.
 
 
 ### T-04 · Photo library — `todo` · 30m

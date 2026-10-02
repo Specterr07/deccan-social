@@ -50,7 +50,8 @@ Next.js (App Router, TypeScript) in `web/` · shadcn/ui + Tailwind v4 for app sc
 
 - `cd web && pnpm dev` — run locally
 - `cd web && pnpm typecheck` — must pass before commit
-- `cd web && pnpm db:push` — apply Drizzle schema
+- `cd web && pnpm db:generate` — write a SQL migration after changing `src/db/schema.ts` (commit it)
+- `cd web && pnpm db:migrate` — apply pending migrations to Neon (**never `drizzle-kit push` against Neon**)
 
 ## Conventions
 

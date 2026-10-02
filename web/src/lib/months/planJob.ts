@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { months } from "@/db/schema";
-import { planMonth } from "@/lib/claude";
+import { planMonth } from "@/lib/ai/planMonth";
 import { downloadObject } from "@/lib/r2";
 import { calendarKeyFor } from "./monthStatus";
 import { savePlan } from "./savePlan";
@@ -20,7 +20,7 @@ export async function runPlanJob(monthId: string): Promise<void> {
     if (!month) throw new Error("this month no longer exists");
 
     const pdf = await downloadObject(calendarKeyFor(monthId));
-    const plan = await planMonth(pdf, month.month);
+    const plan = await planMonth(pdf, month.month, { monthId });
     if (plan.month !== month.month) {
       throw new Error(`the calendar looks like ${plan.month}, but you chose ${month.month}. Check the PDF or the month.`);
     }

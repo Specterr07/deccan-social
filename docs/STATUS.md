@@ -7,7 +7,7 @@
 - **Phase:** SLC
 - **Current task:** T-03c (AI cost tracking) — `doing`, branch `t-03c-ai-cost` (plan in TASKS Notes); then T-04
 - **Last thing done:** T-03b done — CI green on `main`, badge in README, branch protection on (required checks, no force-push).
-- **Next action:** Baseline migrations, `ai_calls` table, `callClaude` wrapper, cheaper retry, budget line, effort test.
+- **Next action:** Open PR for `t-03c-ai-cost`, CI green, merge, then T-04 (photo library).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
