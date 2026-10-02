@@ -71,12 +71,12 @@ Risks: `react-dom/server` inside a Next route may be blocked — fall back to st
 - Not yet tested: rendering inside the Docker image (Chromium + fonts) — do it in T-09.
 
 
-### T-03 · Calendar → plan (Claude) — `doing` · 60m
+### T-03 · Calendar → plan (Claude) — `done` · 60m
 - `schemas/plan.ts`: zod `MonthPlan` (posts with slides, captions, photo_tags, artwork_prompt, rationale). Convert with `z.toJSONSchema` for the tool `input_schema`.
 - `lib/claude.ts planMonth(pdf)`: PDF as a `document` block, system prompt built from `docs/BRAND.md` voice + template rules, `tool_choice` forced; validate with zod.
 - Upload page → R2 → month row → background plan → posts/slides rows.
 - [x] `samples/october-2026-calendar.pdf` produces a sensible plan (Dussehra 20 Oct, exhibitions with exact dates, 1–2 carousels). (6 posts, facts copied exactly; run twice: once needed a correction round, once passed first time.)
-- [x] Invalid output fails loudly with a readable error on the month page. (Rule messages verified on a doctored plan; month page shows the message with a "Plan again" button — Vivek to eyeball the UI.)
+- [x] Invalid output fails loudly with a readable error on the month page. (Rule messages verified on a doctored plan; month page shows the message with a "Plan again" button — Vivek approved merge 2026-10-03.)
 **Notes:** 2026-10-02 plan (branch `t-03-plan`):
 1. Docs first (Vivek's request): `docs/CONTENT-LIMITS.md` (every character/count limit and why) and `samples/calendar-template.md` (fill-in calendar template). Code constants live in `web/src/schemas/limits.ts`; the doc must mirror it.
 2. `schemas/plan.ts`: zod `MonthPlan` using the limits (kind → template derived by code, carousel shape rules, dates inside the month). 

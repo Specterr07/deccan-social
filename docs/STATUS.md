@@ -5,13 +5,17 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** T-03 (calendar → plan) — `doing`, branch `t-03-plan` (plan in TASKS Notes)
-- **Last thing done:** T-02 done and merged — `renderSlide()` renders all 7 templates (4:5 and 1:1) to JPEG; `/dev/templates` gallery.
-- **Next action:** Vivek: `cd web && pnpm dev`, log in, Months → Upload calendar (month 2026-10, `samples/october-2026-calendar.pdf`); confirm the month fills with 6 posts. Then merge `t-03-plan`, mark T-03 done, start T-04.
+- **Current task:** none — T-04 (photo library) is next
+- **Last thing done:** T-03 done and merged — calendar PDF → Claude plan → posts/slides in Neon; upload dialog, month page, CONTENT-LIMITS.md, calendar template.
+- **Next action:** Run `/start`, begin T-04 (photo library: R2 uploads, tags, seed from `brand/sample-photos`, `pickAsset(tags)`).
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-02/03 · T-03 session (Claude, Claude Code)
+- Wrote `docs/CONTENT-LIMITS.md` and `samples/calendar-template.md`; built schema + limit checks, `planMonth()` (structured outputs, one correction retry), R2 helper, plan job via `after()`, upload dialog, month page. ADR-010. Real end-to-end run OK (~$0.05-0.12 per plan).
+- Pushed to origin/main at the start of the session and again after T-03.
 
 ### 2026-10-02 · T-02 session (Claude, Claude Code)
 - Built `web/src/lib/render/` (7 React templates, HTML builder, shared Playwright browser, `renderSlide`), dev gallery. Vivek approved the renders.
