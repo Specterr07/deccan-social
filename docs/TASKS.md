@@ -97,10 +97,10 @@ Read `docs/CICD.md`. The workflow `.github/workflows/ci.yml` is already written.
 - Push and watch the run (`gh run watch`); fix anything red (versions of actions, lint errors, build env).
 - Turn on branch protection for `main` (GitHub → Settings → Branches/Rules): require the `Typecheck, lint, build` and `Docker image builds` checks. Vivek does this in the GitHub UI if `gh` lacks permission.
 - Add a CI status badge to `README.md`.
-- [ ] Both jobs green on `main`.
+- [x] Both jobs green on `main`. (PR #1 run: both green first time, ~4 min; the earlier `main` push run was green too.)
 - [ ] Branch protection requires both checks.
 **Notes:** 2026-10-03 plan (branch `t-03b-ci`): push the branch and open a PR (the workflow runs on PRs and on pushes to `main`), watch the run with `gh run watch`, fix anything red, add the README badge, merge, confirm `main` is green, then set branch protection (try `gh api`; otherwise Vivek does it in the UI). Risk: first run may fail on action versions or on the `public/brand` symlink in a clean checkout.
-
+Badge added to README. Repo is public and `gh` has admin, so protection can be set via `gh api`; waiting for Vivek's explicit yes because it changes repo settings.
 
 ### T-04 · Photo library — `todo` · 30m
 - `/library`: upload (multi-file) to R2 with kind, tags (fruit, category), people_ok checkbox; grid with filters; delete.
