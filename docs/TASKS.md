@@ -102,7 +102,7 @@ Read `docs/CICD.md`. The workflow `.github/workflows/ci.yml` is already written.
 **Notes:** 2026-10-03 plan (branch `t-03b-ci`): push the branch and open a PR (the workflow runs on PRs and on pushes to `main`), watch the run with `gh run watch`, fix anything red, add the README badge, merge, confirm `main` is green, then set branch protection (try `gh api`; otherwise Vivek does it in the UI). Risk: first run may fail on action versions or on the `public/brand` symlink in a clean checkout.
 Badge added to README.
 
-### T-03c · AI cost tracking + cheaper Claude calls — `todo` · 40m
+### T-03c · AI cost tracking + cheaper Claude calls — `doing` · 40m
 Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude.com/docs/en/about-claude/pricing and …/build-with-claude/prompt-caching (as of 2026-10-03: Sonnet 5.5 $2/$10 per MTok in/out, Haiku 4.5 $1/$5; cache read 0.1× input, 5-min cache write 1.25×; minimum cacheable prompt: Sonnet 5.5 512 tokens, Haiku 4.5 4,096).
 
 **Tracking**
@@ -121,7 +121,14 @@ Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude
 - [ ] Month page shows AI spend split Claude / artwork.
 - [ ] Retry call shows cache reads > 0 in `ai_calls`.
 - [ ] A retry asks only for broken posts.
-**Notes:**
+**Notes:** 2026-10-03 plan (branch `t-03c-ai-cost`). Prices re-verified 2026-10-03 on the pricing page: Sonnet 5.5 $2 in / $10 out / $2.50 cache write (5m) / $0.20 cache read; Haiku 4.5 $1 / $5 / $1.25 / $0.10; min cacheable prompt Sonnet 5.5 512 tokens, Haiku 4.5 4,096. Changing `effort` or `output_config.format` between calls invalidates the cached *message* blocks, so the retry keeps both identical.
+1. Env (done): `MONTHLY_IMAGE_BUDGET_INR` → `MONTHLY_AI_BUDGET_INR` and `CLAUDE_MODEL_LIGHT` added to `.env.local` (targeted edit, names only printed), `env.ts` updated; `.env.example` already had them.
+2. Migrations first: baseline (not reset). Generate `0000` from the current schema, run a one-off `scripts/baseline-migrations.ts` that records it as applied in Neon (nothing dropped), then add `ai_calls`, generate `0001`, add `db:generate` / `db:migrate`, remove `db:push`, update `docs/CICD.md` stage 2.
+3. `lib/ai/prices.ts`, `lib/ai/callClaude.ts` (times, prices and logs every call, also failures; logging errors never break the call), move `planMonth` + prompt into `lib/ai/`.
+4. Cheaper retry: first call = system prompt + calendar PDF both with `cache_control`; on limit problems ask for corrected versions of only the failing posts (same output format and effort so the cache holds), merge by index, re-check the whole plan. Problems that are not about one post (wrong month, no posts) still fail loudly.
+5. `lib/budget.ts` (Claude + Higgsfield, INR, IST calendar month) and the spend line on the month page.
+6. Effort test on the October sample at `low` and `medium` (about 10–20 cents approved by Vivek); keep `low` if the plan is as good. A scripted test forces a retry to prove cache reads > 0.
+
 
 ### T-04 · Photo library — `todo` · 30m
 - `/library`: upload (multi-file) to R2 with kind, tags (fruit, category), people_ok checkbox; grid with filters; delete.
