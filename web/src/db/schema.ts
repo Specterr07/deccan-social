@@ -12,6 +12,7 @@ export const months = pgTable("months", {
   calendarUrl: text("calendar_url"),
   status: text("status").notNull().default("uploaded"),
   statusMessage: text("status_message"), // readable error or progress note shown on the month page
+  statusUpdatedAt: timestamp("status_updated_at").notNull().defaultNow(), // lets us spot a plan job that died mid-way
   reviewerEmail: text("reviewer_email"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

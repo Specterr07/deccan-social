@@ -7,7 +7,7 @@
 - **Phase:** SLC
 - **Current task:** T-03 (calendar → plan) — `doing`, branch `t-03-plan` (plan in TASKS Notes)
 - **Last thing done:** T-02 done and merged — `renderSlide()` renders all 7 templates (4:5 and 1:1) to JPEG; `/dev/templates` gallery.
-- **Next action:** Write CONTENT-LIMITS.md + calendar template, then build schema, planMonth, upload flow.
+- **Next action:** Vivek: `cd web && pnpm dev`, log in, Months → Upload calendar (month 2026-10, `samples/october-2026-calendar.pdf`); confirm the month fills with 6 posts. Then merge `t-03-plan`, mark T-03 done, start T-04.
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 

@@ -42,3 +42,9 @@ Add a new record when a choice would surprise a future reader or is costly to re
 **Decision:** Build (a). The 5 templates already exist as HTML/CSS matching the brand kit 1:1; the renderer is ~150 lines; cost is only server RAM.
 **Why not the others:** Satori lacks `<style>`/class names, pseudo-elements, `outline` and WOFF2, so every template would be rewritten as inline-styled JSX. SaaS plans eat most of the ₹1,500–2,000 monthly budget meant for artwork, add vendor lock-in, and need templates rebuilt in their editor. Canva autofill is attractive for letting the social media person edit templates visually, but adds OAuth, async exports and plan dependency.
 **Revisit:** Phase 3 — if non-developers must edit templates, evaluate Canva Autofill (if Deccan Produce already pays for Canva Pro) against our own brand-kit editor. If Chromium on Fly.io proves painful, a hosted HTML-to-image API can replace `renderSlide()` without touching templates.
+
+## ADR-010 · Plan the month with structured outputs and our own limit checks — accepted 2026-10-02
+**Context:** The first plan was to force a tool call (`tool_choice`) so Claude returns schema-shaped JSON. `claude-sonnet-5-5` rejects forced tool use with a 400, and a JSON-schema constraint like `maxLength` cannot express limits that depend on the template.
+**Decision:** `planMonth()` uses structured outputs (`output_config.format` from the zod shape, no limits) and validates the answer in code (`schemas/planRules.ts`, numbers in `schemas/limits.ts`, documented in `docs/CONTENT-LIMITS.md`). If limits are broken, Claude gets the problem list once and corrects its plan; after that the month shows a readable error and nothing is saved.
+**Consequences:** One source of truth for limits (code + doc); a plan sometimes costs two calls (about 10 cents instead of 5). Server-side refusal fallbacks are not enabled (a calendar refusal is very unlikely; a refusal shows a clear message).
+
