@@ -44,7 +44,7 @@ flowchart LR
 | `generations` | id, slide_id, request_id, model, prompt, variant, status, cost_usd, asset_id, created_at |
 | `reviews` | id, post_id, action (approve / request_changes / edit), note, created_at |
 
-Budget = sum of `generations.cost_usd` this calendar month × `USD_INR_RATE` vs `MONTHLY_IMAGE_BUDGET_INR`.
+Budget = (sum of `ai_calls.cost_usd` + `generations.cost_usd`) this calendar month × `USD_INR_RATE` vs `MONTHLY_AI_BUDGET_INR`. `ai_calls` logs every Claude call: purpose, model, tokens (incl. cache), cost, latency, status (ADR-013).
 
 ## Code layout (target)
 

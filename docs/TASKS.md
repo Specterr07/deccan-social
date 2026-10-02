@@ -102,6 +102,27 @@ Read `docs/CICD.md`. The workflow `.github/workflows/ci.yml` is already written.
 **Notes:** 2026-10-03 plan (branch `t-03b-ci`): push the branch and open a PR (the workflow runs on PRs and on pushes to `main`), watch the run with `gh run watch`, fix anything red, add the README badge, merge, confirm `main` is green, then set branch protection (try `gh api`; otherwise Vivek does it in the UI). Risk: first run may fail on action versions or on the `public/brand` symlink in a clean checkout.
 Badge added to README.
 
+### T-03c · AI cost tracking + cheaper Claude calls — `todo` · 40m
+Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude.com/docs/en/about-claude/pricing and …/build-with-claude/prompt-caching (as of 2026-10-03: Sonnet 5.5 $2/$10 per MTok in/out, Haiku 4.5 $1/$5; cache read 0.1× input, 5-min cache write 1.25×; minimum cacheable prompt: Sonnet 5.5 512 tokens, Haiku 4.5 4,096).
+
+**Tracking**
+- Table `ai_calls`: id, month_id (nullable), post_id (nullable), purpose (`plan_month` · `plan_fix` · `rewrite_post` · …), model, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd, latency_ms, status (`ok` · `error` · `refused` · `cut_off`), error, created_at. Generate the migration (`drizzle-kit generate`).
+- `lib/ai/prices.ts`: one price table per model (input, output, cache read, cache write); unknown model → log a warning and use the most expensive known price.
+- `lib/ai/claude.ts`: one wrapper `callClaude({ purpose, monthId?, postId?, ...params })` that every Claude call goes through; it times the call, reads `response.usage`, computes cost and inserts the row (also on errors). Move `planMonth` onto it.
+- `lib/budget.ts`: `spentThisMonth()` = Claude (`ai_calls`) + Higgsfield (`generations`) in INR via `USD_INR_RATE`; `canSpend(estimateUsd)`. Rename `MONTHLY_IMAGE_BUDGET_INR` → `MONTHLY_AI_BUDGET_INR` in env.ts, `.env.example` and `.env.local` (same value 1500).
+- Month page: "AI spend this month: ₹X of ₹1,500 (Claude ₹a · artwork ₹b)".
+
+**Cheaper calls**
+- Prompt caching: `cache_control` on the system prompt and on the calendar PDF block, so the correction call reads both at 0.1×. Keep `effort` identical between the first call and the retry (changing it invalidates the cache).
+- Retry only what's broken: when limits fail, send the problem list and ask for corrected versions of the failing posts only (by index), then merge them into the plan. Do not ask for the whole plan again.
+- `CLAUDE_MODEL_LIGHT=claude-haiku-4-5` (new env var) for small jobs: single-post rewrites in T-06 send only that post's JSON + the voice/limit rules, never the PDF.
+- Effort: run the sample October calendar at `effort: "low"` and `"medium"`; keep `low` if the plan is as good (note result + token counts here).
+- [ ] Every Claude call writes an `ai_calls` row, including failures.
+- [ ] Month page shows AI spend split Claude / artwork.
+- [ ] Retry call shows cache reads > 0 in `ai_calls`.
+- [ ] A retry asks only for broken posts.
+**Notes:**
+
 ### T-04 · Photo library — `todo` · 30m
 - `/library`: upload (multi-file) to R2 with kind, tags (fruit, category), people_ok checkbox; grid with filters; delete.
 - Seed with `brand/sample-photos/*` (script `pnpm seed:library`).
@@ -112,7 +133,7 @@ Badge added to README.
 ### T-05 · Higgsfield artwork — `todo` · 60m
 Read `docs/integrations/higgsfield.md` first.
 - `lib/higgsfield.ts generateArtwork(slide, n)`: prompt = slide.artwork_prompt + BRAND house style; n parallel `subscribe` calls, idempotency `slideId:variant`; copy each result URL to R2 immediately; save `assets` (source `higgsfield`) + `generations` (cost).
-- `lib/budget.ts`: `canSpend(n)` blocks when the month's spend would pass `MONTHLY_IMAGE_BUDGET_INR`; UI shows spend / cap.
+- Use `lib/budget.ts` from T-03c: `canSpend()` before every generation, so Claude + artwork together stay under `MONTHLY_AI_BUDGET_INR`; record each image in `generations` with its cost.
 - Picture step: library hit → use it; else generate n variants, pick variant 1 by default.
 - Handle `failed` / `nsfw` (not charged): retry once with a softened prompt, else leave slide on the no-photo fallback.
 - [ ] A slide with no library match gets n artwork variants saved in R2 and logged with cost.

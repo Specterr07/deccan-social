@@ -53,3 +53,13 @@ Add a new record when a choice would surprise a future reader or is costly to re
 **Context:** AI sessions commit straight to `main`; a broken build would carry into every later session. First deploy is T-09.
 **Decision:** Add CI now (typecheck, lint, build, Docker build on every push/PR; branch protection on `main`). Add CD at T-09: deploy job with a scoped Fly deploy token after CI passes, and switch to generated Drizzle migrations run by Fly's `release_command`. Plan in `docs/CICD.md`.
 **Consequences:** ~3–5 min feedback per push; `main` stays deployable. No staging environment or IaC until there is a second environment to manage.
+
+## ADR-012 · No LangChain or LangSmith — accepted 2026-10-03
+**Context:** Considered LangChain (framework) and LangSmith (tracing) for monitoring Claude calls.
+**Decision:** Call the Anthropic SDK directly; no LangChain, no LangSmith. Spend and usage are tracked in our own `ai_calls` table (ADR-013); request/response debugging uses console logs in development.
+**Revisit:** if we add agents, retrieval, or many prompt variants to compare. LangSmith can be added later with `wrapAnthropic()` (one line, no LangChain).
+
+## ADR-013 · Track every AI call's cost in the app and cut Claude spend — accepted 2026-10-03
+**Context:** Spend was only visible in the Claude and Higgsfield consoles; the budget cap covered images only.
+**Decision:** Log every Claude call in `ai_calls` (purpose, model, tokens incl. cache, cost, latency, status). One monthly cap, `MONTHLY_AI_BUDGET_INR` (₹1,500), covers Claude + Higgsfield. Reduce Claude cost by: prompt caching (system prompt + calendar PDF), fixing only the broken posts on a retry, a cheaper model for small jobs, and the lowest `effort` that keeps quality. Batch API (50% off) rejected for now: results can take hours, too slow for review.
+**Consequences:** Spend is visible to the reviewer without console access. Prices live in one table in code and must be checked against the pricing page when models change.
