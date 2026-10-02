@@ -137,6 +137,16 @@ Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude
 - Spend line shows month-to-date across all months (IST calendar month); today's test calls were ₹11.
 
 
+### T-03d · Slim CI for a solo developer — `todo` · 20m
+Vivek's concerns (2026-10-03): (1) the Docker image job is slow; (2) CI runs too often — `pnpm check` locally, again on the PR, again on merge to `main` — for one developer.
+Proposed (discuss with Vivek before changing):
+- Run CI on pull requests only; drop the extra run on push to `main` (squash-merging a green, up-to-date PR adds nothing new). Re-add a `main` trigger only for the deploy job in T-09.
+- Run the Docker job only when `web/Dockerfile`, `web/package.json`, `web/pnpm-lock.yaml` or `.dockerignore` change (detect-changes job, so required checks still report). The Playwright base image is large; when CD exists (T-09) Fly's build replaces this job.
+- Keep `pnpm check` locally as the main gate; CI is the safety net.
+- Update `docs/CICD.md`, branch protection notes and ADR-011 (supersede with a new ADR).
+- [ ] One CI run per task PR; Docker job skipped unless its files change.
+**Notes:**
+
 ### T-04 · Photo library + image slots — `todo` · 60m
 Read ADR-014 first. In short: some posts need one exact image (event logo, our team photo). Claude marks those slots as required; the user uploads them on the post; the app never guesses or uses AI for them.
 - Plan schema: each slide gets `image { kind: photo | event_logo | specific | artwork, description, required, tags, library_name? }`; update the planner prompt (exhibitions always need `event_logo`; behind-the-scenes always need a real `specific` photo) and the limits checks. Migration for the new columns.
