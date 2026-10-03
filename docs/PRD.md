@@ -22,7 +22,7 @@ A monthly PDF/document written by the team: dates, festivals and days to mark, e
 
 Simple, Lovable, Complete: a small loop that feels finished.
 
-1. Upload the calendar PDF (single shared password login).
+1. Build the month in the app: a month grid with suggested festival and food days, and an "Add post" panel per day (exhibition details and event logo entered right there). A PDF can still be imported into the grid (ADR-015).
 2. Claude plans the month: per post the date, kind, template, fruit palette, aspect (4:5 default), slide text and captions for Instagram and LinkedIn.
 3. Each slide gets a picture: a library photo matched by tags first; otherwise **Higgsfield generates artwork** (N variants, default 3) from a brand-styled prompt. Every generation is logged with its cost and stops at the monthly cap.
 4. Posts render to 1080 × 1350 JPEGs with the brand templates.

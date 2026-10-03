@@ -21,6 +21,8 @@ flowchart LR
 
 ### Month flow
 
+> Since ADR-015 the month is built in the app: **New month → calendar entries (grid + "Add post" panel, suggested days) → Plan posts**. Steps 1–2 below now read entries instead of a PDF; "Import from PDF" turns a PDF into entries first. Table `calendar_entries` (see TASKS T-04b) feeds `posts.entry_id`.
+
 1. `POST /api/months` — upload PDF → store in R2 → row in `months` (status `planning`).
 2. Plan job — Claude reads the PDF natively; output forced through a zod schema via tool use → rows in `posts` and `slides`.
 3. Picture job (per slide) — tags → `assets` search. Hit: link it. Miss: Higgsfield, N variants in parallel (idempotency key `slideId:variant`), each result copied to R2 at once (Higgsfield keeps outputs only ~7 days), logged in `generations` with cost. Budget check before every call.
