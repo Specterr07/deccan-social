@@ -4,8 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { postStatusLabel } from "@/lib/months/postStatus";
 import { ApproveButton } from "./ApproveButton";
+import { ArtworkControls, type ArtworkBudget } from "./ArtworkControls";
 import { CaptionTabs } from "./CaptionTabs";
 import { EditPostSheet } from "./EditPostSheet";
+import { RequestChangesDialog } from "./RequestChangesDialog";
 import { SlideCarousel } from "./SlideCarousel";
 import type { ReviewPost } from "./types";
 
@@ -17,7 +19,7 @@ function formatPostDate(isoDate: string): string {
 const PLATFORM_LABELS: Record<string, string> = { instagram: "Instagram", linkedin: "LinkedIn" };
 
 // One post for review: the drawn slides, both captions, why it was planned, any missing image, and the actions.
-export function PostCard({ post }: { post: ReviewPost }) {
+export function PostCard({ post, budget }: { post: ReviewPost; budget: ArtworkBudget }) {
   const slotSlides = post.slides.filter((slide) => slide.requiredImageKind);
   const statusVariant = post.status === "needs_image" ? "destructive" : post.status === "approved" ? "default" : "secondary";
   return (
@@ -38,9 +40,11 @@ export function PostCard({ post }: { post: ReviewPost }) {
             missingLibraryName={slide.requiredImage ? null : slide.requiredImageLibraryName}
           />
         ))}
+        <ArtworkControls post={post} budget={budget} />
         <div className="flex flex-wrap items-start gap-2">
           <ApproveButton postId={post.id} status={post.status} />
           <EditPostSheet post={post} />
+          <RequestChangesDialog postId={post.id} />
         </div>
       </CardContent>
     </Card>

@@ -6,6 +6,7 @@ import { checkPost } from "@/schemas/planRules";
 import { postEditSchema } from "@/schemas/postEdit";
 import type { PostActionResult } from "./approvePost";
 import { postToPlanPost } from "./planPostFromDb";
+import { saveWords } from "./saveWords";
 import { logReview } from "./reviewLog";
 
 const clean = (text: string | undefined): string | null => (text?.trim() ? text.trim() : null);
@@ -36,15 +37,7 @@ export async function editPost(postId: string, body: unknown): Promise<PostActio
       return { ok: false, status: 422, message: lines.join("\n") };
     }
 
-    await db.transaction(async (transaction) => {
-      await transaction.update(posts).set({
-        captionInstagram: edit.data.captionInstagram, captionLinkedin: edit.data.captionLinkedin,
-        status: post.status === "approved" ? "rendered" : post.status,
-      }).where(eq(posts.id, postId));
-      for (const slide of edited) {
-        await transaction.update(slides).set({ eyebrow: slide.eyebrow, hero: slide.hero, sub: slide.sub, body: slide.body, checklist: slide.checklist }).where(eq(slides.id, slide.id));
-      }
-    });
+    await saveWords(post, edited, { instagram: edit.data.captionInstagram, linkedin: edit.data.captionLinkedin });
     await logReview(postId, "edit");
 
     const report = await renderPost(postId);
