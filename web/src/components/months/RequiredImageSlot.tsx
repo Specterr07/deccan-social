@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { LibraryPickerDialog } from "./LibraryPickerDialog";
+import { LibraryPickerDialog, type LibraryItem } from "./LibraryPickerDialog";
 import { sendSlideImage } from "./slideImageClient";
 
 export type SlotProps = {
@@ -38,6 +38,16 @@ export function RequiredImageSlot({ slideId, kind, description, image, missingLi
     void send("POST", body);
   }
 
+  // The person chose a library image: link that exact one to this slot.
+  async function pickFromLibrary(item: LibraryItem): Promise<boolean> {
+    const body = new FormData();
+    body.set("assetId", item.id);
+    const result = await sendSlideImage(slideId, "POST", body);
+    if (!result.ok) { toast.error(result.message); return false; }
+    router.refresh();
+    return true;
+  }
+
   const fileChooser = <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label={`Upload ${description}`} onChange={(event) => { upload(event.target.files?.[0]); event.target.value = ""; }} />;
 
   if (image) {
@@ -63,7 +73,7 @@ export function RequiredImageSlot({ slideId, kind, description, image, missingLi
       {fileChooser}
       <div className="flex flex-wrap gap-2">
         <Button size="sm" disabled={isBusy} onClick={() => fileInput.current?.click()}>{isBusy ? "Saving…" : "Upload"}</Button>
-        <LibraryPickerDialog slideId={slideId} kind={libraryKind} onPicked={() => router.refresh()} />
+        <LibraryPickerDialog kind={libraryKind} onSelect={pickFromLibrary} />
       </div>
     </div>
   );

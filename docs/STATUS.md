@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-03d done on branch `t-03d-slim-ci`, shipped via PR). T-04 is done and merged (PR #7, CI green).
-- **Last thing done:** T-04 — photo library (`/library`, `pnpm seed:library`, `pickAsset`) and required image slots (event logo / specific photo) with `needs_image` posts; 5 sample photos are in R2/Neon.
-- **Next action:** Run `/start`. Recommended order: **T-04b** (calendar builder — build the month in the app instead of uploading a PDF; ADR-015, mockup linked in the task), then **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), then **T-05b** (render job + DB→renderer mapping, new), then T-06 / T-07 / T-08 / T-09. 
+- **Current task:** none (T-04b merged; branch `main`).
+- **Last thing done:** T-04b — months are built in the app (calendar grid, Add post panel, Plan dialog); posts are planned from entries with facts copied by code. Migration 0003 is applied to Neon.
+- **Next action:** Run `/start`. Recommended order: **T-04c** (import from PDF + suggested days, split out of T-04b), then **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), **T-05b** (render job + DB→renderer mapping), then T-06 / T-07 / T-08 / T-09.
 - **Blockers:** None for building. Vivek still to eyeball in the browser: `/library` and a month page's Images column (upload a logo, pick from library). Brand kit fonts/colours still to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-04b session (Claude, Claude Code)
+- Calendar builder: `calendar_entries` + `posts.entry_id`, entry API, month grid / Add post sheet / Plan dialog, planning from entries (Claude writes words only; `resolvePlan` copies facts). Real test ~6c: posts 1:1 with entries, exact exhibition facts, post-only fix reads the cache. Vivek approved. Split T-04c (PDF import + suggested days). Dev server was already on port 3000 (Vivek's); the old PDF upload dialog and R2 calendar read are gone from the plan path.
 
 ### 2026-10-03 · T-03d session (Claude, Claude Code)
 - Slim CI (ADR-016): PR-only trigger, Docker job only when Docker inputs change, badge removed. Deleted four stale local branches (all their PRs were squash-merged). Remote branches `origin/t-04-library`, `origin/docs/handoff-t04`, `origin/docs/t-04b-calendar-builder` are still there (safe to delete).

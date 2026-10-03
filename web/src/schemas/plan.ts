@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// The shape Claude must return. Kept deliberately plain (no length limits here) so the JSON schema sent
+// The shapes of a plan. Kept deliberately plain (no length limits here) so the JSON schema sent
 // to Claude stays simple; the strict limits are checked afterwards by `checkMonthPlan` (planRules.ts),
 // which gives readable messages and lets us ask Claude to fix them.
 
@@ -27,6 +27,7 @@ const slideShape = z.object({
 });
 
 const postShape = z.object({
+  entry_id: z.string(), // the calendar entry this post was planned from
   date: z.string(), // YYYY-MM-DD
   time: z.string().optional(), // HH:MM IST; omitted = 10:00
   kind: z.enum(["festival", "day_of", "exhibition", "informative", "bts"]),
@@ -39,6 +40,16 @@ const postShape = z.object({
   slides: z.array(slideShape),
 });
 
+// What Claude returns: only the words (ADR-015). Everything factual (date, time, kind, aspect, platforms, exhibition
+// days / city / stand, required images) is copied from the calendar entry by code in `resolvePlan`.
+const answerSlideShape = slideShape.omit({ dates: true, venue: true, stand: true, required_image: true });
+const answerPostShape = postShape.pick({ entry_id: true, fruit: true, caption_instagram: true, caption_linkedin: true, rationale: true })
+  .extend({ slides: z.array(answerSlideShape) });
+export const planAnswerShape = z.object({ posts: z.array(answerPostShape) });
+export type PlanAnswerData = z.infer<typeof planAnswerShape>;
+export type AnswerPost = PlanAnswerData["posts"][number];
+
+// The full plan after the entries' facts have been added. This is what the limit checks and `savePlan` use.
 export const monthPlanShape = z.object({
   month: z.string(), // YYYY-MM
   posts: z.array(postShape),

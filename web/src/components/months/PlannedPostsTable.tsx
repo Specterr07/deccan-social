@@ -1,17 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { postStatusLabel } from "@/lib/months/postStatus";
 import type { getMonthWithPosts } from "@/lib/months/queries";
+import { KIND_LABELS } from "@/components/calendar/kindStyles";
 import { RequiredImageSlot } from "./RequiredImageSlot";
 
 type PostWithSlides = NonNullable<Awaited<ReturnType<typeof getMonthWithPosts>>>["posts"][number];
-
-const KIND_LABELS: Record<string, string> = {
-  festival: "Festival",
-  day_of: "Day-of",
-  exhibition: "Exhibition",
-  informative: "Carousel",
-  bts: "Behind the scenes",
-};
 
 // "2026-10-20" → "Tue 20 Oct"
 function formatPostDate(isoDate: string): string {

@@ -10,16 +10,38 @@ export const months = pgTable("months", {
   id: uuid("id").primaryKey().defaultRandom(),
   month: text("month").notNull().unique(), // "YYYY-MM"
   calendarUrl: text("calendar_url"),
-  status: text("status").notNull().default("uploaded"),
+  status: text("status").notNull().default("draft"), // draft (building the calendar) | planning | planned | failed
   statusMessage: text("status_message"), // readable error or progress note shown on the month page
   statusUpdatedAt: timestamp("status_updated_at").notNull().defaultNow(), // lets us spot a plan job that died mid-way
   reviewerEmail: text("reviewer_email"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// One row per post the person adds to the month's calendar (ADR-015). Planning turns each entry into exactly one post.
+// Facts (date, exhibition days, city, stand, image) live here and are copied onto the post by code, never by Claude.
+export const calendarEntries = pgTable("calendar_entries", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  monthId: uuid("month_id").notNull().references(() => months.id, { onDelete: "cascade" }),
+  date: date("date").notNull(),
+  kind: text("kind").notNull(), // festival | day_of | exhibition | informative | bts
+  title: text("title").notNull(), // festival / event name, or the carousel's topic
+  // exhibition: { firstDay, lastDay, city, stand? }   informative: { fruit?, points?, slideCount }   others: null
+  details: jsonb("details"),
+  notes: text("notes"),
+  aspect: text("aspect").notNull().default("4:5"), // 4:5 | 1:1
+  time: time("time"),
+  platforms: text("platforms").array().notNull().default(["instagram", "linkedin"]),
+  // The event logo (exhibition) or the behind-the-scenes photo; empty = the post waits as needs_image.
+  requiredImageAssetId: uuid("required_image_asset_id").references(() => assets.id, { onDelete: "set null" }),
+  source: text("source").notNull().default("manual"), // manual | suggested | pdf_import
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const posts = pgTable("posts", {
   id: uuid("id").primaryKey().defaultRandom(),
   monthId: uuid("month_id").notNull().references(() => months.id, { onDelete: "cascade" }),
+  entryId: uuid("entry_id").references(() => calendarEntries.id, { onDelete: "set null" }), // the calendar entry this post came from
   date: date("date").notNull(),
   time: time("time"),
   kind: text("kind").notNull(), // festival | exhibition | informative | day_of | bts
@@ -111,7 +133,11 @@ export const reviews = pgTable("reviews", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const monthsRelations = relations(months, ({ many }) => ({ posts: many(posts) }));
+export const monthsRelations = relations(months, ({ many }) => ({ posts: many(posts), entries: many(calendarEntries) }));
+export const calendarEntriesRelations = relations(calendarEntries, ({ one }) => ({
+  month: one(months, { fields: [calendarEntries.monthId], references: [months.id] }),
+  requiredImage: one(assets, { fields: [calendarEntries.requiredImageAssetId], references: [assets.id] }),
+}));
 export const postsRelations = relations(posts, ({ one, many }) => ({
   month: one(months, { fields: [posts.monthId], references: [months.id] }),
   slides: many(slides),

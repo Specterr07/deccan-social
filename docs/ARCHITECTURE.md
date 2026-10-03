@@ -23,8 +23,8 @@ flowchart LR
 
 > Since ADR-015 the month is built in the app: **New month → calendar entries (grid + "Add post" panel, suggested days) → Plan posts**. Steps 1–2 below now read entries instead of a PDF; "Import from PDF" turns a PDF into entries first. Table `calendar_entries` (see TASKS T-04b) feeds `posts.entry_id`.
 
-1. `POST /api/months` — upload PDF → store in R2 → row in `months` (status `planning`).
-2. Plan job — Claude reads the PDF natively; output forced through a zod schema via tool use → rows in `posts` and `slides`.
+1. `POST /api/months` — month only → row in `months` (status `draft`). Entries are added with `POST /api/months/[id]/entries` (checked by `schemas/entries.ts`).
+2. `POST /api/months/[id]/plan` → plan job (status `planning`): entries sent to Claude as JSON; Claude returns only the words per entry (`planAnswerShape`, structured output); `resolvePlan` adds the facts from the entries by code; limit checks (+ one post-only fix call); `savePlan` writes `posts` (with `entry_id`) and `slides`.
 3. Picture job (per slide) — tags → `assets` search. Hit: link it. Miss: Higgsfield, N variants in parallel (idempotency key `slideId:variant`), each result copied to R2 at once (Higgsfield keeps outputs only ~7 days), logged in `generations` with cost. Budget check before every call.
 4. Render job — for each slide: React template → HTML string (inlining tokens.css + templates.css + fonts) → Playwright screenshot of `.dp-post` → JPEG to R2.
 5. Email — Resend, thumbnails + review link. Month status `in_review`.
@@ -39,8 +39,9 @@ flowchart LR
 
 | Table | Key fields |
 | --- | --- |
-| `months` | id, month (YYYY-MM), calendar_url, status, reviewer_email, created_at |
-| `posts` | id, month_id, date, time, kind (festival / exhibition / informative / day_of / bts), template, fruit (pomegranate / mango / grape / citrus / none), aspect (4:5 / 1:1), platforms[], caption_instagram, caption_linkedin, rationale, status |
+| `months` | id, month (YYYY-MM), calendar_url (only for the later PDF import), status (draft / planning / planned / failed), reviewer_email, created_at |
+| `calendar_entries` | id, month_id, date, kind, title, details (json: exhibition first/last day, city, stand; carousel fruit, points, slideCount), notes, aspect, time, platforms[], required_image_asset_id, source (manual / suggested / pdf_import) |
+| `posts` | id, month_id, entry_id, date, time, kind (festival / exhibition / informative / day_of / bts), template, fruit (pomegranate / mango / grape / citrus / none), aspect (4:5 / 1:1), platforms[], caption_instagram, caption_linkedin, rationale, status |
 | `slides` | id, post_id, idx, template_variant (cover / inner / cta / single), eyebrow, hero, sub, info, body, details (json), checklist (json), photo_tags[], artwork_prompt, asset_id, render_url |
 | `assets` | id, url, kind (photo / cutout / event_logo / illustration / ai), tags[], description, people_ok, source (upload / higgsfield), created_at |
 | `generations` | id, slide_id, request_id, model, prompt, variant, status, cost_usd, asset_id, created_at |

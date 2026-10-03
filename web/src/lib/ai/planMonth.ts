@@ -1,10 +1,13 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { env } from "@/env";
-import { monthPlanShape, type MonthPlan } from "@/schemas/plan";
-import { checkMonthPlan, describeProblems } from "@/schemas/planRules";
+import type { EntryWithImage } from "@/lib/entries/queries";
+import { asExhibitionDetails, asInformativeDetails } from "@/lib/entries/entryFacts";
+import { planAnswerShape, type MonthPlan, type PlanAnswerData } from "@/schemas/plan";
+import { checkMonthPlan, describeProblems, type PlanProblem } from "@/schemas/planRules";
 import { callClaude, type AiPurpose } from "./callClaude";
 import { buildPlanSystemPrompt } from "./planPrompt";
+import { checkCoverage, checkSlideCounts, resolvePlan } from "./resolvePlan";
 
 const MAX_OUTPUT_TOKENS = 16000; // a 12-post plan with captions is ~6-8k tokens; leaves headroom without needing streaming
 // Effort must be IDENTICAL on the first call and the fix call: changing it invalidates the prompt cache.
@@ -15,14 +18,23 @@ export type PlanContext = { monthId?: string; effort?: PlanEffort };
 type Conversation = Anthropic.MessageParam[];
 export type PlanAnswer = { text: string; assistantContent: Anthropic.ContentBlock[] };
 
-// The calendar PDF plus the instruction. The PDF block is cached so the fix call reads it at 10% of the price.
-export function buildFirstMessage(pdf: Buffer, month: string): Anthropic.MessageParam {
+// The facts Claude may use, as compact JSON (no ids of images, no internal fields).
+function describeEntry(entry: EntryWithImage) {
+  const exhibition = entry.kind === "exhibition" ? asExhibitionDetails(entry.details) : null;
+  const informative = entry.kind === "informative" ? asInformativeDetails(entry.details) : null;
+  return {
+    entry_id: entry.id, date: entry.date, kind: entry.kind, title: entry.title, notes: entry.notes ?? undefined,
+    exhibition: exhibition ? { first_day: exhibition.firstDay, last_day: exhibition.lastDay, city: exhibition.city, stand: exhibition.stand } : undefined,
+    informative: informative ? { fruit: informative.fruit, points: informative.points, slide_count: informative.slideCount } : undefined,
+  };
+}
+
+// The entries plus the instruction. The block is cached so the fix call reads it at 10% of the price.
+export function buildFirstMessage(entries: EntryWithImage[], month: string): Anthropic.MessageParam {
+  const calendar = JSON.stringify({ month, entries: entries.map(describeEntry) });
   return {
     role: "user",
-    content: [
-      { type: "document", source: { type: "base64", media_type: "application/pdf", data: pdf.toString("base64") }, cache_control: { type: "ephemeral" } },
-      { type: "text", text: `Plan the posts for ${month} from this calendar.` },
-    ],
+    content: [{ type: "text", text: `Write the posts for ${month}. One post per entry.\n\n${calendar}`, cache_control: { type: "ephemeral" } }],
   };
 }
 
@@ -35,21 +47,21 @@ export async function askForPlan(messages: Conversation, purpose: AiPurpose, con
     max_tokens: MAX_OUTPUT_TOKENS,
     system: [{ type: "text", text: buildPlanSystemPrompt(), cache_control: { type: "ephemeral" } }],
     messages,
-    output_config: { effort: context.effort ?? DEFAULT_PLAN_EFFORT, format: zodOutputFormat(monthPlanShape) },
+    output_config: { effort: context.effort ?? DEFAULT_PLAN_EFFORT, format: zodOutputFormat(planAnswerShape) },
   });
   if (response.stop_reason === "refusal") {
-    throw new Error("Claude declined to plan this calendar. Check the PDF contains only the calendar and try again.");
+    throw new Error("Claude declined to write these posts. Check the notes on your calendar entries and try again.");
   }
   if (response.stop_reason === "max_tokens") {
-    throw new Error("Claude's plan was cut off because it was too long. Try a calendar with fewer posts.");
+    throw new Error("Claude's answer was cut off because it was too long. Try a month with fewer posts.");
   }
   const textBlock = response.content.find((block) => block.type === "text");
-  if (!textBlock || textBlock.type !== "text") throw new Error("Claude returned no plan text.");
+  if (!textBlock || textBlock.type !== "text") throw new Error("Claude returned no text.");
   return { text: textBlock.text, assistantContent: response.content };
 }
 
 // Parses Claude's JSON and checks the shape only (the content limits are checked separately).
-export function parsePlanJson(text: string): { plan: MonthPlan } | { problems: string[] } {
+export function parseAnswerJson(text: string): { answer: PlanAnswerData } | { problems: string[] } {
   let parsedJson: unknown;
   try {
     parsedJson = JSON.parse(text);
@@ -57,57 +69,72 @@ export function parsePlanJson(text: string): { plan: MonthPlan } | { problems: s
     // Structured output should always be valid JSON; if not, the answer was damaged.
     return { problems: ["The answer was not valid JSON."] };
   }
-  const shape = monthPlanShape.safeParse(parsedJson);
+  const shape = planAnswerShape.safeParse(parsedJson);
   if (!shape.success) return { problems: shape.error.issues.map((issue) => `${issue.path.join(".")} → ${issue.message}`) };
-  return { plan: shape.data };
+  return { answer: shape.data };
 }
 
-// Asks Claude to correct ONLY the broken posts (not the whole plan), then merges them back in.
-// `brokenIndexes` are positions in plan.posts; the answer must contain exactly those posts, in order.
-export async function repairPosts(
-  firstMessage: Anthropic.MessageParam, first: PlanAnswer, plan: MonthPlan,
+function bulletList(lines: string[]): string {
+  return lines.map((line) => `• ${line}`).join("\n");
+}
+
+// Resolves the answer against the entries and runs every check. Returns the full plan plus all problems found.
+function resolveAndCheck(answer: PlanAnswerData, entries: EntryWithImage[], month: string): { plan: MonthPlan | null; problems: PlanProblem[] } {
+  const coverageProblems = checkCoverage(answer, entries);
+  if (coverageProblems.length > 0) return { plan: null, problems: coverageProblems };
+  const plan = resolvePlan(answer, entries, month);
+  return { plan, problems: [...checkMonthPlan(plan), ...checkSlideCounts(plan, entries)] };
+}
+
+// Asks Claude to correct ONLY the broken posts (not everything), then merges them back by entry_id.
+async function repairPosts(
+  firstMessage: Anthropic.MessageParam, first: PlanAnswer, answer: PlanAnswerData,
   brokenIndexes: number[], problemLines: string[], context: PlanContext,
-): Promise<MonthPlan> {
+): Promise<PlanAnswerData> {
+  const brokenIds = brokenIndexes.map((index) => answer.posts[index].entry_id);
   const messages: Conversation = [
     firstMessage,
     { role: "assistant", content: first.assistantContent },
-    { role: "user", content: `These posts break the rules:\n${problemLines.map((line) => `- ${line}`).join("\n")}\n\nReturn a plan with the same month and ONLY the corrected versions of these ${brokenIndexes.length} post(s), in the same order. Fix only what breaks a rule; keep everything else exactly as it was.` },
+    { role: "user", content: `These posts break the rules:\n${problemLines.map((line) => `- ${line}`).join("\n")}\n\nReturn ONLY the corrected versions of these ${brokenIds.length} post(s) (entry_id: ${brokenIds.join(", ")}). Fix only what breaks a rule; keep everything else exactly as it was.` },
   ];
-  const answer = await askForPlan(messages, "plan_fix", context);
-  const parsed = parsePlanJson(answer.text);
-  if ("problems" in parsed) throw new Error(`Claude's corrected posts were not usable:\n${parsed.problems.map((line) => `• ${line}`).join("\n")}`);
+  const answerFix = await askForPlan(messages, "plan_fix", context);
+  const parsed = parseAnswerJson(answerFix.text);
+  if ("problems" in parsed) throw new Error(`Claude's corrected posts were not usable:\n${bulletList(parsed.problems)}`);
 
-  const fixedPosts = parsed.plan.posts;
-  const datesMatch = fixedPosts.length === brokenIndexes.length && fixedPosts.every((post, order) => post.date === plan.posts[brokenIndexes[order]].date);
-  if (!datesMatch) throw new Error("Claude's corrected posts did not match the posts that needed fixing.");
+  const fixedIds = parsed.answer.posts.map((post) => post.entry_id);
+  const sameSet = fixedIds.length === brokenIds.length && brokenIds.every((id) => fixedIds.includes(id));
+  if (!sameSet) throw new Error("Claude's corrected posts did not match the posts that needed fixing.");
 
-  const posts = [...plan.posts];
-  brokenIndexes.forEach((postIndex, order) => { posts[postIndex] = fixedPosts[order]; });
-  return { ...plan, posts };
+  const posts = [...answer.posts];
+  brokenIndexes.forEach((postIndex) => { posts[postIndex] = parsed.answer.posts.find((post) => post.entry_id === answer.posts[postIndex].entry_id)!; });
+  return { posts };
 }
 
-// Reads the calendar PDF with Claude and returns a validated plan for the month.
+// Writes the month's posts from its calendar entries and returns a validated plan (facts copied from the entries).
 // If a few posts break a limit, Claude is asked once to fix just those posts.
-export async function planMonth(pdf: Buffer, month: string, context: PlanContext = {}): Promise<MonthPlan> {
-  const firstMessage = buildFirstMessage(pdf, month);
+export async function planMonth(entries: EntryWithImage[], month: string, context: PlanContext = {}): Promise<MonthPlan> {
+  if (entries.length === 0) throw new Error("There are no posts in the calendar yet. Add at least one post first.");
+  const firstMessage = buildFirstMessage(entries, month);
   const first = await askForPlan([firstMessage], "plan_month", context);
-  const parsed = parsePlanJson(first.text);
-  if ("problems" in parsed) throw new Error(`Claude's answer was not a usable plan:\n${parsed.problems.map((line) => `• ${line}`).join("\n")}`);
+  const parsed = parseAnswerJson(first.text);
+  if ("problems" in parsed) throw new Error(`Claude's answer was not a usable plan:\n${bulletList(parsed.problems)}`);
 
-  const problems = checkMonthPlan(parsed.plan);
-  if (problems.length === 0) return parsed.plan;
+  const checked = resolveAndCheck(parsed.answer, entries, month);
+  if (checked.plan && checked.problems.length === 0) return checked.plan;
 
-  // Problems about the plan as a whole (wrong month, no posts, too many posts) cannot be fixed post by post.
-  const postLevelOnly = problems.every((problem) => problem.path[0] === "posts" && typeof problem.path[1] === "number");
-  if (!postLevelOnly) throw new Error(`The plan has problems Claude cannot fix one post at a time:\n${describeProblems(parsed.plan, problems).map((line) => `• ${line}`).join("\n")}`);
-
-  const brokenIndexes = [...new Set(problems.map((problem) => problem.path[1] as number))].sort((a, b) => a - b);
-  const repaired = await repairPosts(firstMessage, first, parsed.plan, brokenIndexes, describeProblems(parsed.plan, problems), context);
-
-  const remaining = checkMonthPlan(repaired);
-  if (remaining.length > 0) {
-    // Still wrong after one correction: fail loudly with the exact problems so the month page can show them.
-    throw new Error(`Claude's plan still broke the content limits:\n${describeProblems(repaired, remaining).map((line) => `• ${line}`).join("\n")}`);
+  // Problems about the plan as a whole (a missing or duplicate post) cannot be fixed post by post.
+  const postLevelOnly = checked.plan && checked.problems.every((problem) => problem.path[0] === "posts" && typeof problem.path[1] === "number");
+  if (!checked.plan || !postLevelOnly) {
+    throw new Error(`The plan has problems Claude cannot fix one post at a time:\n${bulletList(describeProblems(checked.plan, checked.problems))}`);
   }
-  return repaired;
+
+  const brokenIndexes = [...new Set(checked.problems.map((problem) => problem.path[1] as number))].sort((a, b) => a - b);
+  const repairedAnswer = await repairPosts(firstMessage, first, parsed.answer, brokenIndexes, describeProblems(checked.plan, checked.problems), context);
+
+  const recheck = resolveAndCheck(repairedAnswer, entries, month);
+  if (!recheck.plan || recheck.problems.length > 0) {
+    // Still wrong after one correction: fail loudly with the exact problems so the month page can show them.
+    throw new Error(`Claude's plan still broke the content limits:\n${bulletList(describeProblems(recheck.plan, recheck.problems))}`);
+  }
+  return recheck.plan;
 }

@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { sendSlideImage } from "./slideImageClient";
 
-type LibraryItem = { id: string; name: string; url: string; tags: string[] };
+export type LibraryItem = { id: string; name: string; url: string; tags: string[] };
 
-// "Pick from library": a searchable grid of existing images; choosing one links that exact image to the slot.
-export function LibraryPickerDialog({ slideId, kind, onPicked }: { slideId: string; kind: string; onPicked: () => void }) {
+// "Pick from library": a searchable grid of existing images; `onSelect` receives the exact image the person chose.
+// It returns true when the choice was accepted (the dialog then closes).
+export function LibraryPickerDialog({ kind, onSelect }: { kind: string; onSelect: (item: LibraryItem) => Promise<boolean> }) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [items, setItems] = useState<LibraryItem[]>([]);
@@ -34,12 +33,7 @@ export function LibraryPickerDialog({ slideId, kind, onPicked }: { slideId: stri
   }, [isOpen, kind, search]);
 
   async function pick(item: LibraryItem) {
-    const body = new FormData();
-    body.set("assetId", item.id);
-    const result = await sendSlideImage(slideId, "POST", body);
-    if (!result.ok) { toast.error(result.message); return; }
-    setIsOpen(false);
-    onPicked();
+    if (await onSelect(item)) setIsOpen(false);
   }
 
   return (

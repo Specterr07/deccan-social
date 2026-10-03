@@ -22,6 +22,13 @@
       "when": 1791037462527,
       "tag": "0002_image_slots_and_asset_names",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791041404331,
+      "tag": "0003_calendar_entries",
+      "breakpoints": true
     }
   ]
 }

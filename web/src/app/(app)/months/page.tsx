@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MonthStatusBadge } from "@/components/months/MonthStatusBadge";
-import { UploadCalendarDialog } from "@/components/months/UploadCalendarDialog";
+import { NewMonthDialog } from "@/components/months/NewMonthDialog";
 import { formatMonthLabel } from "@/lib/months/monthStatus";
 import { listMonths } from "@/lib/months/queries";
 
@@ -22,7 +22,7 @@ export default async function MonthsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-3xl">Months</h1>
-        <UploadCalendarDialog />
+        <NewMonthDialog />
       </div>
 
       {loadError && <p role="alert" className="text-destructive">{loadError}</p>}
@@ -30,7 +30,7 @@ export default async function MonthsPage() {
         <Card>
           <CardHeader>
             <CardTitle>No months yet</CardTitle>
-            <CardDescription>Upload a monthly calendar and its posts will appear here for review.</CardDescription>
+            <CardDescription>Start a month, add its posts on the calendar, and we will plan them for review.</CardDescription>
           </CardHeader>
         </Card>
       )}

@@ -43,6 +43,19 @@ Rules that are not about length:
 | Post time | `HH:MM` in IST; defaults to **10:00** unless the calendar says otherwise |
 | Aspect | `4:5` by default; `1:1` only when the calendar asks (festival and day-of support it) |
 
+## Calendar entries (what you type in "Add post")
+
+| Field | Limit |
+| --- | --- |
+| Name / topic (title) | **60** characters |
+| Notes for the writer | **300** characters |
+| Exhibition city | **28** (it becomes the venue on the post) |
+| Exhibition hall / stand | **28**, optional |
+| Exhibition length | any length; up to **4** days get one date box each, longer events show the first and last day |
+| Carousel slides | **3–6** (the post gets exactly this many) |
+| Carousel points | up to **6**, each up to **80** characters |
+| Format | `1:1` only for festival and day-of |
+
 ## Captions and notes
 
 | Field | Limit | Notes |

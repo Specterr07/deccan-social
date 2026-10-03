@@ -30,6 +30,14 @@ export const LIMITS = {
   artworkPrompt: 280,
   requiredImageDescription: 60,
   libraryName: 60,
+  // Calendar entries (what the person types before planning). Mirrored in docs/CONTENT-LIMITS.md.
+  entryTitle: 60,
+  entryNotes: 300,
+  entryCity: 28, // becomes the venue on the post, so it shares venue's limit
+  entryStand: 28,
+  entryPoints: { max: 6 },
+  entryPointChars: 80,
+  exhibitionDays: { max: 14 }, // longer than two weeks is probably a typo
 } as const;
 
 export const DEFAULT_POST_TIME = "10:00"; // IST, unless the calendar says otherwise

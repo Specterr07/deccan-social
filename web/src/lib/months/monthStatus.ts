@@ -1,5 +1,6 @@
 // Month statuses and the plain words shown to the reviewer (a status is never shown as colour alone).
 export const MONTH_STATUS = {
+  draft: "Building calendar",
   planning: "Planning",
   planned: "Planned",
   failed: "Needs attention",

@@ -31,11 +31,11 @@ export async function POST(request: Request) {
 
   const tags = parseTags(String(formData.get("tags") ?? ""));
   const peopleOk = formData.get("people_ok") === "on";
-  const created: { name: string; url: string }[] = [];
+  const created: { id: string; name: string; url: string }[] = [];
   const errors: string[] = [];
   for (const file of files) {
     const result = await createAssetFromFile({ file, kind, tags, peopleOk });
-    if (result.ok) created.push({ name: result.name, url: result.url });
+    if (result.ok) created.push({ id: result.assetId, name: result.name, url: result.url });
     else errors.push(result.message);
   }
   return Response.json({ created, errors }, { status: created.length > 0 ? 201 : 400 });
