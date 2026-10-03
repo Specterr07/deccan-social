@@ -301,7 +301,7 @@ Real test (scratch month, plan ≈ 4c incl. one fix call): approve refused 409 o
 Also: removed a stray `scripts/tmp-t05b.ts` committed by mistake in T-05b; `pnpm screenshot` now waits for dialogs to open.
 Not checked: Approve and Edit in a real browser by clicking (API paths tested via the same functions); the carousel slide buttons; the page when planning is running.
 
-### T-06b · Review actions: request changes, artwork, approve all — `todo` · 45m
+### T-06b · Review actions: request changes, artwork, approve all — `doing` · 45m
 Split out of T-06.
 - Request changes with a note → `rewritePost()` (`callClaude`, purpose `rewrite_post`, model `CLAUDE_MODEL_LIGHT`, sends only that post's JSON + rules, never the PDF) → limit check → re-render that post. Budget-checked.
 - Swap artwork variant (variants of the same slide) and Regenerate artwork (budget-checked, shows its cost and the remaining budget; uses `generateArtwork`).
@@ -310,6 +310,12 @@ Split out of T-06.
 - [ ] Regenerate shows cost + remaining budget and stops at the cap.
 - [ ] Approve all skips posts that need images.
 **Notes:**
+2026-10-03 plan (branch `t-06b-review-actions`; Vivek confirmed M1: October posts look good).
+1. **Request changes:** `lib/ai/rewritePost.ts` (`callClaude`, purpose `rewrite_post`, `CLAUDE_MODEL_LIGHT`; sends the planning rules + this post's current words + the note, never the PDF or other posts; structured output) and `lib/posts/requestChanges.ts`: budget check → rewrite → same limit checks as planning (`checkPost`) with ONE fix retry → save words → re-render only that post → `reviews` row with the note. Facts, pictures and slide count are not changed. Dialog "Ask for changes" on each card.
+2. **Artwork variants:** variants of a slide = its `generations` rows that produced an asset. `lib/artwork/slidePicture.ts`: *swap* (link one of the slide's own variants) and *regenerate* (= generate one more variant with `generateArtwork`, budget-checked, link it; earlier variants stay selectable). Both re-render only that post. Per-slide "Picture" box on the card: variant thumbnails, "Try another picture" with the cost in rupees and the remaining budget written on it. Not for slides with a required `specific` photo.
+3. **Approve all:** `POST /api/months/[id]/approve-all` approves every `rendered` post, skips `needs_image`; button shows how many are ready.
+4. Verify on a scratch month (≈ 4c plan, ≈ 1c per rewrite, 2 artwork images ≈ ₹1): rewrite changes only that post and logs the note; over-limit rewrite is retried once; regenerate adds a variant, shows cost, and stops at the cap (budget forced low); swap changes only that post's render; approve-all skips the `needs_image` post. Screenshots at 1440 and 390 px.
+Risks: Haiku 4.5 may follow the character limits less well (hence the one retry); a rewrite must keep exactly the same slides (count and kinds) or it is rejected.
 
 ### T-07 · Approval email — `todo` · 30m
 - `lib/email.ts`: Resend, subject "Your <Month> posts are ready (N posts)", thumbnails (R2 URLs) + button to review page. Sent when rendering completes. If any post is `needs_image`, say so at the top: "2 posts need images from you" with links (ADR-014).

@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-06 core shipped; branch `main`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
+- **Current task:** **T-06b** (branch `t-06b-review-actions`, plan in TASKS Notes). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
 - **Last thing done:** T-06 core — the month page is now a review feed: drawn slides with a carousel, Instagram / LinkedIn captions, Approve / Undo, Edit text (limits enforced, only that post redrawn).
-- **Next action:** Run `/start`. **T-06b** (request changes → Claude rewrite, artwork swap / regenerate, approve all), then T-07 (email) → **milestone M2**, T-08, T-09. M1 verdict from Vivek still open (October → Plan again).
+- **Next action:** Run `/start`. **T-06b** (request changes → Claude rewrite, artwork swap / regenerate, approve all), then T-07 (email) → **milestone M2**, T-08, T-09. M1 confirmed by Vivek (October posts look good).
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
