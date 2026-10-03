@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-06b shipped; branch `main`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
-- **Last thing done:** T-06b — Ask for changes (light-model rewrite of one post), Try another picture / swap artwork (cost shown, budget-capped), Approve all ready.
-- **Next action:** Run `/start`. **T-07** (approval email) → **milestone M2** for Vivek (approve, edit, ask for changes, email), then T-08 (pack), T-09 (deploy + October).
+- **Current task:** none (T-07 shipped; branch `main`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
+- **Last thing done:** T-07 — the review email (thumbnails, "N posts need images" banner, review button) is sent after every plan; failures show as a notice. **Milestone M2 is ready for Vivek.**
+- **Next action:** **M2 review by Vivek:** open October 2026 → Plan again → check the email arrives (links point at localhost for now), then approve / edit / ask for changes on a post. Then run `/start` for **T-08** (month pack) and **T-09** (deploy + October end to end).
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-07 session (Claude, Claude Code)
+- Review email via Resend (REST), brand colours read from tokens.css, sent by the plan job. Tested on a scratch month (deleted); one real email was sent to `REVIEWER_EMAIL` (its thumbnails are gone). M2 is ready.
 
 ### 2026-10-03 · T-06b session (Claude, Claude Code)
 - Request changes, artwork swap / regenerate, approve all; tested on a scratch month (deleted with its renders and test artwork). Self-check caught a festival-template overflow (fixed). About 3¢ Claude + ₹1 Higgsfield spent.
