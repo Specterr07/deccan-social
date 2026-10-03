@@ -262,14 +262,21 @@ Risks: a timed-out request may still be charged (recorded at the configured pric
 **Outcome 2026-10-03:** the fake-text problem was the prompt, not the model, so **no model switch was needed** (Vivek allowed up to $2; total spent ≈ $0.08 for 13 images). Prompt A/B/C (no "editorial", no "headline", no "no text"; "a clean unedited camera photo with no words…") gave clean images; the bare scene and the old house style gave gibberish. 8 varied scenes with the new house style: 6 perfectly clean; the 2 with cardboard boxes / a market stall had invented lettering → scenes with boxes, crates, signs, labels, packaging, markets are now refused (`TEXT_PRONE_WORDS`). New house style in `houseStyle.ts` and `docs/BRAND.md`. Image quality is very photo-real (Soul v2 at 1080p, 3:4).
 Not exercised live: the softened-prompt retry (needs a failed or blocked request), the timeout path, and the whole thing through the plan job on a real month (the October month's only post matched a library photo, so nothing was generated). The month-page notice for missing pictures was not seen in a browser. Artwork is not shown in the app yet (renders arrive in T-05b). `.env.local` is on dev settings (`IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300`, cost 0.006): put 3 and 1500 back for the final October run (T-09).
 
-### T-05b · Render job and DB → renderer mapping — `todo` · 45m
+### T-05b · Render job and DB → renderer mapping — `doing` · 45m
 Found during T-04: nothing yet turns saved posts/slides into rendered JPEGs (ARCHITECTURE step 4); T-02 only has `renderSlide()` and the dev gallery.
 - `lib/render/fromDb.ts`: map a post + slide (+ linked assets) to `RenderInput` — automatic picture `slides.asset_id` → `photoUrl`; required `event_logo` → `eventLogoUrl`; required `specific` → `photoUrl` (replaces the automatic one); `details` → dates/venue/stand; `progress` for carousels; aspect from the post.
 - Render job: for each slide with all inputs ready, render → upload JPEG to R2 → `slides.render_url`; post `rendered`. A post with an empty required slot stays `needs_image` and renders with the placeholder (empty logo box omitted, tint block for the photo) so the reviewer still sees it; re-render only that post after an image is added.
 - Run it after planning (+ pictures from T-05); status/progress on the month page; log errors per post, never fail the whole month for one bad slide.
 - [ ] A planned month renders every slide to R2; `render_url` set; one broken slide does not stop the others.
 - [ ] Filling a required image re-renders only that post.
-**Notes:**
+**Notes:** 2026-10-03 plan (branch `t-05b-render-job`).
+1. `lib/render/fromDb.ts`: pure mapping post + slide (+ automatic picture asset, required image asset) → `RenderInput`. Template: `post.template`, or `info_cover/inner/cta` from the slide variant for carousels. `specific` required photo replaces the automatic one; `event_logo` → `eventLogoUrl`; `details` → dates/venue/stand; `progress` for carousels; aspect from the post. Empty required slot = no url, so the template shows its placeholder (T-02 behaviour).
+2. `lib/render/renderPost.ts`: load the post, render each slide (`renderSlide`), upload `renders/<slideId>-<time>.jpg` to R2, set `slides.render_url`, delete the previous file; post status → `rendered` unless it is `needs_image`. Errors are per slide/post and collected, never thrown. `renderMonth(monthId)` loops posts and writes progress text into the month's status message.
+3. Plan job: planning → pictures → render, then `planned`; picture + render problems become notices on the month page. Planning card shows the progress text.
+4. `refreshPostImageStatus` also moves `rendered` ↔ `needs_image`; after an image is filled / removed the post is re-rendered (only that post).
+5. Month page: a thumbnail of each post's first slide in the Posts table (for milestone M1); full carousel view is T-06.
+6. Verify: render the October month for real (Claude plan not needed: render what is saved; if no posts have slides worth testing, plan a scratch month ~5c), look at the JPEGs next to `brand/templates/*.png`, screenshot the month page at 1440 and 390 px, test fill-image → only that post re-renders, one broken slide does not stop the rest.
+Risks: Chromium inside the Next server process (worked in the T-02 dev route); photo URLs from R2 must load (timeout → that slide fails, others continue).
 
 ### T-06 · Review page — `todo` · 60m
 - `/months/[id]`: feed grid by date; per post: slides carousel, captions (IG/LinkedIn tabs), status chip, rationale.

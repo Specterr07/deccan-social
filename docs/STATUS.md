@@ -5,7 +5,7 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-05 shipped; branch `main`). Dev settings in `.env.local` until the final October run: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → set back to 3 and 1500 (T-09).
+- **Current task:** **T-05b** (branch `t-05b-render-job`, plan in TASKS Notes). Dev settings in `.env.local` until the final October run: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → set back to 3 and 1500 (T-09).
 - **Last thing done:** T-05 — Higgsfield client, artwork generation (budget-checked, logged, copied to R2), picture step in the plan job. Fake-text problem solved by prompt wording; about $0.08 of the $5 spent.
 - **Next action:** Run `/start`. **T-05b** (render job + DB→renderer mapping) then **milestone M1** for Vivek (a planned month shows real post images); then T-06 / T-07 / T-08 / T-09.
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
