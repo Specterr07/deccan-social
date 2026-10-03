@@ -1,10 +1,16 @@
 import { notFound } from "next/navigation";
+import { CalendarBuilder } from "@/components/calendar/CalendarBuilder";
 import { AiSpendLine } from "@/components/months/AiSpendLine";
 import { AutoRefresh } from "@/components/months/AutoRefresh";
 import { MonthStatusBadge } from "@/components/months/MonthStatusBadge";
 import { PlanAgainButton } from "@/components/months/PlanAgainButton";
 import { PlannedPostsTable } from "@/components/months/PlannedPostsTable";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { env } from "@/env";
+import { spentThisMonth } from "@/lib/budget";
+import { listEntries } from "@/lib/entries/queries";
+import { toEntryView } from "@/lib/entries/entryView";
 import { formatMonthLabel } from "@/lib/months/monthStatus";
 import { getMonthWithPosts } from "@/lib/months/queries";
 
@@ -19,7 +25,13 @@ export default async function MonthPage({ params }: { params: Promise<{ id: stri
   const month = await getMonthWithPosts(id);
   if (!month) notFound();
 
+  const entries = (await listEntries(id)).map(toEntryView);
+  const spend = await spentThisMonth()
+    .then((amounts) => ({ totalInr: amounts.totalInr, capInr: amounts.capInr, usdInrRate: env.USD_INR_RATE }))
+    .catch((error) => { console.error("Could not read AI spend:", error); return null; }); // the planner works without the spend figure
+
   const isPlanning = month.status === "planning";
+  const calendar = <CalendarBuilder monthId={month.id} month={month.month} entries={entries} canEdit={!isPlanning} hasPosts={month.posts.length > 0} spend={spend} />;
   return (
     <div className="space-y-6">
       <AutoRefresh active={isPlanning} />
@@ -49,7 +61,16 @@ export default async function MonthPage({ params }: { params: Promise<{ id: stri
           </CardContent>
         </Card>
       )}
-      {month.posts.length > 0 && <PlannedPostsTable posts={month.posts} />}
+      {month.posts.length === 0 ? calendar : (
+        <Tabs defaultValue="posts">
+          <TabsList>
+            <TabsTrigger value="posts">Posts</TabsTrigger>
+            <TabsTrigger value="calendar">Calendar</TabsTrigger>
+          </TabsList>
+          <TabsContent value="posts"><PlannedPostsTable posts={month.posts} /></TabsContent>
+          <TabsContent value="calendar">{calendar}</TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 }
