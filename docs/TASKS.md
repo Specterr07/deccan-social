@@ -178,6 +178,41 @@ Rules decided: `pickAsset` only returns `photo` assets and skips ones tagged as 
 - Not done / for later: DB → renderer mapping (T-06) must use `requiredImage.url` as `eventLogoUrl` / `photoUrl` and block approval while `needs_image`; the email (T-07) lists posts needing images; renaming a library image and bulk tag editing; SVG logos (only JPG/PNG/WebP now); `people_ok` is a flag, so auto-pick excludes photos with people-style tags unless it is ticked (no separate has-people field).
 
 
+### T-04b · Calendar builder (build the month in the app) — `todo` · 90m
+Read ADR-015 and look at the mockup first: https://claude.ai/artifact/1uGkPpWimDRdhuMcZjawqW (1 · month planner, 2 · Add post panel, 3 · Plan posts dialog). Reuse T-04's `LibraryPickerDialog`, upload code and `fillRequiredImage` for images; reuse shadcn components (`docs/UI.md`). Use the mockup's wording.
+
+**Data**
+- Table `calendar_entries`: id, month_id (cascade), date, kind (`festival` · `day_of` · `exhibition` · `informative` · `bts`), title, details jsonb (exhibition: `first_day`, `last_day`, `city`, `stand`; informative: `topic`, `fruit`, `points`, `slide_count`), notes, aspect (`4:5` · `1:1`), time, platforms[], required_image_asset_id (event logo / behind-the-scenes photo, nullable), source (`manual` · `suggested` · `pdf_import`), created_at, updated_at. Zod schema per kind in `schemas/entries.ts`; reuse limits from `schemas/limits.ts`.
+- `posts.entry_id` (nullable, set null on delete) so each post knows which entry it came from.
+- `months`: allow creating a month with no PDF; new status `draft` (building the calendar) before `planning`; `dismissed_suggestions text[]`.
+- Generated migration (`pnpm db:generate`, then `pnpm db:migrate`).
+
+**Suggested days**
+- `web/src/data/suggestedDays.ts`: per year, `{ date, title, kind: "festival" | "day_of", note? }`. Fill Oct 2026 – Dec 2027 from an official source (e.g. the Government of India holiday list; UN/FAO pages for international days). Put the source URL beside each year. Never ask Claude for festival dates.
+- Shown as dashed "suggested" chips in the grid and in the "Suggested days" side card: **Add** creates an entry (source `suggested`); **dismiss** stores the title in `dismissed_suggestions`.
+
+**Screens**
+- Months list: "New month" (pick YYYY-MM) replaces the PDF upload dialog → opens the planner.
+- Month page, while `draft` (and later as a "Calendar" tab next to the posts list): month grid Mon–Sun, entries as coloured chips with a type label (never colour alone), "Add post" on empty days, side card "This month" (counts per type, posts still needing an image, estimated planning cost), "Suggested days" card.
+- "Add post" / edit panel (shadcn Sheet): type selector, then only that type's fields; exhibition event logo and behind-the-scenes photo via upload or library pick (optional now — the post then waits as `needs_image`); notes; format; time; platforms; Save / Delete.
+- "Plan N posts" dialog: list of entries with Ready / Needs image, estimated cost, current spend; Plan → runs the plan job.
+- "Import from PDF": upload → Claude (`callClaude`, purpose `import_pdf`) turns the PDF into entries (source `pdf_import`) → shown in the grid for review; nothing is planned until the person presses Plan.
+
+**Planning from entries**
+- `planMonth` takes the entries (compact JSON in the user message, cached system prompt) instead of the PDF; Claude returns one post per entry with `entry_id` and writes only words (eyebrow, hero, sub, body, checklist, captions, photo tags, artwork prompt). Update `planPrompt.ts` accordingly.
+- `savePlan` copies facts from the entry, never from Claude: date, time, aspect, platforms, exhibition dates/city/stand, and the entry's required image → `slides.required_image_asset_id`. A post whose entry has its required image starts ready, not `needs_image`. Check every entry got exactly one post.
+- PDF path = import → entries → same plan. Remove the direct PDF → plan path.
+
+**Done when**
+- [ ] A new month can be built entirely in the app (no PDF) and planned; posts match entries 1:1.
+- [ ] Exhibition dates, city and stand on the posts are exactly what was typed (copied by code).
+- [ ] An exhibition entry saved with its logo plans into a post that is not `needs_image`.
+- [ ] Suggested days come only from `suggestedDays.ts` (with a source URL) and can be added or dismissed.
+- [ ] "Import from PDF" fills the grid with entries for review and plans nothing by itself.
+- [ ] Every Claude call (plan, import) goes through `callClaude()`; the plan dialog shows the estimate and current spend.
+- [ ] Usable at phone width (grid scrolls sideways or becomes a list).
+**Notes:** If over ~90 min, split: ship grid + panel + planning first; "Import from PDF" and the suggested-days card as T-04c.
+
 ### T-05 · Higgsfield artwork — `todo` · 60m
 Read `docs/integrations/higgsfield.md` first.
 - `lib/higgsfield.ts generateArtwork(slide, n)`: prompt = slide.artwork_prompt + BRAND house style; n parallel `subscribe` calls, idempotency `slideId:variant`; copy each result URL to R2 immediately; save `assets` (source `higgsfield`) + `generations` (cost).

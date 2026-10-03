@@ -40,6 +40,7 @@ Fonts: load `brand/fonts/*` with `next/font/local`. Page titles in Fraunces 600;
 | Screen | Key components |
 | --- | --- |
 | Login | Card, Input, Button |
+| Month planner (`/months/[id]`, while drafting; "Calendar" tab after) | 7-column grid of entry chips (type label + colour), Sheet "Add post" with per-type fields, Dialog "Plan N posts", side Cards "This month" and "Suggested days". Mockup: https://claude.ai/artifact/1uGkPpWimDRdhuMcZjawqW |
 | Months list (`/months`) | Table or Card list, Badge (status), Button "Upload calendar" + Dialog with file input |
 | Month review (`/months/[id]`) | Feed grid of Cards; post card = slide carousel (rendered JPEGs), Tabs (Instagram / LinkedIn caption), Badge status, Buttons (Approve, Edit, Request changes), Dialog/Sheet for edits, Textarea, spend meter, progress banner |
 | Photo library (`/library`) | Upload Dialog (multi-file input), Input tags, Checkbox "people OK to post", image grid, Select filters |
