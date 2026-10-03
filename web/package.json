@@ -11,7 +11,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --env-file=.env.local scripts/migrate.ts",
     "db:baseline": "tsx --env-file=.env.local scripts/baseline-migrations.ts",
-    "check": "pnpm typecheck && pnpm lint && pnpm build"
+    "check": "pnpm typecheck && pnpm lint && pnpm build",
+    "seed:library": "tsx --env-file=.env.local scripts/seed-library.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",

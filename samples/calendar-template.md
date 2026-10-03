@@ -17,14 +17,16 @@
 
 ## Posts
 
-| Date | Type | Occasion / topic | Facts to use exactly | Notes for the planner |
-| --- | --- | --- | --- | --- |
-| <Fri 2 Oct> | Festival | <Gandhi Jayanti> | – | <simple respectful greeting, no sales angle> |
-| <Wed 7 Oct> | Carousel | <"Why October matters for Indian pomegranates"> | – | <5 slides, end with an enquiry invite; points to cover: new season, Bhagwa variety, colour and sweetness, export readiness> |
-| <Fri 16 Oct> | Day-of | <World Food Day> | – | <fresh produce from Indian farms to the world> |
-| <Tue 20 Oct> | Festival | <Dussehra> | – | <square 1:1> |
-| <Mon 26 Oct> | Exhibition | <World Fresh Produce Expo> | <Dates: 4–6 Nov 2026 · City: Dubai · Hall 3, Stand B12 · Event logo: will be uploaded> | – |
-| <Thu 29 Oct> | Behind the scenes | <Packhouse team grading grapes> | – | <use a real photo from the library> |
+| Date | Type | Occasion / topic | Facts to use exactly | Image | Notes for the planner |
+| --- | --- | --- | --- | --- | --- |
+| <Fri 2 Oct> | Festival | <Gandhi Jayanti> | – | – | <simple respectful greeting, no sales angle> |
+| <Wed 7 Oct> | Carousel | <"Why October matters for Indian pomegranates"> | – | – | <5 slides, end with an enquiry invite; points to cover: new season, Bhagwa variety, colour and sweetness, export readiness> |
+| <Fri 16 Oct> | Day-of | <World Food Day> | – | – | <fresh produce from Indian farms to the world> |
+| <Tue 20 Oct> | Festival | <Dussehra> | – | – | <square 1:1> |
+| <Mon 26 Oct> | Exhibition | <World Fresh Produce Expo> | <Dates: 4–6 Nov 2026 · City: Dubai · Hall 3, Stand B12> | <will upload> | – |
+| <Thu 29 Oct> | Behind the scenes | <Packhouse team grading grapes> | – | <nashik-packhouse-team> | – |
+
+**Image** is optional: write the **library name** of an exact image already in the app's Library (for example `nashik-packhouse-team`), or `will upload` when you will add it yourself on the month page. Leave it empty for posts that just need a fitting photo; the app picks one by topic. Exhibitions always need their **event logo** and behind-the-scenes posts always need a **real photo**; if you name no library image the post waits as "needs image" until you upload or pick one. Never write a name you are not sure exists.
 
 **Type** is one of: `Festival` · `Day-of` (a world/national fruit or food day) · `Exhibition` · `Carousel` (informative, 3–6 slides) · `Behind the scenes`.
 
@@ -34,9 +36,9 @@
 | --- | --- | --- |
 | Festival | Date, festival name | Tone note, "square" |
 | Day-of | Date, day name | Fruit to feature |
-| Exhibition | Date to post, event name, event dates, city | Hall, stand, event logo (uploaded separately), who is attending |
+| Exhibition | Date to post, event name, event dates, city | Hall, stand, library name of the event logo (or "will upload"), who is attending |
 | Carousel | Date, topic or title | Number of slides (3–6), points to cover, fruit |
-| Behind the scenes | Date, what the photo shows | Photo name from the library |
+| Behind the scenes | Date, what the photo shows | Library name of the photo (or "will upload") |
 
 ## Extra instructions (optional)
 

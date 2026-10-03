@@ -18,6 +18,12 @@ const slideShape = z.object({
   // Picture search words (library first) and, only when no library photo will do, an artwork scene.
   photo_tags: z.array(z.string()),
   artwork_prompt: z.string().optional(),
+  // A picture that must be exactly right. Present only when the slide needs one (ADR-014); never filled by AI.
+  required_image: z.object({
+    kind: z.enum(["event_logo", "specific"]),
+    description: z.string(), // what to upload, e.g. "Event logo for World Fresh Produce Expo"
+    library_name: z.string().optional(), // only if the calendar's Image column names a library image
+  }).optional(),
 });
 
 const postShape = z.object({

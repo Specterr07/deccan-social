@@ -35,7 +35,10 @@ export const posts = pgTable("posts", {
 
 export const assets = pgTable("assets", {
   id: uuid("id").primaryKey().defaultRandom(),
+  // Unique, human-readable handle (e.g. "nashik-packhouse-team") so a calendar can point at one exact image.
+  name: text("name").notNull().unique(),
   url: text("url").notNull(),
+  storageKey: text("storage_key"), // where the file lives in R2 (needed to delete it)
   kind: text("kind").notNull(), // photo | cutout | event_logo | illustration | ai
   tags: text("tags").array().notNull().default([]),
   description: text("description"),
@@ -58,7 +61,13 @@ export const slides = pgTable("slides", {
   checklist: jsonb("checklist"),
   photoTags: text("photo_tags").array().notNull().default([]),
   artworkPrompt: text("artwork_prompt"),
-  assetId: uuid("asset_id").references(() => assets.id, { onDelete: "set null" }),
+  assetId: uuid("asset_id").references(() => assets.id, { onDelete: "set null" }), // the automatic picture (library tags, then artwork)
+  // A picture that must be exactly right (event logo, our own team photo). Only an upload, a library pick or a
+  // library name written in the calendar may fill it: never AI, never a guess. See ADR-014.
+  requiredImageKind: text("required_image_kind"), // event_logo | specific; null = this slide has no required image
+  requiredImageDescription: text("required_image_description"),
+  requiredImageLibraryName: text("required_image_library_name"), // copied from the calendar's Image column
+  requiredImageAssetId: uuid("required_image_asset_id").references(() => assets.id, { onDelete: "set null" }),
   renderUrl: text("render_url"),
 });
 
@@ -110,6 +119,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
 }));
 export const slidesRelations = relations(slides, ({ one, many }) => ({
   post: one(posts, { fields: [slides.postId], references: [posts.id] }),
-  asset: one(assets, { fields: [slides.assetId], references: [assets.id] }),
+  asset: one(assets, { fields: [slides.assetId], references: [assets.id], relationName: "automaticPicture" }),
+  requiredImage: one(assets, { fields: [slides.requiredImageAssetId], references: [assets.id], relationName: "requiredPicture" }),
   generations: many(generations),
 }));

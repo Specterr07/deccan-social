@@ -28,6 +28,8 @@ export const LIMITS = {
   rationale: 200,
   photoTags: { min: 1, max: 6 },
   artworkPrompt: 280,
+  requiredImageDescription: 60,
+  libraryName: 60,
 } as const;
 
 export const DEFAULT_POST_TIME = "10:00"; // IST, unless the calendar says otherwise
