@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** **T-06b** (branch `t-06b-review-actions`, plan in TASKS Notes). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
-- **Last thing done:** T-06 core — the month page is now a review feed: drawn slides with a carousel, Instagram / LinkedIn captions, Approve / Undo, Edit text (limits enforced, only that post redrawn).
-- **Next action:** Run `/start`. **T-06b** (request changes → Claude rewrite, artwork swap / regenerate, approve all), then T-07 (email) → **milestone M2**, T-08, T-09. M1 confirmed by Vivek (October posts look good).
+- **Current task:** none (T-06b shipped; branch `main`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
+- **Last thing done:** T-06b — Ask for changes (light-model rewrite of one post), Try another picture / swap artwork (cost shown, budget-capped), Approve all ready.
+- **Next action:** Run `/start`. **T-07** (approval email) → **milestone M2** for Vivek (approve, edit, ask for changes, email), then T-08 (pack), T-09 (deploy + October).
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-06b session (Claude, Claude Code)
+- Request changes, artwork swap / regenerate, approve all; tested on a scratch month (deleted with its renders and test artwork). Self-check caught a festival-template overflow (fixed). About 3¢ Claude + ₹1 Higgsfield spent.
 
 ### 2026-10-03 · T-06 session (Claude, Claude Code)
 - Review feed + approve / undo / edit with the planning limits. Split T-06b. Tested on a scratch month (deleted).

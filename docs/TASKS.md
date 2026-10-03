@@ -301,14 +301,14 @@ Real test (scratch month, plan ≈ 4c incl. one fix call): approve refused 409 o
 Also: removed a stray `scripts/tmp-t05b.ts` committed by mistake in T-05b; `pnpm screenshot` now waits for dialogs to open.
 Not checked: Approve and Edit in a real browser by clicking (API paths tested via the same functions); the carousel slide buttons; the page when planning is running.
 
-### T-06b · Review actions: request changes, artwork, approve all — `doing` · 45m
+### T-06b · Review actions: request changes, artwork, approve all — `done` · 45m
 Split out of T-06.
 - Request changes with a note → `rewritePost()` (`callClaude`, purpose `rewrite_post`, model `CLAUDE_MODEL_LIGHT`, sends only that post's JSON + rules, never the PDF) → limit check → re-render that post. Budget-checked.
 - Swap artwork variant (variants of the same slide) and Regenerate artwork (budget-checked, shows its cost and the remaining budget; uses `generateArtwork`).
 - "Approve all" for the remaining posts that are ready (skips `needs_image`).
-- [ ] Request changes rewrites only that post and re-renders only it; the note is saved in `reviews`.
-- [ ] Regenerate shows cost + remaining budget and stops at the cap.
-- [ ] Approve all skips posts that need images.
+- [x] Request changes rewrites only that post and re-renders only it; the note is saved in `reviews`. (1 of 6 renders changed; note logged; a failed rewrite changes nothing.)
+- [x] Regenerate shows cost + remaining budget and stops at the cap. ("Costs about ₹0.5. AI spend this month: ₹X of ₹Y" on the button; budget forced to ₹1 → refused with a clear message, no API call.)
+- [x] Approve all skips posts that need images. (3 approved, 1 skipped.)
 **Notes:**
 2026-10-03 plan (branch `t-06b-review-actions`; Vivek confirmed M1: October posts look good).
 1. **Request changes:** `lib/ai/rewritePost.ts` (`callClaude`, purpose `rewrite_post`, `CLAUDE_MODEL_LIGHT`; sends the planning rules + this post's current words + the note, never the PDF or other posts; structured output) and `lib/posts/requestChanges.ts`: budget check → rewrite → same limit checks as planning (`checkPost`) with ONE fix retry → save words → re-render only that post → `reviews` row with the note. Facts, pictures and slide count are not changed. Dialog "Ask for changes" on each card.
@@ -316,6 +316,10 @@ Split out of T-06.
 3. **Approve all:** `POST /api/months/[id]/approve-all` approves every `rendered` post, skips `needs_image`; button shows how many are ready.
 4. Verify on a scratch month (≈ 4c plan, ≈ 1c per rewrite, 2 artwork images ≈ ₹1): rewrite changes only that post and logs the note; over-limit rewrite is retried once; regenerate adds a variant, shows cost, and stops at the cap (budget forced low); swap changes only that post's render; approve-all skips the `needs_image` post. Screenshots at 1440 and 390 px.
 Risks: Haiku 4.5 may follow the character limits less well (hence the one retry); a rewrite must keep exactly the same slides (count and kinds) or it is rejected.
+**Built 2026-10-03:** `lib/ai/rewritePost.ts`, `lib/posts/{requestChanges,approveAll,saveWords}.ts` (`editPost` now shares `saveWords`), `lib/artwork/slidePicture.ts` (swap, regenerate), API `POST /api/posts/[id]/changes`, `POST /api/slides/[id]/{picture,artwork}`, `POST /api/months/[id]/approve-all`, UI `RequestChangesDialog`, `ArtworkControls` (a "Pictures" section per card), `ApproveAllButton`. `generateArtwork` takes a first-variant number so "Try another picture" continues after earlier ones (earlier pictures stay selectable). `generationsRelations` added.
+Real test (scratch month): Haiku 4.5 (`CLAUDE_MODEL_LIGHT`) misses a character limit by 1-3 characters about half the time, so the rewrite gets **two correction rounds** (≈ 1¢ per rewrite at worst) and the prompt asks for ~10% under each limit; after that it fails loudly and changes nothing. Regenerate twice → variants v1, v2 (each $0.006), swap back to v1 worked, a foreign asset id is refused, rewrite and regenerate both stop at the budget cap.
+**Template fix found by the self-check:** a festival with a 2-line name plus a 3-line greeting ran out of the frame; the festival name is now kept on one line (font shrinks). Other templates unchanged.
+Not checked: clicking the dialogs in a real browser (API paths and screenshots only); the "Pictures" section for a carousel with several artwork slides; a swap when the picture came from the library (those slides show no variants until "Try another picture" is used).
 
 ### T-07 · Approval email — `todo` · 30m
 - `lib/email.ts`: Resend, subject "Your <Month> posts are ready (N posts)", thumbnails (R2 URLs) + button to review page. Sent when rendering completes. If any post is `needs_image`, say so at the top: "2 posts need images from you" with links (ADR-014).

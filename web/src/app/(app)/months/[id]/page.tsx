@@ -78,7 +78,7 @@ export default async function MonthPage({ params }: { params: Promise<{ id: stri
             <TabsTrigger value="posts">Posts</TabsTrigger>
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
           </TabsList>
-          <TabsContent value="posts"><PostFeed posts={month.posts} /></TabsContent>
+          <TabsContent value="posts"><PostFeed monthId={month.id} posts={month.posts} budget={{ costInr: env.HIGGSFIELD_COST_PER_IMAGE_USD * env.USD_INR_RATE, spentInr: spend?.totalInr ?? 0, capInr: spend?.capInr ?? env.MONTHLY_AI_BUDGET_INR }} /></TabsContent>
           <TabsContent value="calendar">{calendar}</TabsContent>
         </Tabs>
       )}

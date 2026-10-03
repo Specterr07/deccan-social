@@ -54,12 +54,13 @@ async function makeVariant(input: ArtworkInput, variant: number): Promise<string
 
 // Makes `variantCount` artwork pictures for one slide and saves them (R2 + assets + generations). Never throws:
 // a problem on one picture becomes a message, so the rest of the month carries on.
-export async function generateArtwork(input: ArtworkInput, variantCount = env.IMAGE_VARIANTS_PER_SLIDE): Promise<ArtworkOutcome> {
+// `firstVariant` is the number of the first new picture, so a later "try another" continues after the earlier ones.
+export async function generateArtwork(input: ArtworkInput, variantCount = env.IMAGE_VARIANTS_PER_SLIDE, firstVariant = 1): Promise<ArtworkOutcome> {
   try {
     if (!(await canSpend(variantCount * env.HIGGSFIELD_COST_PER_IMAGE_USD))) {
       return { assetIds: [], message: "The monthly AI budget is used up, so no artwork was made. Raise MONTHLY_AI_BUDGET_INR or wait for next month." };
     }
-    const settled = await Promise.allSettled(Array.from({ length: variantCount }, (_, index) => makeVariant(input, index + 1)));
+    const settled = await Promise.allSettled(Array.from({ length: variantCount }, (_, index) => makeVariant(input, index + firstVariant)));
     const assetIds = settled.flatMap((entry) => (entry.status === "fulfilled" && entry.value ? [entry.value] : []));
     const firstError = settled.find((entry) => entry.status === "rejected");
     if (firstError) console.error(`Artwork for slide ${input.slideId} had an error:`, (firstError as PromiseRejectedResult).reason);

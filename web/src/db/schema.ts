@@ -150,3 +150,7 @@ export const slidesRelations = relations(slides, ({ one, many }) => ({
   requiredImage: one(assets, { fields: [slides.requiredImageAssetId], references: [assets.id], relationName: "requiredPicture" }),
   generations: many(generations),
 }));
+export const generationsRelations = relations(generations, ({ one }) => ({
+  slide: one(slides, { fields: [generations.slideId], references: [slides.id] }),
+  asset: one(assets, { fields: [generations.assetId], references: [assets.id] }),
+}));

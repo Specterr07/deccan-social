@@ -4,6 +4,7 @@ import { Canvas, Layer, Photo } from "./Canvas";
 import { Footer } from "./Footer";
 
 // Festival greeting: turmeric double frame, arch photo, big festival name. Port of festival-post.html.
+// The name is kept on ONE line (the font shrinks): a two-line name plus a 3-line greeting ran out of the frame (seen in T-06b).
 export function FestivalPost({ input }: { input: RenderInput }) {
   const isSquare = input.aspect === "1:1";
   // Square posts are 270px shorter, so the photo shrinks and the text block moves up.
@@ -22,7 +23,7 @@ export function FestivalPost({ input }: { input: RenderInput }) {
       <Photo url={input.photoUrl} style={{ position: "absolute", objectFit: "cover", border: "8px solid var(--white)", ...photoBox }} />
       <Layer style={{ top: textTop, left: 110, right: 110, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: isSquare ? 18 : 22 }}>
         <div className="dp-eyebrow dp-center" style={{ color: "var(--pomegranate-700)" }}>{input.eyebrow}</div>
-        <h1 className="dp-festival" data-fit-lines="2" style={{ color: "var(--leaf-700)" }}>{input.hero}</h1>
+        <h1 className="dp-festival" data-fit-lines="1" style={{ color: "var(--leaf-700)" }}>{input.hero}</h1>
         <p className="dp-body" data-fit-lines="3" style={{ color: "var(--ink-900)", maxWidth: 760 }}>{input.body}</p>
       </Layer>
       <Footer />
