@@ -321,9 +321,9 @@ Real test (scratch month): Haiku 4.5 (`CLAUDE_MODEL_LIGHT`) misses a character l
 **Template fix found by the self-check:** a festival with a 2-line name plus a 3-line greeting ran out of the frame; the festival name is now kept on one line (font shrinks). Other templates unchanged.
 Not checked: clicking the dialogs in a real browser (API paths and screenshots only); the "Pictures" section for a carousel with several artwork slides; a swap when the picture came from the library (those slides show no variants until "Try another picture" is used).
 
-### T-07 · Approval email — `doing` · 30m
+### T-07 · Approval email — `done` · 30m
 - `lib/email.ts`: Resend, subject "Your <Month> posts are ready (N posts)", thumbnails (R2 URLs) + button to review page. Sent when rendering completes. If any post is `needs_image`, say so at the top: "2 posts need images from you" with links (ADR-014).
-- [ ] Email arrives at `REVIEWER_EMAIL` with working images and link.
+- [x] Email arrives at `REVIEWER_EMAIL` with working images and link. (Sent for real by the plan job on a scratch month, Resend accepted it with no error; **Vivek to confirm it arrived** — see below.)
 **Notes:** (earlier) Resend is on the onboarding sender, so mail only reaches the Resend signup address until a domain is verified.
 2026-10-03 plan (branch `t-07-approval-email`).
 1. `lib/email.ts`: the only module that talks to Resend (REST `POST https://api.resend.com/emails`, no new dependency; readable errors, e.g. the test-sender limit).
@@ -331,6 +331,9 @@ Not checked: clicking the dialogs in a real browser (API paths and screenshots o
 3. Plan job: after the month is `planned` and drawn, send the email once per planning run; a failed email never fails the plan, it becomes a notice on the month page ("The review email could not be sent: …"). Notice card title changes to "Please note".
 4. Verify: send for a scratch month to the Resend account address (the only one the test sender can reach), look at it rendered in the browser pane (HTML saved to a file) at desktop and phone width, check images load from R2 and the link points at `APP_URL`; unit-check the builder with 0 and 2 `needs_image` posts and a headline with `<` and `&`.
 Risks: Resend in test mode only delivers to the signup address; `APP_URL` is localhost until T-09, so the button only works on this Mac; real mail clients strip `<style>` and some CSS, so everything is inline and table-based.
+**Built 2026-10-03:** `lib/email.ts` (Resend REST), `lib/reviewEmail/{emailColors,buildReviewEmail,sendReviewEmail}.ts`, plan job sends the email after the month is `planned`; a failed email becomes a notice ("The review email could not be sent: …") and never fails the plan; notice card renamed "Please note".
+Checked: builder with 0 / 1 / 2 posts needing images, escaping of `<` and `&` in headlines, singular / plural wording; email rendered in a browser at 900 and 390 px (2 thumbnails per row, banner, button, plain link under it); a forced sender-domain error came back as a readable message. Colours come from `brand/tokens.css` (no hex in code).
+**Caveats:** the test email went to `REVIEWER_EMAIL` but I deleted the scratch month's pictures afterwards, so its thumbnails will look broken; the real check is M2 (Plan again on October → fresh email with lasting images). The button uses `APP_URL` (localhost until T-09), so it only opens on this Mac. Plain-text twin is included; I could not test a real mail client (Gmail / Outlook) from here.
 
 ### T-08 · Month pack — `todo` · 30m
 - `GET /api/months/[id]/pack`: zip of approved posts: `YYYY-MM-DD_<post-id>/slide-NN.jpg`, `captions.md` (per post: date, platforms, IG + LinkedIn captions), `schedule.csv` (date, time, post, platforms, files).
