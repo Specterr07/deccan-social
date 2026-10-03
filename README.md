@@ -1,7 +1,5 @@
 # deccan-social
 
-[![CI](https://github.com/Specterr07/deccan-social/actions/workflows/ci.yml/badge.svg)](https://github.com/Specterr07/deccan-social/actions/workflows/ci.yml)
-
 Turns Deccan Produce's monthly marketing calendar into ready-to-post, on-brand Instagram and LinkedIn posts with captions, sent to the social media person for approval.
 
 - Product and scope: [docs/PRD.md](docs/PRD.md)

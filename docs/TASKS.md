@@ -137,15 +137,15 @@ Read ADR-012 and ADR-013. Prices to verify at the start: https://platform.claude
 - Spend line shows month-to-date across all months (IST calendar month); today's test calls were ₹11.
 
 
-### T-03d · Slim CI for a solo developer — `todo` · 20m
+### T-03d · Slim CI for a solo developer — `done` · 20m
 Vivek's concerns (2026-10-03): (1) the Docker image job is slow; (2) CI runs too often — `pnpm check` locally, again on the PR, again on merge to `main` — for one developer.
 Proposed (discuss with Vivek before changing):
 - Run CI on pull requests only; drop the extra run on push to `main` (squash-merging a green, up-to-date PR adds nothing new). Re-add a `main` trigger only for the deploy job in T-09.
 - Already done in PR #4/#5: the Docker job is skipped on docs-only changes (`changes` job in ci.yml). Remaining: narrow it further so it runs only when `web/Dockerfile`, `web/package.json`, `web/pnpm-lock.yaml`, `web/pnpm-workspace.yaml` or `.dockerignore` change — not on every code change. The Playwright base image is large; when CD exists (T-09) Fly's build replaces this job.
 - Keep `pnpm check` locally as the main gate; CI is the safety net.
 - Update `docs/CICD.md`, branch protection notes and ADR-011 (supersede with a new ADR).
-- [ ] One CI run per task PR; Docker job skipped unless its files change.
-**Notes:**
+- [x] One CI run per task PR; Docker job skipped unless its files change.
+**Notes:** 2026-10-03 (branch `t-03d-slim-ci`, Vivek approved the proposal): `ci.yml` now triggers on `pull_request` only; `changes` job outputs `docker=true` only for the Docker input files (list in the workflow); ADR-016; `docs/CICD.md` updated; README badge removed (it tracks `main` runs). Required check names unchanged. This PR itself touches `ci.yml`, so its Docker job runs once as a check of the new filter.
 
 ### T-04 · Photo library + image slots — `done` · 60m
 Read ADR-014 first. In short: some posts need one exact image (event logo, our team photo). Claude marks those slots as required; the user uploads them on the post; the app never guesses or uses AI for them.

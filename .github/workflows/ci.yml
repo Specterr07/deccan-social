@@ -1,10 +1,9 @@
-# CI: every push to main and every pull request must typecheck, lint, build, and produce a Docker image.
-# CD (deploy to Fly.io) is added in T-09 — see docs/CICD.md.
+# CI: every pull request must typecheck, lint and build; the Docker image is built only when files that affect it change.
+# No run on push to main: a squash-merged, green PR adds nothing new (ADR-016). T-09 adds a main trigger for the deploy job only.
+# See docs/CICD.md.
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
 
 concurrency:
@@ -15,35 +14,35 @@ permissions:
   contents: read
 
 jobs:
-  # Decides whether the slow Docker job is needed. Docs-only changes (docs/** or any *.md) skip it.
+  # Decides whether the slow Docker job is needed: only when a file that goes into the image changes.
   # The job still exists and reports "skipped", which satisfies branch protection (unlike workflow-level paths-ignore,
   # which would leave the required checks missing and block the merge).
   changes:
     name: Detect changes
     runs-on: ubuntu-latest
     outputs:
-      code: ${{ steps.filter.outputs.code }}
+      docker: ${{ steps.filter.outputs.docker }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - id: filter
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          # No usable base (first push of a branch, or a force-push): assume code changed and run everything.
-          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
-            echo "code=true" >> "$GITHUB_OUTPUT"; exit 0
+          # No usable base commit: assume the image changed and build it.
+          if [ -z "$BASE_SHA" ] || ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            echo "docker=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
-          code=false
+          docker=false
           for file in $(git diff --name-only "$BASE_SHA" "$GITHUB_SHA"); do
             case "$file" in
-              docs/*|*.md) ;;        # documentation only
-              *) code=true ;;
+              # Keep this list in step with what web/Dockerfile copies in and installs.
+              web/Dockerfile|web/package.json|web/pnpm-lock.yaml|web/pnpm-workspace.yaml|.dockerignore|.github/workflows/ci.yml) docker=true ;;
             esac
           done
-          echo "code=$code" >> "$GITHUB_OUTPUT"
-          echo "Code changed: $code"
+          echo "docker=$docker" >> "$GITHUB_OUTPUT"
+          echo "Docker inputs changed: $docker"
 
   web:
     name: Typecheck, lint, build
@@ -69,7 +68,7 @@ jobs:
     name: Docker image builds
     runs-on: ubuntu-latest
     needs: [web, changes]
-    if: needs.changes.outputs.code == 'true'   # skipped (not failed) for docs-only changes
+    if: needs.changes.outputs.docker == 'true'   # skipped (not failed) when no Docker input changed
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
