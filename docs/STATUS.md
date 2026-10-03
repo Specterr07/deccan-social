@@ -5,7 +5,7 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-06b shipped; branch `main`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
+- **Current task:** **T-07** (branch `t-07-approval-email`, plan in TASKS Notes). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
 - **Last thing done:** T-06b — Ask for changes (light-model rewrite of one post), Try another picture / swap artwork (cost shown, budget-capped), Approve all ready.
 - **Next action:** Run `/start`. **T-07** (approval email) → **milestone M2** for Vivek (approve, edit, ask for changes, email), then T-08 (pack), T-09 (deploy + October).
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
