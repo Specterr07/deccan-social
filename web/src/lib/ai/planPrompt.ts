@@ -25,7 +25,7 @@ Instagram caption: warm, 2-4 short paragraphs, a few emoji, ${LIMITS.hashtagsIns
 LinkedIn caption: B2B tone about export quality, sourcing and supply, ${LIMITS.hashtagsLinkedin.min}-${LIMITS.hashtagsLinkedin.max} hashtags.
 
 PICTURES
-photo_tags: ${LIMITS.photoTags.min}-${LIMITS.photoTags.max} lower-case words to find a library photo (fruit, setting). artwork_prompt: only if a stock photo is unlikely to exist, one scene description of at most ${LIMITS.artworkPrompt} characters; never ask for text, letters, logos, people's faces, deities or festival figures (the app adds the house style). Use fruit "none" when no single fruit leads.
+photo_tags: ${LIMITS.photoTags.min}-${LIMITS.photoTags.max} lower-case words to find a library photo (fruit, setting). artwork_prompt: only if a stock photo is unlikely to exist, one scene description of at most ${LIMITS.artworkPrompt} characters; never mention boxes, crates, cartons, bags, signs, labels, boards, banners, stalls or markets (the image model draws fake lettering on them: describe only fruit, leaves, trees, trays or baskets), and never ask for text, letters, logos, people's faces, deities or festival figures (the app adds the house style). Use fruit "none" when no single fruit leads.
 
 HARD LIMITS (characters including spaces; the posts are fixed-size images, so these are strict)
 - eyebrow ≤ ${LIMITS.eyebrow}; sub ≤ ${LIMITS.sub}

@@ -51,6 +51,15 @@ export default async function MonthPage({ params }: { params: Promise<{ id: stri
           </CardHeader>
         </Card>
       )}
+      {month.status === "planned" && month.statusMessage && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Some pictures are missing</CardTitle>
+            <CardDescription>The posts were planned, but:</CardDescription>
+          </CardHeader>
+          <CardContent><pre role="status" className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm">{month.statusMessage}</pre></CardContent>
+        </Card>
+      )}
       {month.status === "failed" && (
         <Card>
           <CardHeader>

@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-04c shipped; branch `main`).
-- **Last thing done:** T-04c — suggested days (official DoP&T + UN lists, Oct 2026 – Dec 2027) and Import from PDF (entries only, plans nothing); `pnpm screenshot` added. Migration 0004 applied to Neon.
-- **Next action:** Run `/start`. Order: **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), **T-05b** (render job; then milestone **M1** for Vivek), T-06 / T-07 / T-08 / T-09.
+- **Current task:** none (T-05 shipped; branch `main`). Dev settings in `.env.local` until the final October run: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → set back to 3 and 1500 (T-09).
+- **Last thing done:** T-05 — Higgsfield client, artwork generation (budget-checked, logged, copied to R2), picture step in the plan job. Fake-text problem solved by prompt wording; about $0.08 of the $5 spent.
+- **Next action:** Run `/start`. **T-05b** (render job + DB→renderer mapping) then **milestone M1** for Vivek (a planned month shows real post images); then T-06 / T-07 / T-08 / T-09.
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-05 session (Claude, Claude Code)
+- Checked the price (account estimate: $0.006 per 1080p image), built the Higgsfield client and artwork step. First real image had garbled fake text; fixed by rewording the house style and banning text-prone scene words (13 images, ≈ $0.08, under Vivek's $2 allowance). Scratch rows deleted; test pictures are in the library (kind `ai`).
 
 ### 2026-10-03 · T-04c session (Claude, Claude Code)
 - Researched holiday dates from the official DoP&T lists and UN observances; built suggestions + PDF import (~1c per import). Added `pnpm screenshot`; its first run caught a phone-width overflow bug from T-04b (fixed). Vivek's October month was left untouched; tests used scratch months that were deleted.

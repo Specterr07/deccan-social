@@ -55,8 +55,10 @@ Fraunces (display serif): `hero` 96, `hero-italic` 72, `title` 64. League Sparta
 
 ## Imagery and AI artwork
 
-Library photos first. AI artwork (Higgsfield) only when the library has nothing, and every prompt ends with the house style:
+Library photos first. AI artwork (Higgsfield Soul v2) only when the library has nothing, and every prompt ends with the house style (`web/src/lib/artwork/houseStyle.ts`):
 
-> editorial food photography, natural daylight, true-to-life colour, fresh Indian produce, dewy and vibrant, warm earthy surroundings, shallow depth of field, calm empty space for a headline, no text, no letters, no logos, no watermarks, no human faces
+> documentary food photography, natural daylight, true-to-life colour, fresh Indian produce, dewy and vibrant, warm earthy surroundings, shallow depth of field, plenty of empty space at the top of the frame. A clean unedited camera photo: the image contains no words, no letters, no numbers, no captions, no logos and no graphic design at all, and no human faces
+
+Why this wording (T-05 tests): the first version said "editorial food photography … space for a headline … no text, no letters" and the model painted fake magazine headlines on the picture. Words like *editorial*, *headline* and even *no text* seem to prime typography. Scenes with boxes, crates, signs, labels, packaging or market stalls get invented lettering too, so artwork scenes may only describe fruit, leaves, trees, trays or baskets (checked in the plan rules and again before sending).
 
 Never generate deities or festival figures (use the curated illustration library, always reviewed). Photos with people need the "people OK to post" flag.
