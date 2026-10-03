@@ -5,7 +5,7 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-04c shipped; branch `main`).
+- **Current task:** **T-05** (branch `t-05-higgsfield`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` — set back to 3 and 1500 for the final October run (T-09).
 - **Last thing done:** T-04c — suggested days (official DoP&T + UN lists, Oct 2026 – Dec 2027) and Import from PDF (entries only, plans nothing); `pnpm screenshot` added. Migration 0004 applied to Neon.
 - **Next action:** Run `/start`. Order: **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), **T-05b** (render job; then milestone **M1** for Vivek), T-06 / T-07 / T-08 / T-09.
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.

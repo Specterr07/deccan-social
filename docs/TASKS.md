@@ -240,7 +240,7 @@ Self-check: screenshots of the Calendar tab at 1440 and 390 px. Found and fixed 
 Notes: Id-ul-Fitr / Id-ul-Zuha (2027) carry a "moon sighting" note; Milad-un-Nabi, Muharram and other days with no greeting were left out. The sample PDF's image names did not match any library image, so no logo was linked (as designed). Importing twice adds the posts twice (dialog warns). UN days repeat every year but the list covers only 2026–2027.
 
 
-### T-05 · Higgsfield artwork — `todo` · 60m
+### T-05 · Higgsfield artwork — `doing` · 60m
 Read `docs/integrations/higgsfield.md` first.
 - `lib/higgsfield.ts generateArtwork(slide, n)`: prompt = slide.artwork_prompt + BRAND house style; n parallel `subscribe` calls, idempotency `slideId:variant`; copy each result URL to R2 immediately; save `assets` (source `higgsfield`) + `generations` (cost).
 - Use `lib/budget.ts` from T-03c: `canSpend()` before every generation, so Claude + artwork together stay under `MONTHLY_AI_BUDGET_INR`; record each image in `generations` with its cost.
@@ -249,7 +249,14 @@ Read `docs/integrations/higgsfield.md` first.
 - [ ] A slide with no library match gets n artwork variants saved in R2 and logged with cost.
 - [ ] Budget cap stops generation and shows a clear message.
 - [ ] Never sends faces/deities/text in prompts (house style appended every time).
-**Notes:**
+**Notes:** 2026-10-03 plan (branch `t-05-higgsfield`; Vivek's money rules: protect the $5 balance, `IMAGE_VARIANTS_PER_SLIDE=1` and `MONTHLY_AI_BUDGET_INR=300` while developing, first real call = exactly 1 image).
+**Price (checked 2026-10-03):** Soul v2 standard is $0.0032 (720p) / $0.0057 (1080p) per image on the model page; the account's own estimate endpoint (`POST api.higgsfield.ai/estimate/<model>`, free, nothing generated) returned $0.004 for 720p and **$0.006 for 1080p 3:4** (0.09 credits). The docs' "$0.094" is only a format example. The old 0.04 figure was ~7× too high → `HIGGSFIELD_COST_PER_IMAGE_USD=0.006` (and `.env.example`). $5 ≈ 800 images. Parameters: `resolution` 720p/1080p, `aspect_ratio` incl. 3:4, `batch_size` 1 or 4, `enhance_prompt` (we send false so our house style is not rewritten). The completed response has no cost field, so cost = the configured price (failed/nsfw = 0).
+1. `lib/higgsfield.ts`: REST (no new dependency): submit with an `Idempotency-Key` (a UUID derived from `slideId:variant:attempt`), poll `status_url` until completed / failed / nsfw / canceled (2 min timeout), return the image URL.
+2. `lib/artwork/houseStyle.ts`: house style from `docs/BRAND.md` appended to every prompt; refuses prompts with deity words; softened retry prompt.
+3. `lib/artwork/generateArtwork.ts`: `canSpend` first (clear message if over the cap), N variants in parallel, copy each image to R2 at once, save `assets` (source `higgsfield`, kind `ai`) + `generations` (cost); failed/nsfw → one retry with the softened prompt, else nothing saved.
+4. `lib/artwork/fillPictures.ts` (the picture step, ADR-014): for each slide without a required `specific` photo: library match by tags (`pickAsset`) → link; no match and an `artwork_prompt` → generate, link variant 1 to `slides.asset_id`; neither → stays empty (tint fallback). Never touches required slots. Runs after `savePlan` in the plan job; one slide failing never fails the month; a budget stop is shown as a notice on the month page.
+5. Test with real calls: estimate first (done), then exactly 1 image for 1 slide, confirm cost with Vivek against the console balance; cap test with the budget forced to ₹1 (no API call). Final October run: set `IMAGE_VARIANTS_PER_SLIDE=3` and `MONTHLY_AI_BUDGET_INR=1500` back (also noted in T-09).
+Risks: a timed-out request may still be charged (recorded at the configured price to stay safe); the SDK is not used, so REST shapes must match the docs (verified by the first real call).
 
 ### T-05b · Render job and DB → renderer mapping — `todo` · 45m
 Found during T-04: nothing yet turns saved posts/slides into rendered JPEGs (ARCHITECTURE step 4); T-02 only has `renderSlide()` and the dev gallery.
