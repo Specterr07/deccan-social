@@ -5,20 +5,20 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none — T-03d (slim CI, discuss first) or T-05 (Higgsfield artwork) next; T-04 PR open with auto-merge
-- **Last thing done:** T-04 built — photo library (`/library`, seed, `pickAsset`) and required image slots (event logo / specific photo) with `needs_image` posts; PR opened with auto-merge.
-- **Next action:** Vivek: after the PR merges, log in and check `/library` and a month page's Images column (upload a logo, pick from library). Then `/start` → T-03d (needs a short chat) or T-05.
-- **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
+- **Current task:** none (branch `main`, clean). T-04 is done and merged (PR #7, CI green).
+- **Last thing done:** T-04 — photo library (`/library`, `pnpm seed:library`, `pickAsset`) and required image slots (event logo / specific photo) with `needs_image` posts; 5 sample photos are in R2/Neon.
+- **Next action:** Run `/start`. Recommended order: **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), then **T-05b** (render job + DB→renderer mapping, new), then T-06 / T-07 / T-08 / T-09. **T-03d** (slim CI) needs a short chat with Vivek first; do it whenever convenient, it is independent.
+- **Blockers:** None for building. Vivek still to eyeball in the browser: `/library` and a month page's Images column (upload a logo, pick from library). Brand kit fonts/colours still to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
 ## Next session — Vivek wants to discuss first
-- T-03d: Docker CI job too slow; too many CI runs for a solo developer (see TASKS).
-- Then T-04 (photo library + image slots, ADR-014).
+- T-03d: Docker CI job too slow; too many CI runs for a solo developer (see TASKS). Branch protection currently requires `Typecheck, lint, build` and `Docker image builds`; changing the workflow's job names or skipping rules must keep both reporting.
 
 ## Session log
 
 ### 2026-10-03 · T-04 session (Claude, Claude Code)
-- Deleted five stale remote branches (contents were already on main). Built migration 0002, plan-schema image slots + docs/template (Image column), library backend + seed, `/library`, month-page slots. Real test with R2/Neon/Claude (~$0.07). Required images are never auto-filled; PR #T-04 with auto-merge, CI not watched (new workflow).
+- Deleted five stale remote branches (contents were already on main). Built migration 0002, plan-schema image slots + docs/template (Image column), library backend + seed, `/library`, month-page slots. Real test with R2/Neon/Claude (~$0.07). Required images are never auto-filled. PR #7 auto-merged with CI green (Docker job ran because code changed). Handoff shipped as its own docs-only PR (Docker job skipped).
+- Gap found: nothing renders saved posts yet (ARCHITECTURE step 4) → new task T-05b. Added backlog L-01 (library polish).
 
 ### 2026-10-03 · Shipping workflow (Claude, Claude Code)
 - New rule: one PR per task incl. the handoff commit; `cd web && pnpm check` before every push; `gh pr create --fill` + `gh pr merge --auto --squash --delete-branch`; do not watch CI. CI now has a `changes` job and skips the Docker job for docs-only changes (skipped jobs satisfy branch protection). Docs: `docs/SDLC.md` step 5, `docs/CICD.md`, `CLAUDE.md`.

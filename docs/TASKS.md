@@ -147,7 +147,7 @@ Proposed (discuss with Vivek before changing):
 - [ ] One CI run per task PR; Docker job skipped unless its files change.
 **Notes:**
 
-### T-04 · Photo library + image slots — `doing` · 60m
+### T-04 · Photo library + image slots — `done` · 60m
 Read ADR-014 first. In short: some posts need one exact image (event logo, our team photo). Claude marks those slots as required; the user uploads them on the post; the app never guesses or uses AI for them.
 - Plan schema: each slide gets `image { kind: photo | event_logo | specific | artwork, description, required, tags, library_name? }`; update the planner prompt (exhibitions always need `event_logo`; behind-the-scenes always need a real `specific` photo) and the limits checks. Migration for the new columns.
 - Assets get a unique, human `name` (e.g. `nashik-packhouse-team`) so the calendar can point at one exact image.
@@ -189,18 +189,28 @@ Read `docs/integrations/higgsfield.md` first.
 - [ ] Never sends faces/deities/text in prompts (house style appended every time).
 **Notes:**
 
+### T-05b · Render job and DB → renderer mapping — `todo` · 45m
+Found during T-04: nothing yet turns saved posts/slides into rendered JPEGs (ARCHITECTURE step 4); T-02 only has `renderSlide()` and the dev gallery.
+- `lib/render/fromDb.ts`: map a post + slide (+ linked assets) to `RenderInput` — automatic picture `slides.asset_id` → `photoUrl`; required `event_logo` → `eventLogoUrl`; required `specific` → `photoUrl` (replaces the automatic one); `details` → dates/venue/stand; `progress` for carousels; aspect from the post.
+- Render job: for each slide with all inputs ready, render → upload JPEG to R2 → `slides.render_url`; post `rendered`. A post with an empty required slot stays `needs_image` and renders with the placeholder (empty logo box omitted, tint block for the photo) so the reviewer still sees it; re-render only that post after an image is added.
+- Run it after planning (+ pictures from T-05); status/progress on the month page; log errors per post, never fail the whole month for one bad slide.
+- [ ] A planned month renders every slide to R2; `render_url` set; one broken slide does not stop the others.
+- [ ] Filling a required image re-renders only that post.
+**Notes:**
+
 ### T-06 · Review page — `todo` · 60m
 - `/months/[id]`: feed grid by date; per post: slides carousel, captions (IG/LinkedIn tabs), status chip, rationale.
 - Actions: Approve · Edit text (eyebrow/hero/sub/info/body, captions) → re-render · Swap artwork variant · Regenerate artwork (budget-checked) · Request changes with note → `rewritePost()` → re-render. "Approve all" for remaining.
 - Progress banner while planning/generating/rendering (poll every 3s).
 - [ ] Every action persists and re-renders only the affected post.
 - [ ] Spend shown on the page.
-**Notes:**
+- [ ] Approve is refused (button disabled and API 409) while a post is `needs_image`.
+**Notes:** Carry-over from T-04: the month page already lists required image slots (`components/months/RequiredImageSlot.tsx`) — reuse it inside the review cards; `rewrite_post` calls must go through `callClaude()` with `CLAUDE_MODEL_LIGHT`. T-06 may exceed 60 minutes once the render job lives in T-05b; split off "Approve all" if needed.
 
 ### T-07 · Approval email — `todo` · 30m
 - `lib/email.ts`: Resend, subject "Your <Month> posts are ready (N posts)", thumbnails (R2 URLs) + button to review page. Sent when rendering completes. If any post is `needs_image`, say so at the top: "2 posts need images from you" with links (ADR-014).
 - [ ] Email arrives at `REVIEWER_EMAIL` with working images and link.
-**Notes:**
+**Notes:** Resend is on the onboarding sender, so mail only reaches the Resend signup address until a domain is verified.
 
 ### T-08 · Month pack — `todo` · 30m
 - `GET /api/months/[id]/pack`: zip of approved posts: `YYYY-MM-DD_<post-id>/slide-NN.jpg`, `captions.md` (per post: date, platforms, IG + LinkedIn captions), `schedule.csv` (date, time, post, platforms, files).
@@ -215,6 +225,7 @@ Includes CI/CD stages 2–3 from `docs/CICD.md`: generated Drizzle migrations + 
 
 ## Backlog (after SLC — see roadmap)
 
+- L-01 Library polish: rename an image, edit tags, SVG logos, a real `has_people` flag instead of people-style tags, per-file names in multi-upload, drag-and-drop
 - P2-01 BullMQ worker process + Redis; move background jobs into it
 - P2-02 Instagram Graph API publishing (single + carousel), delayed jobs at post time
 - P2-03 T-2 reminder emails for unapproved posts; failure alerts
