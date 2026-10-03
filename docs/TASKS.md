@@ -220,13 +220,21 @@ Read ADR-015 and look at the mockup first: https://claude.ai/artifact/1uGkPpWimD
 **Built 2026-10-03:** migration 0003; `schemas/entries.ts`; `lib/entries/*` (queries, saveEntry, entryFacts, entryView); `lib/ai/resolvePlan.ts` (Claude's answer = words only, `planAnswerShape`; code adds facts); `planMonth(entries)` with post-only fix by `entry_id`; `savePlan` copies the entry's image into the slot; UI in `components/calendar/*`, `NewMonthDialog`, month page with Posts/Calendar tabs; `LibraryPickerDialog` now takes `onSelect`. Real run: 4 posts $0.03, fix call read 2,301 cached tokens. Carousel topic = entry title (no separate field). A new plan replaces all posts (and any images filled on posts, not entries). Not done: nothing re-renders (T-05b); `requiredImageLibraryName` / `findAssetByName` are unused until T-04c import.
 Risks (planned): structured-output schema change means prompt + planRules + savePlan change together; `required_image_asset_id` on entries pointing at assets needs set-null on delete; the old `months.calendar_url` stays (unused until T-04c).
 
-### T-04c · Import from PDF and suggested days — `todo` · 60m
+### T-04c · Import from PDF and suggested days — `doing` · 60m
 Split out of T-04b. Read ADR-015 and the T-04b notes.
 - "Import from PDF": upload → Claude (`callClaude`, purpose `import_pdf`) turns the PDF into entries (source `pdf_import`, `library_name` → exact asset link) shown in the grid for review; nothing is planned until Plan is pressed. Uses `samples/calendar-template.md`. `months.calendar_url` and `calendarKeyFor` already exist.
 - `web/src/data/suggestedDays.ts`: per year `{ date, title, kind: "festival" | "day_of", note? }`, Oct 2026 – Dec 2027, from an official source (source URL beside each year). Never ask Claude for festival dates. Dashed "suggested" chips in the grid + "Suggested days" card: **Add** creates an entry (source `suggested`), **dismiss** stores the title in `months.dismissed_suggestions text[]` (new column, migration).
 - [ ] Suggested days come only from `suggestedDays.ts` and can be added or dismissed.
 - [ ] Import fills the grid for review and plans nothing by itself.
-**Notes:**
+**Notes:** 2026-10-03 plan (branch `t-04c-import-suggested`).
+Dates researched 2026-10-03 from the official DoP&T holiday lists (O.M. No. 12/2/2023-JCA dated 03.07.2025 for 2026 and 16.07.2026 for 2027, gazetted + restricted; read via staffnews.in's copies, Delhi/New Delhi offices) and the UN observances list (https://www.un.org/en/observances/list-days-weeks, fixed yearly dates). Id-ul-Fitr, Id-ul-Zuha, Milad-un-Nabi follow moon sighting and may move by a day; left out of 2026 (not in Oct–Dec), included for 2027 with a note.
+1. Migration `0004`: `months.dismissed_suggestions text[]`.
+2. `data/suggestedDays.ts` (dates + source URLs; festivals per year, UN days fixed yearly) and `lib/months/suggestions.ts` (a month's suggestions minus dismissed and already added).
+3. `POST /api/months/[id]/suggestions` `{ action: add | dismiss, date, title }`: the server looks the suggestion up in the data file (never trusts the browser's kind/date), then creates an entry (`source: suggested`) or stores the title in `dismissed_suggestions`. `saveEntry` gets an optional `source`.
+4. Import: `lib/ai/importCalendar.ts` + `importPrompt.ts` (Claude reads the PDF, returns flat rows via structured output, purpose `import_pdf`, `canSpend` first), rows converted to entries by code (checked with `entryInputSchema`, dates must be in the month, `library_name` → exact asset link for exhibition / behind-the-scenes only), bad rows skipped and reported. `POST /api/months/[id]/import` (PDF upload, appends entries, plans nothing).
+5. UI: dashed suggestion chips in the grid (click = add, × = dismiss), "Suggested days" card, "Import from PDF" dialog.
+6. Test: import `samples/october-2026-calendar.pdf` into a scratch month (~5c); check entries and that nothing was planned; add/dismiss suggestions; delete the scratch month.
+Risks: moon-sighting dates; PDF rows Claude cannot map (reported, not guessed); duplicate entries if imported twice (the person deletes; dialog warns).
 
 ### T-05 · Higgsfield artwork — `todo` · 60m
 Read `docs/integrations/higgsfield.md` first.
