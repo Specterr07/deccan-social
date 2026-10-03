@@ -13,6 +13,7 @@ export const months = pgTable("months", {
   status: text("status").notNull().default("draft"), // draft (building the calendar) | planning | planned | failed
   statusMessage: text("status_message"), // readable error or progress note shown on the month page
   statusUpdatedAt: timestamp("status_updated_at").notNull().defaultNow(), // lets us spot a plan job that died mid-way
+  dismissedSuggestions: text("dismissed_suggestions").array().notNull().default([]), // titles of suggested days the person said no to
   reviewerEmail: text("reviewer_email"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

@@ -220,12 +220,12 @@ Read ADR-015 and look at the mockup first: https://claude.ai/artifact/1uGkPpWimD
 **Built 2026-10-03:** migration 0003; `schemas/entries.ts`; `lib/entries/*` (queries, saveEntry, entryFacts, entryView); `lib/ai/resolvePlan.ts` (Claude's answer = words only, `planAnswerShape`; code adds facts); `planMonth(entries)` with post-only fix by `entry_id`; `savePlan` copies the entry's image into the slot; UI in `components/calendar/*`, `NewMonthDialog`, month page with Posts/Calendar tabs; `LibraryPickerDialog` now takes `onSelect`. Real run: 4 posts $0.03, fix call read 2,301 cached tokens. Carousel topic = entry title (no separate field). A new plan replaces all posts (and any images filled on posts, not entries). Not done: nothing re-renders (T-05b); `requiredImageLibraryName` / `findAssetByName` are unused until T-04c import.
 Risks (planned): structured-output schema change means prompt + planRules + savePlan change together; `required_image_asset_id` on entries pointing at assets needs set-null on delete; the old `months.calendar_url` stays (unused until T-04c).
 
-### T-04c · Import from PDF and suggested days — `doing` · 60m
+### T-04c · Import from PDF and suggested days — `done` · 60m
 Split out of T-04b. Read ADR-015 and the T-04b notes.
 - "Import from PDF": upload → Claude (`callClaude`, purpose `import_pdf`) turns the PDF into entries (source `pdf_import`, `library_name` → exact asset link) shown in the grid for review; nothing is planned until Plan is pressed. Uses `samples/calendar-template.md`. `months.calendar_url` and `calendarKeyFor` already exist.
 - `web/src/data/suggestedDays.ts`: per year `{ date, title, kind: "festival" | "day_of", note? }`, Oct 2026 – Dec 2027, from an official source (source URL beside each year). Never ask Claude for festival dates. Dashed "suggested" chips in the grid + "Suggested days" card: **Add** creates an entry (source `suggested`), **dismiss** stores the title in `months.dismissed_suggestions text[]` (new column, migration).
-- [ ] Suggested days come only from `suggestedDays.ts` and can be added or dismissed.
-- [ ] Import fills the grid for review and plans nothing by itself.
+- [x] Suggested days come only from `suggestedDays.ts` and can be added or dismissed. (Add/dismiss verified on a scratch month; a made-up suggestion is refused 404.)
+- [x] Import fills the grid for review and plans nothing by itself. (Sample October PDF → 6 entries, 0 posts, status stays `draft`; $0.011.)
 **Notes:** 2026-10-03 plan (branch `t-04c-import-suggested`).
 Dates researched 2026-10-03 from the official DoP&T holiday lists (O.M. No. 12/2/2023-JCA dated 03.07.2025 for 2026 and 16.07.2026 for 2027, gazetted + restricted; read via staffnews.in's copies, Delhi/New Delhi offices) and the UN observances list (https://www.un.org/en/observances/list-days-weeks, fixed yearly dates). Id-ul-Fitr, Id-ul-Zuha, Milad-un-Nabi follow moon sighting and may move by a day; left out of 2026 (not in Oct–Dec), included for 2027 with a note.
 1. Migration `0004`: `months.dismissed_suggestions text[]`.
@@ -235,6 +235,10 @@ Dates researched 2026-10-03 from the official DoP&T holiday lists (O.M. No. 12/2
 5. UI: dashed suggestion chips in the grid (click = add, × = dismiss), "Suggested days" card, "Import from PDF" dialog.
 6. Test: import `samples/october-2026-calendar.pdf` into a scratch month (~5c); check entries and that nothing was planned; add/dismiss suggestions; delete the scratch month.
 Risks: moon-sighting dates; PDF rows Claude cannot map (reported, not guessed); duplicate entries if imported twice (the person deletes; dialog warns).
+**Built 2026-10-03:** migration 0004; `data/suggestedDays.ts` (Oct 2026 – Dec 2027), `lib/months/{suggestions,handleSuggestion,importFromPdf}.ts`, `lib/ai/{importCalendar,importPrompt}.ts`, `schemas/importRows.ts`, API `/api/months/[id]/{suggestions,import}`, UI `SuggestedDaysCard`, `ImportPdfDialog`, dashed chips in `MonthGrid`. `saveEntry` takes a `source`. Added `pnpm screenshot` (`web/scripts/screenshot.ts`, desktop 1440 + phone 390 into `web/.renders/`).
+Self-check: screenshots of the Calendar tab at 1440 and 390 px. Found and fixed a T-04b bug: on a phone the month grid widened the whole page (missing `min-w-0`); it now scrolls sideways inside its card. Not checked: the Add post sheet and dialogs at phone width (they are shadcn defaults); the import dialog was not clicked in a browser (the import itself was tested through the real code path).
+Notes: Id-ul-Fitr / Id-ul-Zuha (2027) carry a "moon sighting" note; Milad-un-Nabi, Muharram and other days with no greeting were left out. The sample PDF's image names did not match any library image, so no logo was linked (as designed). Importing twice adds the posts twice (dialog warns). UN days repeat every year but the list covers only 2026–2027.
+
 
 ### T-05 · Higgsfield artwork — `todo` · 60m
 Read `docs/integrations/higgsfield.md` first.

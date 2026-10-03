@@ -1,0 +1,1 @@
+ALTER TABLE "months" ADD COLUMN "dismissed_suggestions" text[] DEFAULT '{}' NOT NULL;
