@@ -41,6 +41,7 @@ Slash commands: `/start` (orient + pick the next task), `/handoff` (write status
 - **Spend is capped.** Every paid AI call (Claude via `callClaude()`, Higgsfield) is logged with its cost and checked against one monthly budget. No LangChain/LangSmith (ADR-012).
 - **Copy facts from the calendar.** Dates, venues, stall numbers are never invented; leave them out if missing.
 - **Secrets only in `.env.local`** (never committed). Keep `.env.example` in sync when adding a variable.
+- **Scope is frozen until October is posted (T-09).** Build only tasks already in `docs/TASKS.md`. A new idea, however good, becomes one line in the Backlog section — never a new SLC task or extra work inside the current one — unless Vivek says otherwise.
 - **Small, verified steps.** `pnpm check` must pass before every push; nothing reaches `main` except through a PR with green checks.
 
 ## Stack (SLC)
@@ -61,3 +62,5 @@ Next.js (App Router, TypeScript) in `web/` · shadcn/ui + Tailwind v4 for app sc
 - Branch per task: `t-05-higgsfield`. Conventional commits: `feat(t-05): …`, `fix:`, `docs:`, `chore:`.
 - Keep functions small; one module per external service in `web/src/lib/<service>.ts`.
 - Plain, specific English in UI copy; the reviewer may not be technical.
+- **Model:** Sonnet for building tasks. Suggest switching to Opus (`/model`) only for architecture decisions, tricky debugging, or after two failed attempts at the same problem.
+- **Permissions:** `.claude/settings.json` pre-approves routine commands (pnpm, git on branches, gh pr, doc sites) and blocks secrets reading, pushing to `main`, force-push and `drizzle-kit push`. Migrations, new dependencies and CI/config edits still ask. Personal overrides go in `.claude/settings.local.json`.
