@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-05b shipped; branch `main`). Dev settings in `.env.local` until the final October run: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → set back to 3 and 1500 (T-09).
-- **Last thing done:** T-05b — a planned month now draws every slide to R2 (plan → pictures → render), thumbnails on the month page, image fill/clear re-renders just that post. **Milestone M1 is ready for Vivek.**
-- **Next action:** **M1 review by Vivek** (open October 2026 → press Plan again → look at the post thumbnails; ≈ ₹3). Then run `/start` for **T-06** (review page), T-07, T-08, T-09.
+- **Current task:** none (T-06 core shipped; branch `main`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
+- **Last thing done:** T-06 core — the month page is now a review feed: drawn slides with a carousel, Instagram / LinkedIn captions, Approve / Undo, Edit text (limits enforced, only that post redrawn).
+- **Next action:** Run `/start`. **T-06b** (request changes → Claude rewrite, artwork swap / regenerate, approve all), then T-07 (email) → **milestone M2**, T-08, T-09. M1 verdict from Vivek still open (October → Plan again).
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-06 session (Claude, Claude Code)
+- Review feed + approve / undo / edit with the planning limits. Split T-06b. Tested on a scratch month (deleted).
 
 ### 2026-10-03 · T-05b session (Claude, Claude Code)
 - Render job + DB→renderer mapping; tested on a scratch month (5 posts, all templates), then deleted it with its R2 renders. Found a second phone-width overflow (hidden file inputs). M1 is ready: Vivek presses Plan again on October.

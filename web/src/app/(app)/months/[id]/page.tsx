@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
+import { PostFeed } from "@/components/review/PostFeed";
 import { CalendarBuilder } from "@/components/calendar/CalendarBuilder";
 import { AiSpendLine } from "@/components/months/AiSpendLine";
 import { AutoRefresh } from "@/components/months/AutoRefresh";
 import { MonthStatusBadge } from "@/components/months/MonthStatusBadge";
 import { PlanAgainButton } from "@/components/months/PlanAgainButton";
-import { PlannedPostsTable } from "@/components/months/PlannedPostsTable";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { env } from "@/env";
@@ -78,7 +78,7 @@ export default async function MonthPage({ params }: { params: Promise<{ id: stri
             <TabsTrigger value="posts">Posts</TabsTrigger>
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
           </TabsList>
-          <TabsContent value="posts"><PlannedPostsTable posts={month.posts} /></TabsContent>
+          <TabsContent value="posts"><PostFeed posts={month.posts} /></TabsContent>
           <TabsContent value="calendar">{calendar}</TabsContent>
         </Tabs>
       )}

@@ -109,7 +109,7 @@ function checkSlideShape(post: PlanPost, postIndex: number): PlanProblem[] {
   return ok ? [] : [{ path, message: `a carousel needs ${min}-${max} slides: one "cover", then "inner" slides, then one "cta" (got ${variants.join(", ") || "none"})` }];
 }
 
-function checkPost(post: PlanPost, postIndex: number, month: string): PlanProblem[] {
+export function checkPost(post: PlanPost, postIndex: number, month: string): PlanProblem[] {
   const path = ["posts", postIndex];
   const problems: PlanProblem[] = [];
   const add = (field: string, message: string | null) => {
