@@ -8,7 +8,7 @@ import type { PostKind } from "./limits";
 export type PlanProblem = { path: (string | number)[]; message: string };
 
 const SINGLE_IMAGE_KINDS: PostKind[] = ["festival", "day_of", "exhibition", "bts"];
-const DEITY_WORDS = /\b(ganesh|ganesha|durga|rama|lakshmi|krishna|shiva|hanuman|deity|goddess)\b/i;
+export const DEITY_WORDS = /\b(ganesh|ganesha|durga|rama|lakshmi|krishna|shiva|hanuman|deity|goddess)\b/i;
 
 function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;

@@ -7,7 +7,7 @@
 - **Phase:** SLC
 - **Current task:** **T-05** (branch `t-05-higgsfield`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` — set back to 3 and 1500 for the final October run (T-09).
 - **Last thing done:** T-04c — suggested days (official DoP&T + UN lists, Oct 2026 – Dec 2027) and Import from PDF (entries only, plans nothing); `pnpm screenshot` added. Migration 0004 applied to Neon.
-- **Next action:** Run `/start`. Order: **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), **T-05b** (render job; then milestone **M1** for Vivek), T-06 / T-07 / T-08 / T-09.
+- **Next action:** Finish T-05 on branch `t-05-higgsfield` (code built, committed as WIP). Open problem: Soul v2 paints garbled text onto images. Decide with Vivek: (a) 2-3 more test images with stronger no-typography wording (~$0.006 each), (b) try another Higgsfield model from the console catalogue, (c) crop/blur is not reliable. Only 1 image generated so far ($0.006).
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
