@@ -5,7 +5,7 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-03d done on branch `t-03d-slim-ci`, shipped via PR). T-04 is done and merged (PR #7, CI green).
+- **Current task:** **T-04b** (branch `t-04b-calendar-builder`, plan in TASKS Notes; import + suggested days split to T-04c). Previously: none (T-03d done on branch `t-03d-slim-ci`, shipped via PR). T-04 is done and merged (PR #7, CI green).
 - **Last thing done:** T-04 — photo library (`/library`, `pnpm seed:library`, `pickAsset`) and required image slots (event logo / specific photo) with `needs_image` posts; 5 sample photos are in R2/Neon.
 - **Next action:** Run `/start`. Recommended order: **T-04b** (calendar builder — build the month in the app instead of uploading a PDF; ADR-015, mockup linked in the task), then **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), then **T-05b** (render job + DB→renderer mapping, new), then T-06 / T-07 / T-08 / T-09. 
 - **Blockers:** None for building. Vivek still to eyeball in the browser: `/library` and a month page's Images column (upload a logo, pick from library). Brand kit fonts/colours still to be signed off by the owner (not blocking).

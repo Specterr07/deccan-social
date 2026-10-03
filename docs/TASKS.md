@@ -178,7 +178,7 @@ Rules decided: `pickAsset` only returns `photo` assets and skips ones tagged as 
 - Not done / for later: DB → renderer mapping (T-06) must use `requiredImage.url` as `eventLogoUrl` / `photoUrl` and block approval while `needs_image`; the email (T-07) lists posts needing images; renaming a library image and bulk tag editing; SVG logos (only JPG/PNG/WebP now); `people_ok` is a flag, so auto-pick excludes photos with people-style tags unless it is ticked (no separate has-people field).
 
 
-### T-04b · Calendar builder (build the month in the app) — `todo` · 90m
+### T-04b · Calendar builder (build the month in the app) — `doing` · 90m
 Read ADR-015 and look at the mockup first: https://claude.ai/artifact/1uGkPpWimDRdhuMcZjawqW (1 · month planner, 2 · Add post panel, 3 · Plan posts dialog). Reuse T-04's `LibraryPickerDialog`, upload code and `fillRequiredImage` for images; reuse shadcn components (`docs/UI.md`). Use the mockup's wording.
 
 **Data**
@@ -211,7 +211,13 @@ Read ADR-015 and look at the mockup first: https://claude.ai/artifact/1uGkPpWimD
 - [ ] "Import from PDF" fills the grid with entries for review and plans nothing by itself.
 - [ ] Every Claude call (plan, import) goes through `callClaude()`; the plan dialog shows the estimate and current spend.
 - [ ] Usable at phone width (grid scrolls sideways or becomes a list).
-**Notes:** If over ~90 min, split: ship grid + panel + planning first; "Import from PDF" and the suggested-days card as T-04c.
+**Notes:** 2026-10-03 plan (branch `t-04b-calendar-builder`). Split decided up front (the task allowed it): **T-04b** = data + month grid + Add/Edit panel + Plan dialog + planning from entries (PDF → plan path removed from the UI, `/api/months` takes only a month). **T-04c** = "Import from PDF" (PDF → entries), `suggestedDays.ts` + suggested chips/card + `dismissed_suggestions`. The "Done when" boxes for suggested days and import move to T-04c.
+1. DB migration `0003`: `calendar_entries` and `posts.entry_id`. `months.status` gets the new value `draft` (plain text column, no migration).
+2. `schemas/entries.ts`: zod per kind (discriminated union), limits from `schemas/limits.ts` (new entry limits for city, title, topic, points). `lib/entries/*`: queries, save/delete, `entryStatus` (ready vs needs image), API `POST /api/months` (month only), `GET/POST /api/months/[id]/entries`, `PATCH/DELETE /api/entries/[id]`, `POST /api/months/[id]/plan` (draft or failed → planning).
+3. Planning: `planMonth(entries)` sends the entries as compact JSON; Claude's shape gains `entry_id` and loses the fact fields (dates, venue, stand, required image kind/description: all copied by code). `planRules` checks one post per entry. `savePlan` copies date, time, aspect, platforms, exhibition facts and the entry's image; a post whose entry has its image starts `draft`. Prompt rewritten for entries. Old PDF code (`buildFirstMessage` document block, R2 calendar read in `planJob`) removed.
+4. UI: "New month" dialog (month only) → `/months/[id]`. Month page while `draft`/`planned`: Calendar tab (Mon–Sun grid, type-labelled chips, "Add post" on empty days, "This month" side card) + Posts tab. shadcn `Sheet` for Add/Edit (fields per type, image via existing upload/`LibraryPickerDialog`), "Plan N posts" dialog (Ready / Needs image, estimate, spend).
+5. Test for real: build a small month by hand, plan it (~5c), check posts 1:1 with entries and exact exhibition facts; an exhibition with its logo plans into a `draft` post. Phone width check.
+Risks: structured-output schema change means prompt + planRules + savePlan change together; `required_image_asset_id` on entries pointing at assets needs set-null on delete; the old `months.calendar_url` stays (unused until T-04c).
 
 ### T-05 · Higgsfield artwork — `todo` · 60m
 Read `docs/integrations/higgsfield.md` first.
