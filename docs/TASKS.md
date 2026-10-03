@@ -147,7 +147,7 @@ Proposed (discuss with Vivek before changing):
 - [ ] One CI run per task PR; Docker job skipped unless its files change.
 **Notes:**
 
-### T-04 · Photo library + image slots — `todo` · 60m
+### T-04 · Photo library + image slots — `doing` · 60m
 Read ADR-014 first. In short: some posts need one exact image (event logo, our team photo). Claude marks those slots as required; the user uploads them on the post; the app never guesses or uses AI for them.
 - Plan schema: each slide gets `image { kind: photo | event_logo | specific | artwork, description, required, tags, library_name? }`; update the planner prompt (exhibitions always need `event_logo`; behind-the-scenes always need a real `specific` photo) and the limits checks. Migration for the new columns.
 - Assets get a unique, human `name` (e.g. `nashik-packhouse-team`) so the calendar can point at one exact image.
@@ -161,7 +161,16 @@ Read ADR-014 first. In short: some posts need one exact image (event logo, our t
 - [ ] An exhibition post shows "Upload event logo", stays `needs_image` until filled, then links that exact file.
 - [ ] A `library_name` in the calendar links that exact asset.
 - [ ] Required slots are never filled by AI or by tag guessing.
-**Notes:**
+**Notes:** 2026-10-03 plan (branch `t-04-library`; T-03d deferred until after T-04 — Vivek's call):
+**Model (small deviation from ADR-014, same behaviour):** the automatic picture stays as today (`photo_tags` + `artwork_prompt`, filled by library tags then Higgsfield → `slides.asset_id`). A *required* slot is an optional extra on the slide: `required_image { kind: event_logo | specific, description, library_name? }`, stored in four new `slides.required_image_*` columns, filled only by upload / library pick / calendar `library_name`. Exhibition = auto backdrop + required `event_logo`; behind-the-scenes = required `specific` photo (replaces the auto picture). So a slide never needs two slot tables.
+1. DB migration `0002`: `assets.name` (unique, human slug) and the four `required_image_*` columns. Post status `needs_image` while any required slot is empty (computed on save and after every upload).
+2. Plan schema + rules + prompt + `docs/CONTENT-LIMITS.md` + `samples/calendar-template.md` (new **Image** column). Rules: exhibition must have `event_logo`; bts must have `specific`; `event_logo` only on exhibitions; description ≤ 60. `library_name` is copied from the calendar only — an unknown name leaves the slot empty (never guessed).
+3. Library backend: `lib/library/*` (create asset from upload, slug names, list/filter, delete, `pickAsset(tags)`), `r2.deleteObject`, `POST/GET /api/library`, `DELETE /api/library/[id]`, `pnpm seed:library` (uploads `brand/sample-photos/*` with tags, idempotent by name).
+4. Library page `/library`: multi-file upload (kind, tags, people-OK), grid, filters, delete.
+5. Month page: each post lists its required slot — dashed "Upload <description>" box with upload or "Pick from library"; filling links the exact asset (uploads are also saved to the library with tags) and refreshes `needs_image`.
+6. Test: seed for real (R2), pickAsset, plan the October sample once (~5c) to see the slots Claude chooses, doctored plan with a `library_name` to prove the exact link.
+Rules decided: `pickAsset` only returns `photo` assets and skips ones tagged as people/team unless `people_ok` is set (no separate has-people flag yet). No approve button exists yet (T-06) — T-06 must refuse approval while a post is `needs_image`. DB → renderer mapping (eventLogoUrl, photoUrl) is T-06's job.
+
 
 ### T-05 · Higgsfield artwork — `todo` · 60m
 Read `docs/integrations/higgsfield.md` first.

@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none — T-04 (photo library) is next
+- **Current task:** T-04 (photo library + image slots) — `doing`, branch `t-04-library` (plan in TASKS Notes); T-03d (slim CI) after it
 - **Last thing done:** T-03c done and merged — `ai_calls` cost log, `callClaude` wrapper, cached + post-only plan retries, AI budget + spend line, SQL migrations (baselined).
-- **Next action:** Run `/start`, begin T-04 (photo library). Schema changes now go through `pnpm db:generate` + `pnpm db:migrate` (never `push`).
+- **Next action:** Migration 0002, plan schema + docs, library backend, `/library`, slot UI on the month page, seed + tests.
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
