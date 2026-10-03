@@ -21,7 +21,7 @@ flowchart LR
 
 ### Month flow
 
-> Since ADR-015 the month is built in the app: **New month → calendar entries (grid + "Add post" panel, suggested days) → Plan posts**. Steps 1–2 below now read entries instead of a PDF; "Import from PDF" turns a PDF into entries first. Table `calendar_entries` (see TASKS T-04b) feeds `posts.entry_id`.
+> Since ADR-015 the month is built in the app: **New month → calendar entries (grid + "Add post" panel, suggested days) → Plan posts**. Steps 1–2 below now read entries instead of a PDF; "Import from PDF" (`POST /api/months/[id]/import`, purpose `import_pdf`) turns a PDF into entries first; suggested days come from `web/src/data/suggestedDays.ts` (`POST /api/months/[id]/suggestions`). Table `calendar_entries` (see TASKS T-04b) feeds `posts.entry_id`.
 
 1. `POST /api/months` — month only → row in `months` (status `draft`). Entries are added with `POST /api/months/[id]/entries` (checked by `schemas/entries.ts`).
 2. `POST /api/months/[id]/plan` → plan job (status `planning`): entries sent to Claude as JSON; Claude returns only the words per entry (`planAnswerShape`, structured output); `resolvePlan` adds the facts from the entries by code; limit checks (+ one post-only fix call); `savePlan` writes `posts` (with `entry_id`) and `slides`.

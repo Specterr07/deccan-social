@@ -12,6 +12,7 @@ import { spentThisMonth } from "@/lib/budget";
 import { listEntries } from "@/lib/entries/queries";
 import { toEntryView } from "@/lib/entries/entryView";
 import { formatMonthLabel } from "@/lib/months/monthStatus";
+import { suggestionsForMonth } from "@/lib/months/suggestions";
 import { getMonthWithPosts } from "@/lib/months/queries";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +32,8 @@ export default async function MonthPage({ params }: { params: Promise<{ id: stri
     .catch((error) => { console.error("Could not read AI spend:", error); return null; }); // the planner works without the spend figure
 
   const isPlanning = month.status === "planning";
-  const calendar = <CalendarBuilder monthId={month.id} month={month.month} entries={entries} canEdit={!isPlanning} hasPosts={month.posts.length > 0} spend={spend} />;
+  const suggestions = suggestionsForMonth(month.month, month.dismissedSuggestions, entries);
+  const calendar = <CalendarBuilder monthId={month.id} month={month.month} entries={entries} suggestions={suggestions} canEdit={!isPlanning} hasPosts={month.posts.length > 0} spend={spend} />;
   return (
     <div className="space-y-6">
       <AutoRefresh active={isPlanning} />

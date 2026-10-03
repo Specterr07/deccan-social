@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-04b merged; branch `main`).
-- **Last thing done:** T-04b — months are built in the app (calendar grid, Add post panel, Plan dialog); posts are planned from entries with facts copied by code. Migration 0003 is applied to Neon.
-- **Next action:** Run `/start`. Recommended order: **T-04c** (import from PDF + suggested days, split out of T-04b), then **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), **T-05b** (render job + DB→renderer mapping), then T-06 / T-07 / T-08 / T-09.
-- **Blockers:** None for building. Vivek still to eyeball in the browser: `/library` and a month page's Images column (upload a logo, pick from library). Brand kit fonts/colours still to be signed off by the owner (not blocking).
+- **Current task:** none (T-04c shipped; branch `main`).
+- **Last thing done:** T-04c — suggested days (official DoP&T + UN lists, Oct 2026 – Dec 2027) and Import from PDF (entries only, plans nothing); `pnpm screenshot` added. Migration 0004 applied to Neon.
+- **Next action:** Run `/start`. Order: **T-05** (Higgsfield artwork, spends the $5 credit — n=1 tests first), **T-05b** (render job; then milestone **M1** for Vivek), T-06 / T-07 / T-08 / T-09.
+- **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-04c session (Claude, Claude Code)
+- Researched holiday dates from the official DoP&T lists and UN observances; built suggestions + PDF import (~1c per import). Added `pnpm screenshot`; its first run caught a phone-width overflow bug from T-04b (fixed). Vivek's October month was left untouched; tests used scratch months that were deleted.
 
 ### 2026-10-03 · Working agreements (Claude, claude.ai)
 - Added `.claude/settings.json` (pre-approved routine commands, blocked risky ones), scope freeze and model guidance in `CLAUDE.md`, self-checks and milestone reviews (M1–M3) in `docs/SDLC.md`. Task order unchanged.

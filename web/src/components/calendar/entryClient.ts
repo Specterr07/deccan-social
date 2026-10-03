@@ -16,6 +16,8 @@ async function send(url: string, method: string, body?: unknown): Promise<Client
 export const addEntry = (monthId: string, payload: unknown) => send(`/api/months/${monthId}/entries`, "POST", payload);
 export const updateEntry = (monthId: string, entryId: string, payload: unknown) => send(`/api/months/${monthId}/entries/${entryId}`, "PUT", payload);
 export const removeEntry = (monthId: string, entryId: string) => send(`/api/months/${monthId}/entries/${entryId}`, "DELETE");
+export const answerSuggestion = (monthId: string, action: "add" | "dismiss", suggestion: { date: string; title: string }) =>
+  send(`/api/months/${monthId}/suggestions`, "POST", { action, date: suggestion.date, title: suggestion.title });
 export const startPlanning = (monthId: string) => send(`/api/months/${monthId}/plan`, "POST");
 
 // Uploads one image to the library and returns it (used for the event logo / photo of a post).

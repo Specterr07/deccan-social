@@ -1,6 +1,6 @@
 # Deccan Produce — Social calendar, <MONTH YEAR>
 
-> **Note (ADR-015):** the month is now built directly in the app (Months → New month). This template remains for the PDF import (task T-04c).
+> **Note (ADR-015):** the month is now built directly in the app (Months → New month). This template is what the app's "Import from PDF" reads.
 >
 > **How to use this template**
 > 1. Copy this file, replace everything in `<angle brackets>`, delete the example rows and these instructions.

@@ -5,7 +5,7 @@ import { env } from "@/env";
 import { costInUsd, type TokenUsage } from "./prices";
 
 // What the call was for; shown in the cost log and used for per-feature spend later.
-export type AiPurpose = "plan_month" | "plan_fix" | "rewrite_post";
+export type AiPurpose = "plan_month" | "plan_fix" | "rewrite_post" | "import_pdf";
 
 type CallOptions = Anthropic.MessageCreateParamsNonStreaming & { purpose: AiPurpose; monthId?: string; postId?: string };
 

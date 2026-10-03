@@ -4,6 +4,7 @@ import { calendarEntries, months } from "@/db/schema";
 import { entryInputSchema, firstProblem } from "@/schemas/entries";
 import { LIMITS } from "@/schemas/limits";
 
+export type EntrySource = "manual" | "suggested" | "pdf_import";
 export type SaveEntryResult = { ok: true; entryId: string } | { ok: false; status: number; message: string };
 
 // Months where the calendar can still change. While a plan job runs the entries must not move under it.
@@ -18,8 +19,8 @@ function checkEntry(body: unknown, month: string) {
   return { entry };
 }
 
-// Creates a new entry in a month, or updates an existing one when `entryId` is given.
-export async function saveEntry(monthId: string, body: unknown, entryId?: string): Promise<SaveEntryResult> {
+// Creates a new entry in a month, or updates an existing one when `entryId` is given. `source` records where a new entry came from.
+export async function saveEntry(monthId: string, body: unknown, entryId?: string, source: EntrySource = "manual"): Promise<SaveEntryResult> {
   try {
     const [month] = await db.select().from(months).where(eq(months.id, monthId));
     if (!month) return { ok: false, status: 404, message: "That month does not exist." };
@@ -45,7 +46,7 @@ export async function saveEntry(monthId: string, body: unknown, entryId?: string
 
     const existing = await db.select({ id: calendarEntries.id }).from(calendarEntries).where(eq(calendarEntries.monthId, monthId));
     if (existing.length >= LIMITS.postsPerMonth) return { ok: false, status: 400, message: `A month can have at most ${LIMITS.postsPerMonth} posts.` };
-    const [created] = await db.insert(calendarEntries).values({ monthId, ...values }).returning({ id: calendarEntries.id });
+    const [created] = await db.insert(calendarEntries).values({ monthId, source, ...values }).returning({ id: calendarEntries.id });
     return { ok: true, entryId: created.id };
   } catch (error) {
     // Database trouble, or a malformed id in the address.
