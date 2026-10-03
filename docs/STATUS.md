@@ -5,7 +5,7 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-05b shipped; branch `main`). Dev settings in `.env.local` until the final October run: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → set back to 3 and 1500 (T-09).
+- **Current task:** **T-06** core (branch `t-06-review-page`, plan in TASKS Notes; request-changes / artwork / approve-all split to T-06b). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
 - **Last thing done:** T-05b — a planned month now draws every slide to R2 (plan → pictures → render), thumbnails on the month page, image fill/clear re-renders just that post. **Milestone M1 is ready for Vivek.**
 - **Next action:** **M1 review by Vivek** (open October 2026 → press Plan again → look at the post thumbnails; ≈ ₹3). Then run `/start` for **T-06** (review page), T-07, T-08, T-09.
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.

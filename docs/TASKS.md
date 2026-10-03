@@ -281,7 +281,7 @@ Risks: Chromium inside the Next server process (worked in the T-02 dev route); p
 Self-check (screenshots at 1440 and 390 px, renders compared to the brand look): all 7 template types looked right (Diwali 1:1, day-of, exhibition with dates/city/stand and logo box, 4-slide carousel with dots and checklist, behind-the-scenes placeholder). Found and fixed a phone-width bug: hidden file inputs inside the Posts table (absolutely positioned) escaped the scroll box and widened the page (fix: `relative` on the box). Not checked: rendering inside the Docker image (T-09); the Add post sheet at phone width.
 Notes: a post waiting for an image still renders (empty logo box omitted, plain background) so the reviewer sees it. No render is made for months planned before this task: press **Plan again** on October 2026 (≈ ₹3 of Claude, plus ₹0.5 per artwork image if any slide has no library match). Render problems show as a notice on the month page (zod errors are reworded).
 
-### T-06 · Review page — `todo` · 60m
+### T-06 · Review page — `doing` · 60m
 - `/months/[id]`: feed grid by date; per post: slides carousel, captions (IG/LinkedIn tabs), status chip, rationale.
 - Actions: Approve · Edit text (eyebrow/hero/sub/info/body, captions) → re-render · Swap artwork variant · Regenerate artwork (budget-checked) · Request changes with note → `rewritePost()` → re-render. "Approve all" for remaining.
 - Progress banner while planning/generating/rendering (poll every 3s).
@@ -289,6 +289,23 @@ Notes: a post waiting for an image still renders (empty logo box omitted, plain 
 - [ ] Spend shown on the page.
 - [ ] Approve is refused (button disabled and API 409) while a post is `needs_image`.
 **Notes:** Carry-over from T-04: the month page already lists required image slots (`components/months/RequiredImageSlot.tsx`) — reuse it inside the review cards; `rewrite_post` calls must go through `callClaude()` with `CLAUDE_MODEL_LIGHT`. T-06 may exceed 60 minutes once the render job lives in T-05b; split off "Approve all" if needed.
+2026-10-03 plan (branch `t-06-review-page`). **Split decided up front:** T-06 = core (this task). **T-06b** (new, below) = Request changes → Claude rewrite, swap / regenerate artwork, Approve all. Moved there so this task stays reviewable; criteria below that need them are marked → T-06b.
+1. `components/review/`: post card feed replaces the Posts table: slide carousel (rendered JPEGs, previous / next + dots), Instagram / LinkedIn caption tabs, status chip in words, rationale, date / time / platforms, the required-image box (reuse `RequiredImageSlot`), Approve / Undo approval, Edit text. Header shows "N of M approved".
+2. `POST /api/posts/[id]/approve` (409 while `needs_image` or not drawn yet) and `DELETE` (undo); every action writes a `reviews` row.
+3. `PATCH /api/posts/[id]`: edited slide text + captions, checked by the same limit rules as planning (`checkPost` exported from `planRules`, fed from the saved rows), then only that post is re-drawn; an approved post goes back to `rendered` (an edit needs a fresh look). Edit sheet = shadcn Sheet with the limits shown as counters.
+4. Progress banner and spend line already exist on the page (planning card polls every 3 s); keep them.
+5. Verify: approve / undo / edit on a scratch month (plan ≈ 4c), 409 on a `needs_image` post, over-limit edit refused with a readable message, only the edited post's render URL changes; screenshots at 1440 and 390 px.
+Risks: carousel posts have several slides to edit; edits must not change facts (dates, venue, stand) — those are not editable here (they come from the calendar entry).
+
+### T-06b · Review actions: request changes, artwork, approve all — `todo` · 45m
+Split out of T-06.
+- Request changes with a note → `rewritePost()` (`callClaude`, purpose `rewrite_post`, model `CLAUDE_MODEL_LIGHT`, sends only that post's JSON + rules, never the PDF) → limit check → re-render that post. Budget-checked.
+- Swap artwork variant (variants of the same slide) and Regenerate artwork (budget-checked, shows its cost and the remaining budget; uses `generateArtwork`).
+- "Approve all" for the remaining posts that are ready (skips `needs_image`).
+- [ ] Request changes rewrites only that post and re-renders only it; the note is saved in `reviews`.
+- [ ] Regenerate shows cost + remaining budget and stops at the cap.
+- [ ] Approve all skips posts that need images.
+**Notes:**
 
 ### T-07 · Approval email — `todo` · 30m
 - `lib/email.ts`: Resend, subject "Your <Month> posts are ready (N posts)", thumbnails (R2 URLs) + button to review page. Sent when rendering completes. If any post is `needs_image`, say so at the top: "2 posts need images from you" with links (ADR-014).
