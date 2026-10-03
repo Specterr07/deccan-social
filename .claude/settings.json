@@ -1,0 +1,59 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(npm run check-env *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git switch *)",
+      "Bash(git checkout -b *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(git push *)",
+      "Bash(git branch *)",
+      "Bash(git stash *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr merge *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "Edit(/web/**)",
+      "Edit(/docs/**)",
+      "Edit(/brand/**)",
+      "Edit(/samples/**)",
+      "WebFetch(domain:docs.higgsfield.ai)",
+      "WebFetch(domain:platform.claude.com)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebFetch(domain:orm.drizzle.team)",
+      "WebFetch(domain:nextjs.org)",
+      "WebFetch(domain:resend.com)",
+      "WebFetch(domain:developers.cloudflare.com)",
+      "WebFetch(domain:fly.io)",
+      "WebFetch(domain:playwright.dev)"
+    ],
+    "ask": [
+      "Bash(pnpm db:migrate *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm remove *)",
+      "Edit(/.github/**)",
+      "Edit(/.claude/**)",
+      "Edit(/CLAUDE.md)"
+    ],
+    "deny": [
+      "Read(**/.env.local)",
+      "Bash(git push origin main *)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push * --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(rm -rf *)",
+      "Bash(pnpm drizzle-kit push *)",
+      "Bash(npx drizzle-kit push *)"
+    ]
+  }
+}

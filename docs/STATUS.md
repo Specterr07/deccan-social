@@ -13,6 +13,9 @@
 
 ## Session log
 
+### 2026-10-03 · Working agreements (Claude, claude.ai)
+- Added `.claude/settings.json` (pre-approved routine commands, blocked risky ones), scope freeze and model guidance in `CLAUDE.md`, self-checks and milestone reviews (M1–M3) in `docs/SDLC.md`. Task order unchanged.
+
 ### 2026-10-03 · T-04b session (Claude, Claude Code)
 - Calendar builder: `calendar_entries` + `posts.entry_id`, entry API, month grid / Add post sheet / Plan dialog, planning from entries (Claude writes words only; `resolvePlan` copies facts). Real test ~6c: posts 1:1 with entries, exact exhibition facts, post-only fix reads the cache. Vivek approved. Split T-04c (PDF import + suggested days). Dev server was already on port 3000 (Vivek's); the old PDF upload dialog and R2 calendar read are gone from the plan path.
 
