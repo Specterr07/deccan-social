@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** T-04 (photo library + image slots) — `doing`, branch `t-04-library` (plan in TASKS Notes); T-03d (slim CI) after it
-- **Last thing done:** T-03c done and merged — `ai_calls` cost log, `callClaude` wrapper, cached + post-only plan retries, AI budget + spend line, SQL migrations (baselined).
-- **Next action:** Migration 0002, plan schema + docs, library backend, `/library`, slot UI on the month page, seed + tests.
+- **Current task:** none — T-03d (slim CI, discuss first) or T-05 (Higgsfield artwork) next; T-04 PR open with auto-merge
+- **Last thing done:** T-04 built — photo library (`/library`, seed, `pickAsset`) and required image slots (event logo / specific photo) with `needs_image` posts; PR opened with auto-merge.
+- **Next action:** Vivek: after the PR merges, log in and check `/library` and a month page's Images column (upload a logo, pick from library). Then `/start` → T-03d (needs a short chat) or T-05.
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
@@ -16,6 +16,9 @@
 - Then T-04 (photo library + image slots, ADR-014).
 
 ## Session log
+
+### 2026-10-03 · T-04 session (Claude, Claude Code)
+- Deleted five stale remote branches (contents were already on main). Built migration 0002, plan-schema image slots + docs/template (Image column), library backend + seed, `/library`, month-page slots. Real test with R2/Neon/Claude (~$0.07). Required images are never auto-filled; PR #T-04 with auto-merge, CI not watched (new workflow).
 
 ### 2026-10-03 · Shipping workflow (Claude, Claude Code)
 - New rule: one PR per task incl. the handoff commit; `cd web && pnpm check` before every push; `gh pr create --fill` + `gh pr merge --auto --squash --delete-branch`; do not watch CI. CI now has a `changes` job and skips the Docker job for docs-only changes (skipped jobs satisfy branch protection). Docs: `docs/SDLC.md` step 5, `docs/CICD.md`, `CLAUDE.md`.

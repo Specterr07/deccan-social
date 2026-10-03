@@ -1,4 +1,4 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { env } from "@/env";
 
 // Cloudflare R2 speaks the S3 protocol; "auto" is the region name R2 expects.
@@ -33,5 +33,15 @@ export async function downloadObject(key: string): Promise<Buffer> {
   } catch (error) {
     // Fails if the key does not exist (NoSuchKey) or storage is unreachable.
     throw new Error(`Could not read ${key} from storage: ${(error as Error).message}`);
+  }
+}
+
+// Removes a file from R2. Deleting a key that is already gone is not an error in S3, so this is safe to repeat.
+export async function deleteObject(key: string): Promise<void> {
+  try {
+    await r2.send(new DeleteObjectCommand({ Bucket: env.R2_BUCKET, Key: key }));
+  } catch (error) {
+    // Fails on wrong R2 keys or a network drop. The caller decides whether that matters.
+    throw new Error(`Could not delete ${key} from storage: ${(error as Error).message}`);
   }
 }

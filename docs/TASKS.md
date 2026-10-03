@@ -157,10 +157,10 @@ Read ADR-014 first. In short: some posts need one exact image (event logo, our t
 - `/library`: upload (multi-file) to R2 with kind, tags (fruit, category), people_ok checkbox; grid with filters; delete.
 - Seed with `brand/sample-photos/*` (script `pnpm seed:library`).
 - `pickAsset(tags)` returns best tag match or null — used only for `photo` slots.
-- [ ] Seeded photos appear with tags; picking by tags works.
-- [ ] An exhibition post shows "Upload event logo", stays `needs_image` until filled, then links that exact file.
-- [ ] A `library_name` in the calendar links that exact asset.
-- [ ] Required slots are never filled by AI or by tag guessing.
+- [x] Seeded photos appear with tags; picking by tags works. (5 sample photos seeded to R2/Neon; `pickAsset` ranks by tag overlap and returns null for no match. `/library` page awaits Vivek's visual check.)
+- [x] An exhibition post shows "Upload event logo", stays `needs_image` until filled, then links that exact file. (Backend flow verified end to end; the month-page UI awaits Vivek's check.)
+- [x] A `library_name` in the calendar links that exact asset. (Exact, case-insensitive name match only; unknown name leaves the slot empty.)
+- [x] Required slots are never filled by AI or by tag guessing. (`pickAsset` is only for automatic pictures; required slots only change via upload, library pick, or an exact `library_name`.)
 **Notes:** 2026-10-03 plan (branch `t-04-library`; T-03d deferred until after T-04 — Vivek's call):
 **Model (small deviation from ADR-014, same behaviour):** the automatic picture stays as today (`photo_tags` + `artwork_prompt`, filled by library tags then Higgsfield → `slides.asset_id`). A *required* slot is an optional extra on the slide: `required_image { kind: event_logo | specific, description, library_name? }`, stored in four new `slides.required_image_*` columns, filled only by upload / library pick / calendar `library_name`. Exhibition = auto backdrop + required `event_logo`; behind-the-scenes = required `specific` photo (replaces the auto picture). So a slide never needs two slot tables.
 1. DB migration `0002`: `assets.name` (unique, human slug) and the four `required_image_*` columns. Post status `needs_image` while any required slot is empty (computed on save and after every upload).
@@ -170,6 +170,12 @@ Read ADR-014 first. In short: some posts need one exact image (event logo, our t
 5. Month page: each post lists its required slot — dashed "Upload <description>" box with upload or "Pick from library"; filling links the exact asset (uploads are also saved to the library with tags) and refreshes `needs_image`.
 6. Test: seed for real (R2), pickAsset, plan the October sample once (~5c) to see the slots Claude chooses, doctored plan with a `library_name` to prove the exact link.
 Rules decided: `pickAsset` only returns `photo` assets and skips ones tagged as people/team unless `people_ok` is set (no separate has-people flag yet). No approve button exists yet (T-06) — T-06 must refuse approval while a post is `needs_image`. DB → renderer mapping (eventLogoUrl, photoUrl) is T-06's job.
+**Built 2026-10-03:**
+- Migration `0002_image_slots_and_asset_names` (assets `name` unique + `storage_key`; slides `required_image_*`). Plan schema/rules/prompt/limits + `docs/CONTENT-LIMITS.md` + calendar template (Image column).
+- Backend: `lib/library/{assetRules,createAsset,queries,pickAsset,fillRequiredImage,postImageStatus}.ts`, `r2.deleteObject`, API `/api/library`, `/api/library/[id]`, `/api/slides/[id]/image`, `pnpm seed:library`.
+- UI: `/library` (multi-upload, kind/tags/people-OK, filters, delete), month page Images column with `RequiredImageSlot` (dashed upload box, replace/remove, "Pick from library" dialog) and word status badges.
+- Real test (R2 + Neon + Claude ~$0.07): October re-planned; Claude chose exactly one `event_logo` (exhibition) and one `specific` (bts), nothing else. Slot test: unknown `library_name` stays empty and the post is `needs_image`; `sample-packhouse` named in the calendar links exactly; upload / pick / clear / delete all move the post between `draft` and `needs_image`; deleting an image empties the slot and R2 file; the automatic picture never filled a required slot.
+- Not done / for later: DB → renderer mapping (T-06) must use `requiredImage.url` as `eventLogoUrl` / `photoUrl` and block approval while `needs_image`; the email (T-07) lists posts needing images; renaming a library image and bulk tag editing; SVG logos (only JPG/PNG/WebP now); `people_ok` is a flag, so auto-pick excludes photos with people-style tags unless it is ticked (no separate has-people field).
 
 
 ### T-05 · Higgsfield artwork — `todo` · 60m

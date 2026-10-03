@@ -23,6 +23,14 @@ Rooted, trustworthy, quietly proud of Indian farms; festive without shouting. "W
 Instagram caption: warm, 2-4 short paragraphs, a few emoji, ${LIMITS.hashtagsInstagram.min}-${LIMITS.hashtagsInstagram.max} hashtags at the end.
 LinkedIn caption: B2B tone about export quality, sourcing and supply, ${LIMITS.hashtagsLinkedin.min}-${LIMITS.hashtagsLinkedin.max} hashtags.
 
+REQUIRED IMAGES (required_image)
+Some slides need one exact picture that only a person can supply. Add required_image {kind, description, library_name?} ONLY for these:
+- exhibition: always kind "event_logo", description like "Event logo for <event name>".
+- bts (behind the scenes): always kind "specific", description of the photo the calendar asks for (e.g. "Packhouse team grading grapes").
+- any other slide ONLY if the calendar explicitly says a specific image will be supplied (kind "specific").
+library_name: copy it ONLY if the calendar's Image column writes a library image name for that row (a lower-case-and-hyphens handle). Never invent or guess a name. If the calendar says an image "will be uploaded" or names none, leave library_name out.
+AI artwork is never used for a required image. Slides without required_image get their picture automatically from photo_tags / artwork_prompt.
+
 PICTURES
 photo_tags: ${LIMITS.photoTags.min}-${LIMITS.photoTags.max} lower-case words to find a library photo (fruit, setting). artwork_prompt: only if a stock photo is unlikely to exist, one scene description of at most ${LIMITS.artworkPrompt} characters; never ask for text, letters, logos, people's faces, deities or festival figures (the app adds the house style). Use fruit "none" when no single fruit leads.
 
@@ -31,6 +39,7 @@ HARD LIMITS (characters including spaces; the posts are fixed-size images, so th
 - hero: festival/day-of ≤ ${LIMITS.heroFestival}; exhibition ≤ ${LIMITS.heroExhibition}; behind the scenes ≤ ${LIMITS.heroBehindTheScenes}; carousel cover ≤ ${LIMITS.heroCover}; inner ≤ ${LIMITS.heroInner}; closing slide ≤ ${LIMITS.heroCta}
 - body: festival/day-of ≤ ${LIMITS.bodyGreeting}; carousel inner ≤ ${LIMITS.bodyInner} and ≤ ${LIMITS.bodyInnerWords} words
 - checklist item ≤ ${LIMITS.checklistItemChars}; venue ≤ ${LIMITS.venue}; stand ≤ ${LIMITS.stand}
+- required_image description ≤ ${LIMITS.requiredImageDescription}; library_name ≤ ${LIMITS.libraryName}
 - Instagram caption ${LIMITS.captionInstagram.min}-${LIMITS.captionInstagram.max}; LinkedIn caption ${LIMITS.captionLinkedin.min}-${LIMITS.captionLinkedin.max}; rationale ≤ ${LIMITS.rationale} (one sentence for the reviewer: why this post)
 Count before you answer and shorten anything over the limit.`;
 }

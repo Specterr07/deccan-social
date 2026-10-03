@@ -15,6 +15,13 @@
       "when": 1790968275543,
       "tag": "0001_ai_calls",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791037462527,
+      "tag": "0002_image_slots_and_asset_names",
+      "breakpoints": true
     }
   ]
 }

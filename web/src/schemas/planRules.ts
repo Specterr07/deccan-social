@@ -60,6 +60,8 @@ function checkSlide(post: PlanPost, slide: PlanSlide, postIndex: number, slideIn
   if (slide.venue) add("venue", tooLong("venue", slide.venue, LIMITS.venue));
   if (slide.stand) add("stand", tooLong("stand", slide.stand, LIMITS.stand));
 
+  checkRequiredImage(post, slide).forEach(([field, message]) => add(field, message));
+
   const tagCount = slide.photo_tags.length;
   if (tagCount < LIMITS.photoTags.min || tagCount > LIMITS.photoTags.max) {
     add("photo_tags", `photo_tags has ${tagCount} tags, it needs ${LIMITS.photoTags.min}-${LIMITS.photoTags.max}`);
@@ -68,6 +70,22 @@ function checkSlide(post: PlanPost, slide: PlanSlide, postIndex: number, slideIn
     add("artwork_prompt", tooLong("artwork_prompt", slide.artwork_prompt, LIMITS.artworkPrompt));
     if (DEITY_WORDS.test(slide.artwork_prompt)) add("artwork_prompt", "artwork_prompt mentions a deity or festival figure; never generate those");
   }
+  return problems;
+}
+
+// Which slides must (or must not) carry a required image, and its text limits. Returns [field, message] pairs.
+function checkRequiredImage(post: PlanPost, slide: PlanSlide): [string, string][] {
+  const image = slide.required_image;
+  const problems: [string, string][] = [];
+  if (post.kind === "exhibition" && image?.kind !== "event_logo") problems.push(["required_image", 'exhibition slides need required_image kind "event_logo"']);
+  if (post.kind === "bts" && image?.kind !== "specific") problems.push(["required_image", 'behind-the-scenes slides need required_image kind "specific" (a real photo)']);
+  if (!image) return problems;
+  if (image.kind === "event_logo" && post.kind !== "exhibition") problems.push(["required_image", '"event_logo" is only for exhibition posts']);
+  const descriptionProblem = tooLong("required_image description", image.description, LIMITS.requiredImageDescription);
+  if (descriptionProblem) problems.push(["required_image", descriptionProblem]);
+  if (!image.description.trim()) problems.push(["required_image", "required_image description is empty"]);
+  const nameProblem = image.library_name ? tooLong("required_image library_name", image.library_name, LIMITS.libraryName) : null;
+  if (nameProblem) problems.push(["required_image", nameProblem]);
   return problems;
 }
 

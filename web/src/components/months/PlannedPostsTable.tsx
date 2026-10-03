@@ -1,7 +1,9 @@
 import { Badge } from "@/components/ui/badge";
-import type { posts, slides } from "@/db/schema";
+import { postStatusLabel } from "@/lib/months/postStatus";
+import type { getMonthWithPosts } from "@/lib/months/queries";
+import { RequiredImageSlot } from "./RequiredImageSlot";
 
-type PostWithSlides = typeof posts.$inferSelect & { slides: (typeof slides.$inferSelect)[] };
+type PostWithSlides = NonNullable<Awaited<ReturnType<typeof getMonthWithPosts>>>["posts"][number];
 
 const KIND_LABELS: Record<string, string> = {
   festival: "Festival",
@@ -16,7 +18,27 @@ function formatPostDate(isoDate: string): string {
   return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 }
 
-// Simple read-only list of the planned posts. The full review page (images, approve, edit) arrives in T-06.
+// The required images of a post's slides (event logo, specific photo), each as a fill-in box.
+function PostImageSlots({ post }: { post: PostWithSlides }) {
+  const slots = post.slides.filter((slide) => slide.requiredImageKind);
+  if (slots.length === 0) return <span className="text-muted-foreground">Picked automatically</span>;
+  return (
+    <div className="space-y-2">
+      {slots.map((slide) => (
+        <RequiredImageSlot
+          key={slide.id}
+          slideId={slide.id}
+          kind={slide.requiredImageKind!}
+          description={slide.requiredImageDescription ?? "the image"}
+          image={slide.requiredImage ? { url: slide.requiredImage.url, name: slide.requiredImage.name } : null}
+          missingLibraryName={slide.requiredImage ? null : slide.requiredImageLibraryName}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Read-only list of the planned posts plus their required-image slots. The full review page (images, approve, edit) arrives in T-06.
 export function PlannedPostsTable({ posts }: { posts: PostWithSlides[] }) {
   return (
     <div className="overflow-x-auto rounded-xl border bg-card">
@@ -26,18 +48,18 @@ export function PlannedPostsTable({ posts }: { posts: PostWithSlides[] }) {
             <th className="p-3 font-medium">Date</th>
             <th className="p-3 font-medium">Type</th>
             <th className="p-3 font-medium">Headline</th>
-            <th className="p-3 font-medium">Slides</th>
-            <th className="p-3 font-medium">Why this post</th>
+            <th className="p-3 font-medium">Status</th>
+            <th className="min-w-72 p-3 font-medium">Images</th>
           </tr>
         </thead>
         <tbody>
           {posts.map((post) => (
-            <tr key={post.id} className="border-b last:border-0 align-top">
-              <td className="p-3 whitespace-nowrap">{formatPostDate(post.date)}</td>
+            <tr key={post.id} className="border-b align-top last:border-0">
+              <td className="whitespace-nowrap p-3">{formatPostDate(post.date)}</td>
               <td className="p-3"><Badge variant="secondary">{KIND_LABELS[post.kind] ?? post.kind}</Badge></td>
-              <td className="p-3 font-medium">{post.slides[0]?.hero}</td>
-              <td className="p-3">{post.slides.length}{post.aspect === "1:1" ? " · square" : ""}</td>
-              <td className="p-3 text-muted-foreground">{post.rationale}</td>
+              <td className="p-3 font-medium">{post.slides[0]?.hero}<p className="font-normal text-muted-foreground">{post.rationale}</p></td>
+              <td className="p-3"><Badge variant={post.status === "needs_image" ? "destructive" : "secondary"}>{postStatusLabel(post.status)}</Badge></td>
+              <td className="p-3"><PostImageSlots post={post} /></td>
             </tr>
           ))}
         </tbody>

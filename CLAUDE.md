@@ -53,6 +53,7 @@ Next.js (App Router, TypeScript) in `web/` · shadcn/ui + Tailwind v4 for app sc
 - `cd web && pnpm check` — typecheck + lint + build; run before every push (`pnpm typecheck` alone is fine while iterating)
 - `cd web && pnpm db:generate` — write a SQL migration after changing `src/db/schema.ts` (commit it)
 - `cd web && pnpm db:migrate` — apply pending migrations to Neon (**never `drizzle-kit push` against Neon**)
+- `cd web && pnpm seed:library` — add `brand/sample-photos/*` to the photo library (safe to repeat)
 
 ## Conventions
 

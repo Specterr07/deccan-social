@@ -23,6 +23,11 @@ Counts are characters including spaces, unless stated. The renderer shrinks a he
 | `stand` (exhibition) | Hall / stand line (26 px) | **28** | Same row. |
 | `dates` (exhibition) | One box per day | **1–4 boxes** | Four boxes use half the width. For an event longer than four days, show the first and last day only and give the full range in the caption. |
 
+| `required_image.description` | Label of the upload box on the month page ("Upload <description>") | **60** | One short line, e.g. "Event logo for World Fresh Produce Expo". |
+| `required_image.library_name` | Name of an existing library image written in the calendar | **60** | Lower-case words and hyphens, copied from the calendar, never invented. |
+
+Required images (see ADR-014): exhibition slides always have an **event logo**; behind-the-scenes slides always have a **specific photo**; a calendar row can ask for one on any other slide. They are filled only by an upload, a library pick, or a library name written in the calendar — never by AI or a tag guess. Until filled, the post is `needs_image` and cannot be approved.
+
 Rules that are not about length:
 - One hero, at most one sub, at most one info line per slide (brand rule).
 - Facts (dates, city, hall, stand, event name) are copied from the calendar. If the calendar does not give one, **leave the field out** — the template simply omits it. Never guess.
