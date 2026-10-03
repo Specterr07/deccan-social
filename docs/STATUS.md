@@ -11,6 +11,10 @@
 - **Blockers:** None. Brand kit fonts/colours to be signed off by the owner (not blocking).
 - **Production URL:** — (set in T-09)
 
+## Next session — Vivek wants to discuss first
+- T-03d: Docker CI job too slow; too many CI runs for a solo developer (see TASKS).
+- Then T-04 (photo library + image slots, ADR-014).
+
 ## Session log
 
 ### 2026-10-03 · Shipping workflow (Claude, Claude Code)
