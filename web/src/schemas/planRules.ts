@@ -10,6 +10,9 @@ export type PlanProblem = { path: (string | number)[]; message: string };
 const SINGLE_IMAGE_KINDS: PostKind[] = ["festival", "day_of", "exhibition", "bts"];
 export const DEITY_WORDS = /\b(ganesh|ganesha|durga|rama|lakshmi|krishna|shiva|hanuman|deity|goddess)\b/i;
 
+// Scenes with printed surfaces make the image model invent gibberish lettering (seen in T-05 tests: box printing, shop signs, crate stencils).
+export const TEXT_PRONE_WORDS = /\b(box|boxes|carton|cartons|cardboard|crate|crates|packaging|package|packages|label|labels|sign|signs|signage|signboard|banner|banners|poster|posters|board|boards|bag|bags|bottle|bottles|jar|jars|tin|tins|stall|stalls|market|shop|store|menu)\b/i;
+
 function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
@@ -69,6 +72,7 @@ function checkSlide(post: PlanPost, slide: PlanSlide, postIndex: number, slideIn
   if (slide.artwork_prompt) {
     add("artwork_prompt", tooLong("artwork_prompt", slide.artwork_prompt, LIMITS.artworkPrompt));
     if (DEITY_WORDS.test(slide.artwork_prompt)) add("artwork_prompt", "artwork_prompt mentions a deity or festival figure; never generate those");
+    if (TEXT_PRONE_WORDS.test(slide.artwork_prompt)) add("artwork_prompt", "artwork_prompt mentions boxes, crates, signs, labels, packaging or a market; the image model draws fake lettering on those, so describe only the fruit, leaves, trees, trays or baskets");
   }
   return problems;
 }
