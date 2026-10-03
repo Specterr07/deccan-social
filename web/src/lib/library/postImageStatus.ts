@@ -3,7 +3,7 @@ import { db } from "@/db/client";
 import { posts, slides } from "@/db/schema";
 
 // Sets a post to "needs_image" while any of its required images is empty, and back to "draft" once all are filled.
-// Only touches those two statuses, so an approved or rendered post is never knocked backwards by accident.
+// Only touches draft / rendered / needs_image, so an approved or rendered post is never knocked backwards by accident.
 export async function refreshPostImageStatus(postId: string): Promise<void> {
   try {
     const postSlides = await db.select().from(slides).where(eq(slides.postId, postId));
@@ -11,8 +11,8 @@ export async function refreshPostImageStatus(postId: string): Promise<void> {
     const [post] = await db.select({ status: posts.status }).from(posts).where(eq(posts.id, postId));
     if (!post) return;
 
-    if (hasEmptySlot && post.status === "draft") await db.update(posts).set({ status: "needs_image" }).where(eq(posts.id, postId));
-    if (!hasEmptySlot && post.status === "needs_image") await db.update(posts).set({ status: "draft" }).where(eq(posts.id, postId));
+    if (hasEmptySlot && (post.status === "draft" || post.status === "rendered")) await db.update(posts).set({ status: "needs_image" }).where(eq(posts.id, postId));
+    if (!hasEmptySlot && post.status === "needs_image") await db.update(posts).set({ status: "draft" }).where(eq(posts.id, postId)); // renderPost then makes it "rendered"
   } catch (error) {
     // The database may be down; the upload itself already succeeded, so just log it.
     console.error(`Could not refresh the image status of post ${postId}:`, error);

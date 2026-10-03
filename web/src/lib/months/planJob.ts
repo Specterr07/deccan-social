@@ -3,6 +3,7 @@ import { db } from "@/db/client";
 import { months } from "@/db/schema";
 import { planMonth } from "@/lib/ai/planMonth";
 import { fillPictures } from "@/lib/artwork/fillPictures";
+import { renderMonth } from "@/lib/render/renderPost";
 import { listEntries } from "@/lib/entries/queries";
 import { savePlan } from "./savePlan";
 
@@ -11,7 +12,7 @@ async function setStatus(monthId: string, status: string, statusMessage: string 
   await db.update(months).set({ status, statusMessage, statusUpdatedAt: new Date() }).where(eq(months.id, monthId));
 }
 
-// Background job: read the month's calendar entries, ask Claude to write the posts, save them, then pick the pictures.
+// Background job: read the month's calendar entries, ask Claude to write the posts, save them, pick the pictures, then draw every slide.
 // Never throws: any failure is stored on the month so the page can show it instead of a silent spinner.
 export async function runPlanJob(monthId: string): Promise<void> {
   try {
@@ -22,8 +23,11 @@ export async function runPlanJob(monthId: string): Promise<void> {
     const entries = await listEntries(monthId);
     const plan = await planMonth(entries, month.month, { monthId });
     await savePlan(monthId, plan, entries);
+    await setStatus(monthId, "planning", "Choosing pictures…");
     const pictureNotices = await fillPictures(monthId); // library photos first, then AI artwork; never fails the plan
-    await setStatus(monthId, "planned", pictureNotices.length > 0 ? pictureNotices.join("\n") : null);
+    const renderNotices = await renderMonth(monthId, (done, total) => setStatus(monthId, "planning", `Drawing the posts (${done + 1} of ${total})…`));
+    const notices = [...pictureNotices, ...renderNotices];
+    await setStatus(monthId, "planned", notices.length > 0 ? notices.join("\n") : null);
   } catch (error) {
     // Typical causes: storage or Claude unreachable, an empty calendar, or a plan that breaks the content limits.
     console.error(`Plan job failed for month ${monthId}:`, error);

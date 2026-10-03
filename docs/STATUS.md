@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-05 shipped; branch `main`). Dev settings in `.env.local` until the final October run: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → set back to 3 and 1500 (T-09).
-- **Last thing done:** T-05 — Higgsfield client, artwork generation (budget-checked, logged, copied to R2), picture step in the plan job. Fake-text problem solved by prompt wording; about $0.08 of the $5 spent.
-- **Next action:** Run `/start`. **T-05b** (render job + DB→renderer mapping) then **milestone M1** for Vivek (a planned month shows real post images); then T-06 / T-07 / T-08 / T-09.
+- **Current task:** none (T-05b shipped; branch `main`). Dev settings in `.env.local` until the final October run: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → set back to 3 and 1500 (T-09).
+- **Last thing done:** T-05b — a planned month now draws every slide to R2 (plan → pictures → render), thumbnails on the month page, image fill/clear re-renders just that post. **Milestone M1 is ready for Vivek.**
+- **Next action:** **M1 review by Vivek** (open October 2026 → press Plan again → look at the post thumbnails; ≈ ₹3). Then run `/start` for **T-06** (review page), T-07, T-08, T-09.
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-03 · T-05b session (Claude, Claude Code)
+- Render job + DB→renderer mapping; tested on a scratch month (5 posts, all templates), then deleted it with its R2 renders. Found a second phone-width overflow (hidden file inputs). M1 is ready: Vivek presses Plan again on October.
 
 ### 2026-10-03 · T-05 session (Claude, Claude Code)
 - Checked the price (account estimate: $0.006 per 1080p image), built the Higgsfield client and artwork step. First real image had garbled fake text; fixed by rewording the house style and banning text-prone scene words (13 images, ≈ $0.08, under Vivek's $2 allowance). Scratch rows deleted; test pictures are in the library (kind `ai`).

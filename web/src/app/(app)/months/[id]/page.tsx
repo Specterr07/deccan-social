@@ -47,7 +47,7 @@ export default async function MonthPage({ params }: { params: Promise<{ id: stri
         <Card>
           <CardHeader>
             <CardTitle>Planning your posts…</CardTitle>
-            <CardDescription>We are reading the calendar and writing each post. This page updates by itself; it usually takes a minute or two.</CardDescription>
+            <CardDescription>{month.statusMessage ?? "Writing each post."} This page updates by itself; it usually takes a minute or two.</CardDescription>
           </CardHeader>
         </Card>
       )}

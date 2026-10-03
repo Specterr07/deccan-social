@@ -2,6 +2,7 @@ import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import { assets, slides } from "@/db/schema";
 import { deleteObject } from "@/lib/r2";
+import { renderPostQuietly } from "@/lib/render/renderPost";
 import { refreshPostImageStatus } from "./postImageStatus";
 
 export type LibraryFilter = { kind?: string; tag?: string; search?: string };
@@ -42,6 +43,9 @@ export async function deleteAsset(assetId: string): Promise<{ found: boolean; sl
       console.error(`Library row deleted but the file ${asset.storageKey} stayed in storage:`, error);
     }
   }
-  for (const postId of new Set(users.map((slide) => slide.postId))) await refreshPostImageStatus(postId);
+  for (const postId of new Set(users.map((slide) => slide.postId))) {
+    await refreshPostImageStatus(postId);
+    await renderPostQuietly(postId); // draw it again without the deleted picture
+  }
   return { found: true, slidesAffected: users.length };
 }
