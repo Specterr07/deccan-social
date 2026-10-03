@@ -29,6 +29,7 @@ async function main() {
         const [pagePath, buttonName] = target.split("::");
         await page.goto(`${BASE_URL}${pagePath}`, { waitUntil: "networkidle" });
         if (buttonName) await page.getByRole("tab", { name: buttonName }).or(page.getByRole("button", { name: buttonName })).first().click();
+        if (buttonName) await page.waitForTimeout(700); // let dialogs and side panels finish their opening animation
         const fileName = `${pagePath.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "home"}${buttonName ? `-${buttonName.toLowerCase()}` : ""}-${size.name}.png`;
         await page.screenshot({ path: path.join(OUTPUT_DIR, fileName), fullPage: true });
         console.log(`saved .renders/${fileName}`);

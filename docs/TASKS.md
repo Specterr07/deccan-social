@@ -281,13 +281,13 @@ Risks: Chromium inside the Next server process (worked in the T-02 dev route); p
 Self-check (screenshots at 1440 and 390 px, renders compared to the brand look): all 7 template types looked right (Diwali 1:1, day-of, exhibition with dates/city/stand and logo box, 4-slide carousel with dots and checklist, behind-the-scenes placeholder). Found and fixed a phone-width bug: hidden file inputs inside the Posts table (absolutely positioned) escaped the scroll box and widened the page (fix: `relative` on the box). Not checked: rendering inside the Docker image (T-09); the Add post sheet at phone width.
 Notes: a post waiting for an image still renders (empty logo box omitted, plain background) so the reviewer sees it. No render is made for months planned before this task: press **Plan again** on October 2026 (≈ ₹3 of Claude, plus ₹0.5 per artwork image if any slide has no library match). Render problems show as a notice on the month page (zod errors are reworded).
 
-### T-06 · Review page — `doing` · 60m
+### T-06 · Review page (core) — `done` · 60m
 - `/months/[id]`: feed grid by date; per post: slides carousel, captions (IG/LinkedIn tabs), status chip, rationale.
 - Actions: Approve · Edit text (eyebrow/hero/sub/info/body, captions) → re-render · Swap artwork variant · Regenerate artwork (budget-checked) · Request changes with note → `rewritePost()` → re-render. "Approve all" for remaining.
 - Progress banner while planning/generating/rendering (poll every 3s).
-- [ ] Every action persists and re-renders only the affected post.
-- [ ] Spend shown on the page.
-- [ ] Approve is refused (button disabled and API 409) while a post is `needs_image`.
+- [x] Every action persists and re-renders only the affected post. (Approve / undo / edit; an edit changed exactly 1 of 6 render URLs. Request changes / artwork actions → T-06b.)
+- [x] Spend shown on the page. (AI spend line under the title.)
+- [x] Approve is refused (button disabled and API 409) while a post is `needs_image`.
 **Notes:** Carry-over from T-04: the month page already lists required image slots (`components/months/RequiredImageSlot.tsx`) — reuse it inside the review cards; `rewrite_post` calls must go through `callClaude()` with `CLAUDE_MODEL_LIGHT`. T-06 may exceed 60 minutes once the render job lives in T-05b; split off "Approve all" if needed.
 2026-10-03 plan (branch `t-06-review-page`). **Split decided up front:** T-06 = core (this task). **T-06b** (new, below) = Request changes → Claude rewrite, swap / regenerate artwork, Approve all. Moved there so this task stays reviewable; criteria below that need them are marked → T-06b.
 1. `components/review/`: post card feed replaces the Posts table: slide carousel (rendered JPEGs, previous / next + dots), Instagram / LinkedIn caption tabs, status chip in words, rationale, date / time / platforms, the required-image box (reuse `RequiredImageSlot`), Approve / Undo approval, Edit text. Header shows "N of M approved".
@@ -296,6 +296,10 @@ Notes: a post waiting for an image still renders (empty logo box omitted, plain 
 4. Progress banner and spend line already exist on the page (planning card polls every 3 s); keep them.
 5. Verify: approve / undo / edit on a scratch month (plan ≈ 4c), 409 on a `needs_image` post, over-limit edit refused with a readable message, only the edited post's render URL changes; screenshots at 1440 and 390 px.
 Risks: carousel posts have several slides to edit; edits must not change facts (dates, venue, stand) — those are not editable here (they come from the calendar entry).
+**Built 2026-10-03:** `components/review/` (PostFeed, PostCard, SlideCarousel, CaptionTabs, ApproveButton, EditPostSheet, SlideFields, reviewClient), `lib/posts/{approvePost,editPost,planPostFromDb,reviewLog}.ts`, `schemas/postEdit.ts`, API `POST|DELETE /api/posts/[id]/approve`, `PATCH /api/posts/[id]`. `checkPost` is now exported from `planRules` and used for edits (same limits as planning). The old Posts table was removed. Every action writes a `reviews` row (approve, unapprove, edit).
+Real test (scratch month, plan ≈ 4c incl. one fix call): approve refused 409 on the `needs_image` post; approve / undo / re-approve; over-limit headline refused with "Slide 1: hero is 45 characters, the limit is 18"; valid edit redrew only that post and moved an approved post back to `rendered`; carousel no-op edit OK. Screenshots at 1440 and 390 px (feed and the Edit text panel) looked right; the page stays 390 px wide. Scratch month and its renders deleted.
+Also: removed a stray `scripts/tmp-t05b.ts` committed by mistake in T-05b; `pnpm screenshot` now waits for dialogs to open.
+Not checked: Approve and Edit in a real browser by clicking (API paths tested via the same functions); the carousel slide buttons; the page when planning is running.
 
 ### T-06b · Review actions: request changes, artwork, approve all — `todo` · 45m
 Split out of T-06.
