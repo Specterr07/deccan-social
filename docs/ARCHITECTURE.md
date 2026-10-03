@@ -26,7 +26,7 @@ flowchart LR
 1. `POST /api/months` — month only → row in `months` (status `draft`). Entries are added with `POST /api/months/[id]/entries` (checked by `schemas/entries.ts`).
 2. `POST /api/months/[id]/plan` → plan job (status `planning`): entries sent to Claude as JSON; Claude returns only the words per entry (`planAnswerShape`, structured output); `resolvePlan` adds the facts from the entries by code; limit checks (+ one post-only fix call); `savePlan` writes `posts` (with `entry_id`) and `slides`.
 3. Picture job (per slide) — tags → `assets` search. Hit: link it. Miss: Higgsfield, N variants in parallel (idempotency key `slideId:variant`), each result copied to R2 at once (Higgsfield keeps outputs only ~7 days), logged in `generations` with cost. Budget check before every call.
-4. Render job — for each slide: React template → HTML string (inlining tokens.css + templates.css + fonts) → Playwright screenshot of `.dp-post` → JPEG to R2.
+4. Render job (`lib/render/renderPost.ts`, mapping in `fromDb.ts`; runs at the end of the plan job and again for one post when an image is filled) — for each slide: React template → HTML string (inlining tokens.css + templates.css + fonts) → Playwright screenshot of `.dp-post` → JPEG to R2.
 5. Email — Resend, thumbnails + review link. Month status `in_review`.
 6. Review page actions → re-plan one post (Claude), re-generate artwork, swap variant, edit text → re-render that post only.
 7. Pack — zip streamed from R2: `YYYY-MM-DD_<post-id>/slide-01.jpg…`, `captions.md`, `schedule.csv`.

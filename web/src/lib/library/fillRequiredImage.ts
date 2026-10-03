@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { assets, slides } from "@/db/schema";
 import { createAssetFromFile } from "./createAsset";
+import { renderPostQuietly } from "@/lib/render/renderPost";
 import { refreshPostImageStatus } from "./postImageStatus";
 import { slugifyName } from "./assetRules";
 
@@ -19,6 +20,7 @@ async function loadSlotSlide(slideId: string) {
 async function linkAsset(slideId: string, postId: string, assetId: string): Promise<void> {
   await db.update(slides).set({ requiredImageAssetId: assetId }).where(eq(slides.id, slideId));
   await refreshPostImageStatus(postId);
+  await renderPostQuietly(postId); // draw the post again with the new image (only this post)
 }
 
 // Fills the slot with a newly uploaded file. The file is also saved to the library with tags, so it can be reused.
@@ -70,6 +72,7 @@ export async function clearRequiredImage(slideId: string): Promise<FillResult | 
   try {
     await db.update(slides).set({ requiredImageAssetId: null }).where(eq(slides.id, slideId));
     await refreshPostImageStatus(slide.postId);
+    await renderPostQuietly(slide.postId); // back to the placeholder picture
     return { ok: true };
   } catch (clearError) {
     console.error(`Could not clear the image of slide ${slideId}:`, clearError);
