@@ -5,9 +5,9 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-07 shipped; branch `main`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
+- **Current task:** **T-08** (branch `t-08-month-pack`, plan in TASKS Notes). **M2 passed** (Vivek, 2026-10-07: Plan again worked, email arrived and worked). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
 - **Last thing done:** T-07 — the review email (thumbnails, "N posts need images" banner, review button) is sent after every plan; failures show as a notice. **Milestone M2 is ready for Vivek.**
-- **Next action:** **M2 review by Vivek:** open October 2026 → Plan again → check the email arrives (links point at localhost for now), then approve / edit / ask for changes on a post. Then run `/start` for **T-08** (month pack) and **T-09** (deploy + October end to end).
+- **Next action:** Finish T-08, then T-09 (deploy + October end to end; Vivek will need to supply a Fly.io account / deploy token — list them at the start of T-09).
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
