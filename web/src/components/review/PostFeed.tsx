@@ -1,4 +1,5 @@
 import { ApproveAllButton } from "./ApproveAllButton";
+import { DownloadPackButton } from "./DownloadPackButton";
 import type { ArtworkBudget } from "./ArtworkControls";
 import { PostCard } from "./PostCard";
 import type { ReviewPost } from "./types";
@@ -15,7 +16,10 @@ export function PostFeed({ monthId, posts, budget }: { monthId: string; posts: R
           <strong className="text-foreground">{approvedCount} of {posts.length}</strong> approved
           {needImageCount > 0 && <> · <span className="font-medium text-destructive">{needImageCount} {needImageCount === 1 ? "post needs" : "posts need"} an image</span></>}
         </p>
-        <ApproveAllButton monthId={monthId} readyCount={readyCount} />
+        <div className="flex flex-wrap items-start gap-2">
+          <ApproveAllButton monthId={monthId} readyCount={readyCount} />
+          <DownloadPackButton monthId={monthId} approvedCount={approvedCount} />
+        </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {posts.map((post) => <PostCard key={post.id} post={post} budget={budget} />)}

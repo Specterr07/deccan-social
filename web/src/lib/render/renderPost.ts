@@ -2,17 +2,11 @@ import { eq } from "drizzle-orm";
 import { ZodError } from "zod";
 import { db } from "@/db/client";
 import { posts, slides } from "@/db/schema";
-import { deleteObject, publicUrlFor, uploadObject } from "@/lib/r2";
+import { deleteObject, keyFromPublicUrl, uploadObject } from "@/lib/r2";
 import { buildRenderInput } from "./fromDb";
 import { renderSlide } from "./renderSlide";
 
 export type RenderReport = { problems: string[] }; // readable lines for the month page; empty = everything rendered
-
-// The R2 key behind a public URL (so an old render can be deleted when a newer one replaces it).
-function keyFromUrl(url: string): string | null {
-  const prefix = `${publicUrlFor("")}`;
-  return url.startsWith(prefix) ? url.slice(prefix.length) : null;
-}
 
 async function loadPost(postId: string) {
   return db.query.posts.findFirst({
@@ -37,7 +31,7 @@ export async function renderPost(postId: string): Promise<RenderReport> {
       const url = await uploadObject(key, jpeg, "image/jpeg");
       await db.update(slides).set({ renderUrl: url }).where(eq(slides.id, slide.id));
       renderedCount += 1;
-      const oldKey = slide.renderUrl ? keyFromUrl(slide.renderUrl) : null;
+      const oldKey = slide.renderUrl ? keyFromPublicUrl(slide.renderUrl) : null;
       if (oldKey) await deleteObject(oldKey).catch((error) => console.warn(`Could not delete the old render ${oldKey}:`, error)); // only wasted space if it fails
     } catch (error) {
       // Typical causes: a picture that will not load, Chromium trouble, or storage unreachable.

@@ -13,6 +13,12 @@ export function publicUrlFor(key: string): string {
   return `${env.R2_PUBLIC_BASE_URL.replace(/\/$/, "")}/${key}`;
 }
 
+// The R2 key behind a public URL, or null if the URL is not one of ours.
+export function keyFromPublicUrl(url: string): string | null {
+  const prefix = publicUrlFor("");
+  return url.startsWith(prefix) ? url.slice(prefix.length) : null;
+}
+
 // Saves a file to R2 and returns its public URL.
 export async function uploadObject(key: string, body: Buffer, contentType: string): Promise<string> {
   try {

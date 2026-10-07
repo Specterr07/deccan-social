@@ -5,13 +5,16 @@
 ## Now
 
 - **Phase:** SLC
-- **Current task:** none (T-07 shipped; branch `main`). Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
-- **Last thing done:** T-07 — the review email (thumbnails, "N posts need images" banner, review button) is sent after every plan; failures show as a notice. **Milestone M2 is ready for Vivek.**
-- **Next action:** **M2 review by Vivek:** open October 2026 → Plan again → check the email arrives (links point at localhost for now), then approve / edit / ask for changes on a post. Then run `/start` for **T-08** (month pack) and **T-09** (deploy + October end to end).
+- **Current task:** none (T-08 shipped; branch `main`). M2 passed. Dev settings in `.env.local`: `IMAGE_VARIANTS_PER_SLIDE=1`, `MONTHLY_AI_BUDGET_INR=300` → back to 3 and 1500 for T-09.
+- **Last thing done:** T-08 — "Download pack" gives a zip of the approved posts (slides per post folder, `captions.md`, `schedule.csv`).
+- **Next action:** Run `/start` for **T-09** (deploy to Fly.io + the real October run). Vivek should line up before it: a Fly.io account + `flyctl` login, and a decision on the app name / region (`bom`). Domain for Resend is optional.
 - **Blockers:** None for building. Brand kit fonts/colours still to be signed off by the owner (not blocking). Suggested-day dates cover Oct 2026 – Dec 2027 only; extend `web/src/data/suggestedDays.ts` for later months.
 - **Production URL:** — (set in T-09)
 
 ## Session log
+
+### 2026-10-07 · T-08 session (Claude, Claude Code)
+- Recorded M2 as passed (Vivek: Plan again + working email). Month pack zip with `fflate` (approved by Vivek); tested on a scratch month, which was deleted.
 
 ### 2026-10-03 · T-07 session (Claude, Claude Code)
 - Review email via Resend (REST), brand colours read from tokens.css, sent by the plan job. Tested on a scratch month (deleted); one real email was sent to `REVIEWER_EMAIL` (its thumbnails are gone). M2 is ready.
