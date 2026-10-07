@@ -335,9 +335,9 @@ Risks: Resend in test mode only delivers to the signup address; `APP_URL` is loc
 Checked: builder with 0 / 1 / 2 posts needing images, escaping of `<` and `&` in headlines, singular / plural wording; email rendered in a browser at 900 and 390 px (2 thumbnails per row, banner, button, plain link under it); a forced sender-domain error came back as a readable message. Colours come from `brand/tokens.css` (no hex in code).
 **Caveats:** the test email went to `REVIEWER_EMAIL` but I deleted the scratch month's pictures afterwards, so its thumbnails will look broken; the real check is M2 (Plan again on October → fresh email with lasting images). The button uses `APP_URL` (localhost until T-09), so it only opens on this Mac. Plain-text twin is included; I could not test a real mail client (Gmail / Outlook) from here.
 
-### T-08 · Month pack — `doing` · 30m
+### T-08 · Month pack — `done` · 30m
 - `GET /api/months/[id]/pack`: zip of approved posts: `YYYY-MM-DD_<post-id>/slide-NN.jpg`, `captions.md` (per post: date, platforms, IG + LinkedIn captions), `schedule.csv` (date, time, post, platforms, files).
-- [ ] Zip opens on macOS; files in date order.
+- [x] Zip opens on macOS; files in date order. (`unzip -t` clean and macOS's own `ditto` extracted it; folders and `schedule.csv` rows in date order; the unapproved post is left out.)
 **Notes:** 2026-10-07 plan (branch `t-08-month-pack`; Vivek approved the `fflate` dependency).
 1. `fflate` (small, no sub-dependencies) for the zip; JPEGs are stored without compression (already compressed).
 2. `lib/pack/buildPack.ts`: approved posts only, sorted by date then time; each slide downloaded from R2 by key (`downloadObject`; the URL→key helper moves from `renderPost` into `r2.ts`); folders `YYYY-MM-DD_<kind>-<first 8 of post id>/slide-NN.jpg`; `captions.md` (date, time, platforms, Instagram + LinkedIn caption per post); `schedule.csv` (date, time, post headline, platforms, files; proper CSV quoting).
@@ -345,6 +345,9 @@ Checked: builder with 0 / 1 / 2 posts needing images, escaping of `<` and `&` in
 4. Month page: "Download pack (N approved)" button next to Approve all; disabled with the reason when N is 0.
 5. Verify: scratch month (plan ≈ 4c), approve 3 of 4 posts (the 4th needs an image), build the zip, `unzip -t` + list it, read captions.md and schedule.csv (commas / quotes / non-ASCII in a headline), check order by date; 409 when nothing approved; screenshot the button.
 Risks: a post approved but with a missing render file → clear error instead of a broken zip; large months (31 posts × several slides) are fine in memory (a few MB).
+**Built 2026-10-07:** `fflate` added; `lib/pack/{buildPack,packText}.ts`, `GET /api/months/[id]/pack`, `components/review/DownloadPackButton.tsx` (next to Approve all; disabled with a reason until a post is approved). Folder names are `YYYY-MM-DD_<kind>-<first 8 of post id>`. The URL→key helper moved to `lib/r2.ts` (`keyFromPublicUrl`, shared with `renderPost`).
+Real test (scratch month, plan ≈ 3c): 409 with a plain message when nothing was approved; 3 approved posts (carousel = 3 slides) → 5 JPEGs + `captions.md` + `schedule.csv`; route returns `application/zip` with a download file name; unknown month → 404; CSV quoting checked on commas, quotes and Devanagari. Screenshots of the button at 1440 and 390 px. Scratch month and renders deleted.
+Not checked: downloading by clicking the button in a browser (the route function was called directly); a very large month (31 posts) — it is built in memory, a few MB.
 
 ### T-09 · Deploy + October end-to-end — `todo` · 45m
 Includes CI/CD stages 2–3 from `docs/CICD.md`: generated Drizzle migrations + `release_command`, and the `deploy` job with a scoped Fly deploy token.
