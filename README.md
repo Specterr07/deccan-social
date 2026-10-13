@@ -18,6 +18,28 @@ claude                             # start Claude Code, then type /start
 
 Needs: Node 22+, pnpm (`npm i -g pnpm`), Docker Desktop (for deploy), Fly CLI (`brew install flyctl`).
 
+## Running locally
+
+The Next.js application lives in `web/`.
+
+```bash
+cd web && pnpm dev
+# or from root:
+pnpm --dir web dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+### Common commands
+
+All application commands run inside `web/`:
+
+- `cd web && pnpm dev` — start local development server
+- `cd web && pnpm check` — typecheck, lint, and build (run before every push)
+- `cd web && pnpm typecheck` — run Next.js typegen and TypeScript check
+- `cd web && pnpm db:migrate` — apply database migrations to Neon
+- `cd web && pnpm seed:library` — seed sample photos into the photo library
+
 Online references (owner's copies):
 - Brand kit: https://claude.ai/artifact/37MQ2N2hKM9QhDwx3EQiVt
 - Architecture doc: https://claude.ai/code/artifact/4a64459b-6376-4be0-94b3-a8ad666700b6
